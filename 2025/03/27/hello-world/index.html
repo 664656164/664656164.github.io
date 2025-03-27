@@ -193,7 +193,7 @@
   const ipt = document.querySelector('#search-input')
   const btn = document.querySelector('#search-btn')
   const layer = document.querySelector('#search-layer')
-  const posts = JSON.parse(`[{"title":"Hello World","path":"2025/03/27/hello-world/"},{"title":"","path":"2025/03/27/学习Redis/"}]`)
+  const posts = JSON.parse(`[{"title":"Hello World","path":"2025/03/27/hello-world/"},{"title":"学习Redis","path":"2025/03/27/学习Redis/"}]`)
   ipt.addEventListener('keyup', e => {
     if (e.key === 'Enter') {
       handleSearch()
@@ -258,13 +258,13 @@
       <div class="main-left--statics">
         <a href="/categories">
           <div>
-            <span>0</span>
+            <span>1</span>
             <span>分类</span>
           </div>
         </a>
         <a href="/tags">
           <div>
-            <span>0</span>
+            <span>1</span>
             <span>标签</span>
           </div>
         </a>
@@ -414,7 +414,7 @@
           
             <p>
               <span>上一篇：</span>
-              <a href="/2025/03/27/学习Redis/"></a>
+              <a href="/2025/03/27/学习Redis/">学习Redis</a>
             </p>
            
           
