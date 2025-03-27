@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>我的技术与生活——学习javaweb基础 | 欢迎来到小韩的学习博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="shortcut icon" href="/imgs/shortcut-icon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="/css/public.css" />
+  <link rel="stylesheet" href="/css/layout.css" />
+  <link rel="stylesheet" href="/css/iconfont.css" />
+  <link rel="stylesheet" href="/css/APlayer.min.css" />
+  <script src="/js/APlayer.min.js"></script>
+  <script src="/js/jquery.min.js"></script>
+  <script src="/js/jquery.pjax.min.js"></script>
+
+  <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+  <script>
+    document.title = `我的技术与生活——学习javaweb基础`
+  </script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<style>
+  .load {
+    width: 100%;
+    height: 100vh;
+    background-color: rgb(37, 35, 40);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 9999;
+  }
+  .load-circle {
+    width: 80px;
+    height: 80px;
+    border: 8px solid orange;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: rotate 1s linear infinite;
+    filter: drop-shadow(0 0 3px orange);
+  }
+  .load-circle-inner {
+    width: 40px;
+    height: 40px;
+    border: 8px solid orange;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: rotate-reverse .5s linear infinite;
+  }
+  .load-text {
+    margin-top: 20px;
+    font-size: 24px;
+    color: orange;
+    display: flex;
+  }
+  .load-text span {
+    margin: 0 5px;
+    text-shadow: 5px 5px 5px orange;
+    animation: move 1s linear infinite;
+  }
+  .load-text span:nth-child(1) {
+    animation-delay: -0.6s;
+  }
+  .load-text span:nth-child(2) {
+    animation-delay: -0.5s;
+  }
+  .load-text span:nth-child(3) {
+    animation-delay: -0.4s;
+  }
+  .load-text span:nth-child(4) {
+    animation-delay: -0.3s;
+  }
+  .load-text span:nth-child(5) {
+    animation-delay: -0.2s;
+  }
+  .load-text span:nth-child(6) {
+    animation-delay: -0.1s;
+  }
+  @keyframes rotate {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(360deg); }
+  }
+  @keyframes rotate-reverse {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(-360deg); }
+  }
+  @keyframes move {
+    0% { transform: translateY(0%) rotate(0) scale(1); }
+    20% { transform: translateY(20%) rotate(10deg) scale(1.2); }
+    80% { transform: translateY(-10%) rotate(-20deg) scale(.8);}
+    100% { transform: translateY(0) rotate(0) scale(1); }
+  }
+
+  .progress {
+    position: fixed;
+    left: 0; top: 0;
+    width: 0;
+    height: 3px;
+    background-color: green;
+    transition: all cubic-bezier(0.215, 0.610, 0.355, 1) .1s;
+    z-index: 9999;
+  }
+
+  .to-up {
+    animation: toUp .5s 1;
+  }
+  .gray {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 9999;
+    display: none;
+    pointer-events: none;
+    background-color: #000;
+    mix-blend-mode: color;
+  }
+  @keyframes toUp {
+    from { transform: translateY(15px); opacity: 0; }
+    to { transform: translateY(0) ; opacity: 1; }
+  }
+</style>
+<body>
+  <div id="load" class="load">
+    <div class="load-circle">
+      <div class="load-circle-inner"></div>
+    </div>
+    <p class="load-text">
+      <span>L</span>
+      <span>O</span>
+      <span>A</span>
+      <span>D</span>
+      <span>I</span>
+      <span>N</span>
+      <span>G</span>
+    </p>
+  </div>
+  <div id="container" class="container w-100 vh-100" style="display: none;">
+    <header class="header">
+  <div class="header-wrapper">
+    <div class="header-left">
+      <div class="header-search">
+        <input id="search-input" type="text" class="header-search--input" placeholder="请输入要检索的文章标题" />
+        <span id="search-btn" class="header-search--icon"><i class="iconfont icon-sousuo"></i></span>
+      </div>
+      <div id="search-layer" class="header-search--layer hidden">
+        <p class="title">
+          <span>以下是搜索内容：</span>
+          <span id="close-layer-btn">关闭</span>
+        </p>
+        <ul>
+        </ul>
+      </div>
+    </div>
+    <div class="header-right">
+      <ul class="header-menu">
+        <li>
+          <a href="http://example.com/">
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+            <span class="header-menu--span">首页</span>
+          </a>
+        </li>
+        <li>
+          <a href="http://example.com/log">
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+            <span class="header-menu--span">日志</span>
+          </a>
+        </li>
+        <li>
+          <a href="http://example.com/link">
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+            <span class="header-menu--span">友情链接</span>
+          </a>
+        </li>
+        <li>
+          <a href="http://example.com/about">
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+            <span class="header-menu--span">关于我</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<script>
+  const ipt = document.querySelector('#search-input')
+  const btn = document.querySelector('#search-btn')
+  const layer = document.querySelector('#search-layer')
+  const posts = JSON.parse(`[{"title":"学习javaweb框架","cover":"/images/javaweb-cover.jpg","path":"2024/11/27/JAVAWEB框架/"},{"title":"学习javaweb基础","cover":"/images/javaweb-cover.jpg","path":"2024/03/27/JAVA WEB/"},{"title":"python应用","cover":"/images/python.jpg","path":"2024/04/03/Python/"},{"title":"c++竞赛","cover":"/images/c++.jpg","path":"2023/03/27/ACM暑假集训笔记/"},{"title":"学习git指令","cover":"/images/git.jpg","path":"2024/04/11/git项目管理工具/"},{"title":"python基础","cover":"/images/python.jpg","path":"2024/05/12/python详细版本/"},{"title":"学习Redis","cover":"/images/redis-cover.jpg","path":"2025/03/27/学习Redis/"},{"title":"微信小程序","cover":"/images/wx.jpg","path":"2024/09/09/微信小程序/"},{"title":"mysql","cover":"/images/mysql.jpg","path":"2023/10/25/数据库知识/"}]`)
+  ipt.addEventListener('keyup', e => {
+    if (e.key === 'Enter') {
+      handleSearch()
+    }
+  })
+  btn.addEventListener('click', () => {
+    handleSearch()
+  })
+
+  document.querySelector('#close-layer-btn').addEventListener('click', () => {
+    layer.classList.toggle('hidden')
+  })
+
+  function handleSearch() {
+    if (ipt.value.trim() === '') {
+      return
+    }
+    let html = ''
+    const targetPosts = posts.filter(post => post.title.includes(ipt.value))
+    targetPosts.forEach(post => {
+      html += `
+        <li>
+          <div>
+            <a href="/${post.path}">${post.title.replace(new RegExp(ipt.value), `<span>${ipt.value}</span>`)}</a>
+          </div>
+          <img src="${post.cover || '/imgs/default-cover.webp' }" />
+        </li>
+      `
+    })
+    if (html.trim () === '') {
+      html += '<p class="empty">没有搜索到内容</p>'
+    }
+    layer.querySelector('ul').innerHTML = html
+    layer.classList.remove('hidden')
+  }
+</script> 
+    <section id="main" class="main">
+      <div class="main-left-wrapper">
+<div class="main-left">
+  <div class="main-left--block">
+    <div class="main-left--info">
+      <img src="/imgs/avatar.jpg"" class="main-left--avatar" />
+      <div class="main-left--intro">
+        <p class="main-left--name">gcbsh</p>
+        <div class="main-left--tags">
+          <span class="main-left--tag">减肥</span>
+          <span class="main-left--tag">学习</span>
+        </div>
+      </div>
+    </div>
+  
+    <div>
+      <div class="main-left--motto">
+        <p>“关关难过关关过，前路漫漫亦灿灿”</p>
+        <p>“愿望是宅家睡大觉”</p>
+      </div>
+      <div class="main-left--github">
+        <span class="line"></span>
+        <a target="_blank" rel="noopener" href="https://github.com/Aizener"><i class="logo iconfont icon-github-fill"></i></a>
+        <span class="line"></span>
+      </div>
+      <div class="main-left--statics">
+        <a href="/categories">
+          <div>
+            <span>7</span>
+            <span>分类</span>
+          </div>
+        </a>
+        <a href="/tags">
+          <div>
+            <span>0</span>
+            <span>标签</span>
+          </div>
+        </a>
+        <a href="/archives">
+          <div>
+            <span>8 </span>
+            <span>归档</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-left--block">
+    <ul class="main-left--menu">
+      
+        <li>
+          <a href="/">
+            <span class="header-menu--span">小站首页</span>
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/log">
+            <span class="header-menu--span">个人日志</span>
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/link">
+            <span class="header-menu--span">友情链接</span>
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/about">
+            <span class="header-menu--span">关于自己</span>
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/tools">
+            <span class="header-menu--span">我的工具</span>
+            <i class="header-menu--icon iconfont icon-gongju"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+  <div class="main-left--block">
+    <div class="main-left--site">
+      <h5 class="main-left--title">
+        <span>站点信息</span>
+        <i class="iconfont icon-zhandian"></i>
+      </h5>
+      <p class="main-left--subtitle">
+        <span>文章数目：</span>
+        <span>9 篇</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>最近动态：</span>
+        <span>今天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>上线时间：</span>
+        <span>1天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>当前版本：</span>
+        <span>v1.0.2</span>
+      </p>
+    </div>
+  </div>
+</div></div>
+      <div id="main-container" class="main-container">
+
+
+  <link rel="stylesheet" href="/css/partial/article.css" />
+
+<div class="article-container">
+  <div class="article">
+    <h1 class="article-title">学习javaweb基础</h1>
+    <div class="article-info">
+      <div class="article-info--item">
+        <div class="article-info--info">
+          
+          <div class="article-info--categories">
+            <span>分类：</span>
+            <a class="category-link" href="/categories/javaweb/">Javaweb</a>
+          </div>
+          
+          
+          <div class="article-info--tags">
+            <span>标签：</span>
+            
+          </div>
+          
+          <p class="article-info--date">日期：2024-03-27 00:00:00</p>
+        </div>
+        <img src="/images/javaweb-cover.jpg" alt="" class="article-cover">
+      </div>
+    </div>
+    <article class="article-content markdown-body">
+      <h1 id="JAVA-WEB基础"><a href="#JAVA-WEB基础" class="headerlink" title="JAVA WEB基础"></a>JAVA WEB基础</h1><p>javaweb 基础1 Web开发基础+开发环境配置<br><a target="_blank" rel="noopener" href="https://note.youdao.com/s/RJf3BKLU">https://note.youdao.com/s/RJf3BKLU</a></p>
+<p>第一个Servlet项目<br>Java Web 基础 2<br><a target="_blank" rel="noopener" href="https://note.youdao.com/s/Je0qmtm1">https://note.youdao.com/s/Je0qmtm1</a></p>
+<p>Java Web基础4 servlet进阶，转发，重定向:<br><a target="_blank" rel="noopener" href="https://note.youdao.com/s/Jg3PWTow">https://note.youdao.com/s/Jg3PWTow</a></p>
+<p>Java Web 基础 5–会话跟踪技术<br><a target="_blank" rel="noopener" href="https://note.youdao.com/s/5wsIg51Q">https://note.youdao.com/s/5wsIg51Q</a></p>
+<p>Java Web 基础 6 JSP+登录注册<br><a target="_blank" rel="noopener" href="https://note.youdao.com/s/F8ILWLTD">https://note.youdao.com/s/F8ILWLTD</a></p>
+<p>Java Web 基础 7<br><a target="_blank" rel="noopener" href="https://note.youdao.com/s/4xGGrrt6">https://note.youdao.com/s/4xGGrrt6</a></p>
+<p>Java Web 基础 8 编辑删除<br><a target="_blank" rel="noopener" href="https://note.youdao.com/s/PN4HLLP0">https://note.youdao.com/s/PN4HLLP0</a></p>
+<p>【Javaweb基础9 】过滤器</p>
+<p><a target="_blank" rel="noopener" href="https://note.youdao.com/s/dfq5Z2no">https://note.youdao.com/s/dfq5Z2no</a></p>
+<p>【Java Web 基础 10】 监听器<br><a target="_blank" rel="noopener" href="https://note.youdao.com/s/NY0GxPH7">https://note.youdao.com/s/NY0GxPH7</a></p>
+<h2 id="一-Servlet"><a href="#一-Servlet" class="headerlink" title="一.Servlet"></a>一.Servlet</h2><h3 id="1-Servlet概念"><a href="#1-Servlet概念" class="headerlink" title="1.Servlet概念"></a>1.Servlet概念</h3><p>servlet:server applet</p>
+<p>概念：运行在服务器端得小程序</p>
+<p><strong>servlet 就是一个接口，定义了java类被浏览器访问到（tomcat识别）的规则</strong></p>
+<p>将来我们自定义一个类，实现servlet接口，复写方法。</p>
+<p><img src="/images/image-20240421151031795.png" alt="javaweb基础"></p>
+<h3 id="2-配置Servlet"><a href="#2-配置Servlet" class="headerlink" title="2.配置Servlet"></a>2.配置Servlet</h3><h4 id="2-1-在web-xml中配置"><a href="#2-1-在web-xml中配置" class="headerlink" title="2.1 在web.xml中配置"></a>2.1 在web.xml中配置</h4><p>配置javaweb项目部署到tomcat</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!--  配置Servlet--&gt;</span></span><br><span class="line">  </span><br><span class="line">  <span class="tag">&lt;<span class="name">servlet</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">servlet-name</span>&gt;</span>给需要配置的servlet取一个名字<span class="tag">&lt;/<span class="name">servlet-name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">servlet-class</span>&gt;</span>需要配置的这个servlet类<span class="tag">&lt;/<span class="name">servlet-class</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">servlet</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">servlet-mapping</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">servlet-name</span>&gt;</span>和上面的取得名字一样<span class="tag">&lt;/<span class="name">servlet-name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">url-pattern</span>&gt;</span>/访问名<span class="tag">&lt;/<span class="name">url-pattern</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">servlet-mapping</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/image-20240421152535114.png" alt="javaweb基础"></p>
+<p><img src="/images/image-20240421152416321.png" alt="javaweb基础"></p>
+<p><img src="/images/image-20240421152458009.png" alt="javaweb基础"></p>
+<p><img src="/images/image-20240421152510397.png" alt="javaweb基础"></p>
+<h4 id="2-2-注解配置（3-0版本以上）"><a href="#2-2-注解配置（3-0版本以上）" class="headerlink" title="2.2 注解配置（3.0版本以上）"></a>2.2 注解配置（3.0版本以上）</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@WebServlet(&quot;/访问名&quot;)</span></span><br><span class="line">一个Servelt可以配置多个路径名</span><br><span class="line">  <span class="meta">@WebServlet(&#123;&quot;/访问名1&quot;，&quot;/访问名2&quot;，&quot;/访问名3&quot;&#125;)</span>  </span><br></pre></td></tr></table></figure>
+
+<h3 id="3-Servlet原理"><a href="#3-Servlet原理" class="headerlink" title="3.Servlet原理"></a>3.Servlet原理</h3><p>1.当服务器接受到客服端浏览器的请求后，会解析请求URL路径，获取访问的Servlet的资源路径。</p>
+<p>2.查找web.xml文件，是否有对应的<url-pattern>标签体内容。</p>
+<p>3.如果有，则再找到对应的<servlet-class>类名。</p>
+<p>4.tomcat会将字节码文件加载进内存，并创建其对象。</p>
+<p>5.调用其方法。</p>
+<p><img src="/images/image-20240421153226098.png" alt="javaweb基础"></p>
+<h3 id="4-Servlet生命周期"><a href="#4-Servlet生命周期" class="headerlink" title="4.Servlet生命周期"></a>4.Servlet生命周期</h3><p>加载实例化—–&gt;init——&gt;service——&gt;destroy</p>
+<p><strong>init 初始化方法</strong>：在Servlet被创建时，被执行，只会执行一次。</p>
+<p>​                           Servlet什么时候被创建?</p>
+<p>​                          *默认情况下，第一次访问时，Servlet被创建。</p>
+<p>​                           *可以配置执行Servlet的创建时机。(在web.xml中的servlet标签中通过load-on-startup配置)</p>
+<p>​                           *Servlet的init 初始化方法，只会执行一次。说明servlet在内存中只存在一个对象，servlet是单例的。</p>
+<p><img src="/images/image-20240421155840881.png" alt="javaweb基础"></p>
+<p>​                      <img src="/images/image-20240421155321968.png" alt="javaweb基础"></p>
+<p><strong>service  提供服务方法</strong>: 每一次Servlet被访问时，执行。执行多次。</p>
+<p>​                                    *每次访问Servlet时，都会被调用一次。</p>
+<p><strong>destroy 销毁方法</strong>： 在服务器正常关闭时，执行，只会执行一次。</p>
+<p><img src="/images/image-20240421160015878.png" alt="javaweb基础"></p>
+<p>getservletconfig() 获取Servlet配置对象</p>
+<p>getservletInfo() 获取Servlet信息（作者，版本，版权….）</p>
+<h3 id="5-Servlet体系结构"><a href="#5-Servlet体系结构" class="headerlink" title="5.Servlet体系结构"></a>5.Servlet体系结构</h3><p><img src="/images/image-20240421160512555.png" alt="javaweb基础"></p>
+<h2 id="二-doGet，doPost，doPut，doDelete方法"><a href="#二-doGet，doPost，doPut，doDelete方法" class="headerlink" title="二.doGet，doPost，doPut，doDelete方法"></a>二.doGet，doPost，doPut，doDelete方法</h2><p>doGet()-&gt;处理get请求</p>
+<p>doPost()-&gt;处理post请求</p>
+<p>doPut()-&gt;处理put请求 </p>
+<p>doDelete()-&gt;处理delete请求 </p>
+<h2 id="三-Request对象和Response对象"><a href="#三-Request对象和Response对象" class="headerlink" title="三.Request对象和Response对象"></a>三.Request对象和Response对象</h2><h3 id="1-request和response原理"><a href="#1-request和response原理" class="headerlink" title="1.request和response原理"></a>1.request和response原理</h3><p>request和response对象是由服务器（tomcat）创建的，我们来使用它们。</p>
+<p><strong>request</strong>对象是用来<strong>获取请求消息</strong>，<strong>response对象</strong>是用来设置<strong>响应消息</strong></p>
+<p><img src="/images/image-20240422190615723.png" alt="javaweb基础"></p>
+<h3 id="2-request对象"><a href="#2-request对象" class="headerlink" title="2.request对象"></a>2.request对象</h3><p>requese对象中封装请求消息数据。</p>
+<h4 id="2-1-request对象体系结构"><a href="#2-1-request对象体系结构" class="headerlink" title="2.1 request对象体系结构"></a>2.1 request对象体系结构</h4><p><img src="/images/image-20240422191203444.png" alt="javaweb基础"></p>
+<h4 id="2-2-request对象功能"><a href="#2-2-request对象功能" class="headerlink" title="2.2 request对象功能"></a>2.2 request对象功能</h4><h5 id="2-2-1-请求行"><a href="#2-2-1-请求行" class="headerlink" title="2.2.1 请求行"></a>2.2.1 请求行</h5><p>GET&#x2F;request-demo&#x2F;req1?name&#x3D;xhangsan&amp;password&#x3D;123456 HTTP&#x2F;1.1</p>
+<p>获取请求方式 String <strong>getMethod()</strong>—–&gt;GET</p>
+<p><strong>获取虚拟路径</strong> <strong>String getContextpath()</strong>  —-&gt;&#x2F;request-demo</p>
+<p>获取Servlet路径：String getServletPath() —–&gt;&#x2F;req1</p>
+<p><strong>获取请求参数</strong>：String <strong>getQueryString()</strong>—-&gt;name&#x3D;xhangsan&amp;password&#x3D;123456</p>
+<p><strong>获取请求URI</strong>：<strong>String getRequestURI()</strong>—–&gt;&#x2F;request-demo&#x2F;req1</p>
+<p>​                         StringBuffer getRequestURL()—–&gt;http::&#x2F;&#x2F;localhost&#x2F;request-demo&#x2F;req1</p>
+<p> 获取协议及版本：String getprotocol()—–&gt;HTTP&#x2F;1.1</p>
+<p>获取客户机的IP地址：String getRemoteAddr()</p>
+<h5 id="2-2-2-请求头"><a href="#2-2-2-请求头" class="headerlink" title="2.2.2 请求头"></a>2.2.2 请求头</h5><p><strong>根据请求头名称获取值</strong> String getHesder(String name)</p>
+<p>获取所有的请求头名称 Enumeration<String> getHeaderNames()</p>
+<p><img src="/images/image-20240422195317753.png" alt="javaweb基础"></p>
+<p><img src="/images/image-20240422195435931.png" alt="javaweb基础"></p>
+<h5 id="2-2-3-请求体"><a href="#2-2-3-请求体" class="headerlink" title="2.2.3 请求体"></a>2.2.3 请求体</h5><p> 请求体：只有post请求方式，才有请求体，在请求体中封装了post请求的请求参数。</p>
+<p>步骤：1.获取流对象</p>
+<p>​             ServletInpustStream getInputStream():获取字节输入流，可以操作所有类型数据。</p>
+<p>​              BufferedReader getReader():获取字符输入流，只能操作字符数据。</p>
+<p>​            </p>
+<h5 id="2-2-4-通用方式获取请求参数（兼容get和post）"><a href="#2-2-4-通用方式获取请求参数（兼容get和post）" class="headerlink" title="*2.2.4 通用方式获取请求参数（兼容get和post）"></a>*2.2.4 通用方式获取请求参数（兼容get和post）</h5><p>根据参数名称获取参数值  String getParameter(String name)</p>
+<p> 根据参数名称获取参数值的数组 String[ ]  getParameterValues(String name)</p>
+<p>获取所有参数的Map集合 Map&lt;String,String[ ]&gt; getParameterMap()</p>
+<p><img src="/images/image-20240422204233957.png" alt="javaweb基础"></p>
+<p>获取所有请求参数的名称 Enumeration<String>  getParameterNames()</p>
+<p><strong>？？中文乱码问题</strong>：</p>
+<h5 id="2-2-5-请求转发"><a href="#2-2-5-请求转发" class="headerlink" title="*2.2.5 请求转发"></a>*2.2.5 请求转发</h5><p>浏览器-》ServletA-》servletB</p>
+<p>请求转发：是一种在<strong>服务器内部的资源</strong>跳转方式。</p>
+<p><strong>步骤</strong>：</p>
+<p>1.通过request对象获取请求转发器对象：RequestDispatcher **getRequestDispatcher(**String path).</p>
+<p>2.使用RequestDispatcher对象进行转发：<strong>forward</strong>(ServletRequest request,ServletResponse response).</p>
+<p>*<strong>转发的特点</strong>：</p>
+<p>1.浏览器地址栏路径不发生变化。</p>
+<p>2.只能转发到当前服务器内部资源中。</p>
+<p>3.转发是一次请求。</p>
+<h5 id="2-2-6-共享数据"><a href="#2-2-6-共享数据" class="headerlink" title="*2.2.6 共享数据"></a>*2.2.6 共享数据</h5><p>域对象：一个有作用范围的对象，可以在范围内共享数据。</p>
+<p>request域：代表<strong>一次请求</strong>的范围，一般用于请求转发的多个资源中共享数据。</p>
+<p>方法： </p>
+<p>存储数据 void setAttribute(String name,Object o) </p>
+<p>根据Key获取值-&gt;Object getAttribute(String name)&#x2F;&#x2F;注意这里返回的是Object对象，可以通过(String),(int)..强转。<br>        根据Key删除该键值对-&gt;void removeAttribute(String name)</p>
+<h5 id="2-2-7-获取ServletContext"><a href="#2-2-7-获取ServletContext" class="headerlink" title="*2.2.7 获取ServletContext"></a>*2.2.7 获取ServletContext</h5><p>ServletContext  request.getServletContext()</p>
+<h2 id="案例：登录页面"><a href="#案例：登录页面" class="headerlink" title="案例：登录页面"></a>案例：登录页面</h2><p><img src="/images/image-20240423135152565.png" alt="javaweb基础"></p>
+<h3 id="3-Response对象"><a href="#3-Response对象" class="headerlink" title="3.Response对象"></a>3.Response对象</h3><p>功能：设置响应消息（设置响应行，设置响应头，设置响应体）</p>
+<h4 id="3-1-response对象功能"><a href="#3-1-response对象功能" class="headerlink" title="3.1 response对象功能"></a>3.1 response对象功能</h4><h5 id="3-1-1-响应行"><a href="#3-1-1-响应行" class="headerlink" title="3.1.1 响应行"></a>3.1.1 响应行</h5><p>设置状态码：setStatus(int sc)  格式：Http&#x2F;1.1 200 ok</p>
+<h5 id="3-1-2-响应头"><a href="#3-1-2-响应头" class="headerlink" title="3.1.2 响应头"></a>3.1.2 响应头</h5><p>setHeader(String name,String value)</p>
+<h5 id="3-1-3-响应体"><a href="#3-1-3-响应体" class="headerlink" title="3.1.3 响应体"></a>3.1.3 响应体</h5><p>使用步骤：</p>
+<p>1.获取输出流：</p>
+<p>  2.使用输出流，将数据输出到客户端浏览器</p>
+<p>​     <strong>字符输出流：PrintWriter getWriter()</strong></p>
+<p>​                           获取字符输出流对象：PrintWriter pw &#x3D; response.getWriter();</p>
+<p>​                            输出数据：pw.write(“String”);</p>
+<p>​                            解决乱码问题：</p>
+<p>​                            浏览器解码是ISO-8859-1</p>
+<p>​                            在获取字符输出流对象之前，告诉浏览器用utf-8的方式编码 response.getContentType(“text&#x2F;html;charset&#x3D;utf-8”)</p>
+<p>​           字节输出流：ServeltOutputStream response.getOutputStream();</p>
+<p>​           输出数据：pw.write(“String”.getBytes());</p>
+<h2 id="三-转发和重定向"><a href="#三-转发和重定向" class="headerlink" title="三.转发和重定向"></a>三.转发和重定向</h2><h3 id="1-转发"><a href="#1-转发" class="headerlink" title="1.转发"></a>1.转发</h3><p>请求转发：是一种在<strong>服务器内部的资源</strong>跳转方式。</p>
+<p><strong>浏览器-》Servleta（只完成一部分）-》servletB</strong></p>
+<p><strong>步骤</strong>：</p>
+<p>1.通过request对象获取请求转发器对象：RequestDispatcher **getRequestDispatcher(**String path).</p>
+<p>2.使用RequestDispatcher对象进行转发：<strong>forward</strong>(ServletRequest request,ServletResponse response).</p>
+<p>*<strong>转发的特点</strong>：</p>
+<p>1.浏览器地址栏路径不发生变化。</p>
+<p>2.只能转发到当前服务器内部资源中。</p>
+<p>3.转发是一次请求。</p>
+<h3 id="2-重定向"><a href="#2-重定向" class="headerlink" title="2.重定向"></a>2.重定向</h3><p><img src="/images/image-20240423193300520.png" alt="javaweb基础"></p>
+<p><strong>浏览器-》Servleta（它不能做，告诉浏览器一个可以做这个事儿的地址）-》浏览器-》servletB</strong></p>
+<p>重定向：资源跳转的一种方式</p>
+<p>方法：  response.<strong>sentRedirect</strong>(“<strong>request.getContextpath()+”seveltpath”</strong> “)</p>
+<p><strong>重定向的特点：</strong></p>
+<p>1.浏览器地址栏路径发生变化。</p>
+<p>2.重定向可以访问其他站点(服务器)的资源。</p>
+<p>3.重定向是俩次请求。(不能使用request对象来共享数据)</p>
+<h2 id="四-会话跟踪技术"><a href="#四-会话跟踪技术" class="headerlink" title="四.会话跟踪技术"></a>四.会话跟踪技术</h2><h3 id="什么是会话？"><a href="#什么是会话？" class="headerlink" title="什么是会话？"></a>什么是会话？</h3><p>用户打开浏览器，访问web服务器的资源，会话建立，直到有一方断开连接，会话结束。在一次会话中可以包含多次请求。</p>
+<p><strong>会话跟踪</strong>：一种维护浏览器状态的方法，服务器需要识别多次请求是否来自于同一浏览器，以便在同一次会话的多次请求间共享数据。</p>
+<h3 id="Http协议-（无状态协议）"><a href="#Http协议-（无状态协议）" class="headerlink" title="Http协议:（无状态协议）"></a>Http协议:（无状态协议）</h3><ol>
+<li><strong>HTTP协议是无状态的</strong>，每次浏览器向服务器请求时，服务器会将该请求视为新的请求</li>
+<li>HTTP协议设计成无状态的目的是让每次请求之间<strong>相互独立，互不影响</strong></li>
+<li>请求与请求之间独立后，就<strong>无法实现多次请求之间的数据共享</strong></li>
+</ol>
+<p>因此我们需要会话跟踪技术来实现会话内数据共享。</p>
+<h3 id="Cookie（客户端会话跟踪技术）"><a href="#Cookie（客户端会话跟踪技术）" class="headerlink" title="Cookie（客户端会话跟踪技术）"></a>Cookie（客户端会话跟踪技术）</h3><h5 id="1-什么是Cookie"><a href="#1-什么是Cookie" class="headerlink" title="1.什么是Cookie"></a>1.什么是Cookie</h5><p>Cookie：<strong>客户端会话跟踪技术</strong>，将<strong>数据保存到客户端</strong>，以后每次请求都携带Cookie数据进行访问。<br>       Cookie是一种用于在<strong>Web浏览器和Web服务器之间存储数据的小型文本文件</strong>。它通过在Web浏览器中存储一个键值对，使Web应用 程序能够跟踪用户的活动和状态。</p>
+<h5 id="2-Cookie的工作原理"><a href="#2-Cookie的工作原理" class="headerlink" title="2.Cookie的工作原理"></a>2.Cookie的工作原理</h5><p><img src="/images/image-20240520132310999.png" alt="javaweb基础"></p>
+<p>当用户访问一个Web应用程序时，Web服务器会向Web浏览器发送一组Cookie。当Web浏览器接收到Cookie后，它会将Cookie保存在用户的计算机上。每当用户再次访问该Web应用程序时，Web浏览器会将Cookie发送回Web服务器。Web服务器可以使用Cookie来跟踪用户的活动和状态。</p>
+<h5 id="3-Cookie的使用"><a href="#3-Cookie的使用" class="headerlink" title="3.Cookie的使用"></a>3.Cookie的使用</h5><p><strong>发送Cookie</strong></p>
+<ol>
+<li>创建Cookie对象，并设置数据-&gt;<strong>Cookie cookie &#x3D; new Cookie(“key”,“value”);</strong></li>
+<li>使用response对象，将Cookie从服务器中发送（响应）到客户端浏览器-&gt;<strong>response.addCookie(cookie);</strong></li>
+</ol>
+<p><strong>获取Cookie</strong></p>
+<p>  1.使用request对象，获取客户端携带的所有<strong>Cookie-&gt;Cookie[] cookies &#x3D; request.getCookies();</strong>&#x2F;&#x2F;获取客户端所有的Cookie并返回一个Cookie数组，如果只想获取username 可以用if判断一下<br>          2.遍历数组cookies，获取每一个Cookie对象<br>          3.使用Cookie对象方法获取数据-&gt;<strong>cookie.getName(); cookie.getValue()；</strong></p>
+<p><strong>设置Cookie的存活时间</strong></p>
+<p>当发送请求到ServletB之前，如果把浏览器关闭然后再重新访问资源，可以发现ServletB是获取不到Cookie对象的。因为在默认情况下，Cookie是存储在浏览器缓存中，当浏览器关闭时，内存释放，Cookie则同时被销毁。所以，如何实现将Cookie数据存储持久化：通过Cookie的一个API：<strong>setMaxAg</strong>e来实现。</p>
+<p>设置Cookie存活时间-&gt;setMaxAge(int seconds)<br>参数second为：</p>
+<p>1.正数：将Cookie写入浏览器所在电脑的硬盘，持久化存储。到时间自动删除<br>        2.负数：默认值，Cookie在当前浏览器内存中，当浏览器关闭，则Cookie被销毁<br>        3.零：删除对应Cookie</p>
+<p>eg.存储一周：</p>
+<p>​     Cookie.setMaxAge(60 *60 *24 *7);</p>
+<p><strong>Cookie存储中文</strong></p>
+<p>Cookie对象如果存储中文数据，会存在问题，访问时浏览器显示500错误信息码。<br>所以，Cookie是不能直接存储中文的。</p>
+<p>解决方式：URL编码。</p>
+<p>String value &#x3D; “张三”</p>
+<p>value &#x3D; URLEncoder(value,”UTF-8”);</p>
+<p>Cookie cookie &#x3D; new Cookie(“username”,”value);</p>
+<p>再获取时 再用URLDecoder.decode(value,”UTF-8”)解码；</p>
+<p>采用URLEncoder.encode()对中文进行编码，将编码后的值存入Cookie中<br>在另一个服务器中获取Cookie的值，获取之后使用URLDecoder.decode()解码</p>
+<h3 id="Session（服务端会话跟踪技术）"><a href="#Session（服务端会话跟踪技术）" class="headerlink" title="Session（服务端会话跟踪技术）"></a>Session（服务端会话跟踪技术）</h3><h5 id="1-什么是Session"><a href="#1-什么是Session" class="headerlink" title="1. 什么是Session"></a>1. 什么是Session</h5><p>Session：是<strong>服务端会话跟踪技术</strong>：<strong>将数据保存到服务端。</strong></p>
+<p>当客户端第一次访问Web应用程序时，**服务器会创建一个唯一的会话ID，并将其存储在客户端的Cookie中。**会话ID通常是一个长的随机字符串，用于识别客户端。每个后续请求都将包含这个会话ID，使得服务器能够识别客户端，并且能够在不同请求之间共享数据。</p>
+<ol>
+<li>Session是存储在服务端而Cookie是存储在客户端</li>
+<li>存储在客户端的数据容易被窃取和截获，存在很多不安全的因素</li>
+<li>存储在服务端的数据相比于客户端来说就更安全</li>
+</ol>
+<h5 id="2-Session的工作原理？"><a href="#2-Session的工作原理？" class="headerlink" title="2. Session的工作原理？"></a>2. Session的工作原理？</h5><p>session是基于cookie实现的。</p>
+<p><img src="/images/image-20240520135245376.png" alt="javaweb基础"></p>
+<h5 id="3-Session的使用"><a href="#3-Session的使用" class="headerlink" title="3.Session的使用"></a>3.Session的使用</h5><p><em><strong>在JavaEE中提供了HttpSession接口，来实现一次会话的多次请求之间数据共享功能。</strong></em></p>
+<p><strong>1.获取Session</strong></p>
+<p>使用request对象获取Session对象-》HttpSession session &#x3D; <strong>request.getSession();</strong></p>
+<p><img src="/images/image-20240402173026248.png%22" alt="javaweb基础"></p>
+<p><strong>2.Session域对象</strong></p>
+<p>Session域对象在<strong>一次会话的多次请求间</strong>共享数据，将数据保存在服务器端的对象中。HttpSession</p>
+<p>​        void session.<strong>setAttribute(String name,Object o)</strong></p>
+<p>根据Key获取值-&gt;Object <strong>session.getAttribute(String name)</strong>&#x2F;&#x2F;注意这里返回的是Object对象，可以通过(String),(int)..强转。<br>        根据Key删除该键值对-&gt;void session.<strong>removeAttribute(String name)</strong></p>
+<p><strong>3.获取SessionID</strong></p>
+<p>  session.getId()</p>
+<h3 id="URL重写"><a href="#URL重写" class="headerlink" title="URL重写:"></a>URL重写:</h3><p>a.重定向的过程使用URL重写实现会话跟踪</p>
+<p>response.encodeRedirextURl(“url”);</p>
+<p>b.普通页面跳转–验证会话跟踪技术</p>
+<p>response.encodeURl(“url”);</p>
+<p>浏览器会话和服务器会话</p>
+<h2 id="五-ServeltContext对象"><a href="#五-ServeltContext对象" class="headerlink" title="五.ServeltContext对象"></a>五.ServeltContext对象</h2><h3 id="1-ServeltContext概念："><a href="#1-ServeltContext概念：" class="headerlink" title="1.ServeltContext概念："></a>1.ServeltContext概念：</h3><p>代表<strong>整个web应用</strong>，可以和程序的容器（服务器）来通信。</p>
+<p>功能：1.获取MIME类型（MIME类型:在互联网通信过程中定义的一种文件数据类型）</p>
+<p>​            2.域对象：共享数据</p>
+<p>​            3.获取文件的真实（服务器）路径</p>
+<h3 id="2-获取ServeltContext："><a href="#2-获取ServeltContext：" class="headerlink" title="2.获取ServeltContext："></a>2.获取ServeltContext：</h3><p>1.通过request对象获取：</p>
+<p>​          request.getServeltContext();</p>
+<p>2.通过HttpServelt获取：</p>
+<p>​         this.getServeltContext();或者直接调用方法getServeltContext()</p>
+<h3 id="3-ServeltContext的功能："><a href="#3-ServeltContext的功能：" class="headerlink" title="3.ServeltContext的功能："></a>3.ServeltContext的功能：</h3><h4 id="3-1-获取MIME类型"><a href="#3-1-获取MIME类型" class="headerlink" title="3.1 获取MIME类型"></a>3.1 获取MIME类型</h4><p>MIME类型:在互联网通信过程中定义的一种文件数据类型</p>
+<p>格式： 大类型&#x2F;小类型 eg.text&#x2F;html   image&#x2F;jpeg</p>
+<p>获取：String getMimeType(String file)</p>
+<h4 id="3-2-域对象"><a href="#3-2-域对象" class="headerlink" title="3.2 域对象"></a>3.2 域对象</h4><p>共享数据</p>
+<p>ServeltContext域对象范围：所有用户所有请求的数据</p>
+<p>存储数据 void setAttribute(String name,Object o) </p>
+<p>根据Key获取值-&gt;Object getAttribute(String name)&#x2F;&#x2F;注意这里返回的是Object对象，可以通过(String),(int)..强转。<br>        根据Key删除该键值对-&gt;void removeAttribute(String name)</p>
+<h4 id="3-3-获取文件的真实（服务器）路径"><a href="#3-3-获取文件的真实（服务器）路径" class="headerlink" title="*3.3  获取文件的真实（服务器）路径"></a>*3.3  获取文件的真实（服务器）路径</h4><p><img src="/images/image-20240424123633359.png" alt="javaweb基础"></p>
+<h2 id="六-JSP"><a href="#六-JSP" class="headerlink" title="六.JSP"></a>六.JSP</h2><h3 id="1-JSP概念"><a href="#1-JSP概念" class="headerlink" title="1.JSP概念"></a>1.JSP概念</h3><p>java server pages(java服务器端页面) 是一种<strong>动态网页技术标准</strong>。一个特殊的页面，既可以定义html,css,js等<strong>静态</strong>内容，也可以定义java代码的<strong>动态</strong>内容。用于简化书写。jsp&#x3D;html+java</p>
+<p><img src="/images/image-20240423233436871.png" alt="javaweb基础"></p>
+<h3 id="2-JSP作用"><a href="#2-JSP作用" class="headerlink" title="2.JSP作用"></a>2.JSP作用</h3><p>简化开发，避免了在Servlet中直接输出HTML标签.代管Servet 程序回传 html 页面的数据</p>
+<h3 id="3-JSP原理"><a href="#3-JSP原理" class="headerlink" title="3.JSP原理"></a>3.JSP原理</h3><p><strong>JSP本质上就是一个Servelt</strong></p>
+<p><img src="/images/image-20240520093203518.png" alt="javaweb基础"></p>
+<h3 id="4-JSP快速入门"><a href="#4-JSP快速入门" class="headerlink" title="4.JSP快速入门"></a>4.JSP快速入门</h3><p>1.导入JSP依赖</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">&lt;!--导入jsp的坐标--&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">  &lt;groupId&gt;jakarta.servlet.jsp&lt;/groupId&gt;</span><br><span class="line">  &lt;artifactId&gt;jakarta.servlet.jsp-api&lt;/artifactId&gt;</span><br><span class="line">  &lt;version&gt;<span class="number">3.0</span><span class="number">.0</span>&lt;/version&gt;</span><br><span class="line">  &lt;scope&gt;provided&lt;/scope&gt;</span><br></pre></td></tr></table></figure>
+
+<p>2.创建JSP文件</p>
+<p>3.编写HTML标签和JAVA代码</p>
+<h3 id="5-JSP脚本"><a href="#5-JSP脚本" class="headerlink" title="5.JSP脚本"></a>5.JSP脚本</h3><p>a.&lt;% %&gt;定义属性和方法甚至是静态代码块、内部类</p>
+<p>b.&lt;%&#x3D; %&gt; 在jsp页面上输出数据</p>
+<p>c.&lt;%! %&gt;可以在jsp页面中，编写我们自己需要的功能</p>
+<h2 id="七-EL表达式"><a href="#七-EL表达式" class="headerlink" title="七.EL表达式"></a>七.EL表达式</h2><h3 id="1-EL表达式作用"><a href="#1-EL表达式作用" class="headerlink" title="1.EL表达式作用"></a>1.EL表达式作用</h3><p>用于简化JSP页面内的java代码，主要功能：<strong>获取域对象中的数据</strong>（request对象转发共享域（范围一次请求），session共享域（一次会话，多次请求间），ServeltContext域对象）</p>
+<h3 id="2-语法"><a href="#2-语法" class="headerlink" title="2.语法"></a>2.语法</h3><p><strong>${expression}</strong>—-&gt;eg. ${username} 获取域对象中存储key为user的数据</p>
+<h2 id="八-JSTL标签"><a href="#八-JSTL标签" class="headerlink" title="八.JSTL标签"></a>八.JSTL标签</h2><h3 id="1-JSTL标签作用"><a href="#1-JSTL标签作用" class="headerlink" title="1.JSTL标签作用"></a>1.JSTL标签作用</h3><p>用于简化JSP页面内的java代码。主要功能：<strong>遍历获取的域对象</strong></p>
+<h3 id="2-JSTL标签使用"><a href="#2-JSTL标签使用" class="headerlink" title="2.JSTL标签使用"></a>2.JSTL标签使用</h3><p>a.导入依赖</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">     &lt;groupId&gt;jakarta.servlet.jsp.jstl&lt;/groupId&gt;</span><br><span class="line">     &lt;artifactId&gt;jakarta.servlet.jsp.jstl-api&lt;/artifactId&gt;</span><br><span class="line">     &lt;version&gt;<span class="number">3.0</span><span class="number">.0</span>&lt;/version&gt;</span><br><span class="line">   &lt;/dependency&gt;</span><br><span class="line">   &lt;dependency&gt;</span><br><span class="line">     &lt;groupId&gt;org.glassfish.web&lt;/groupId&gt;</span><br><span class="line">     &lt;artifactId&gt;jakarta.servlet.jsp.jstl&lt;/artifactId&gt;</span><br><span class="line">     &lt;version&gt;<span class="number">3.0</span><span class="number">.1</span>&lt;/version&gt;</span><br><span class="line">   &lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
+
+<p>b.在JSP页面上引入JSTL标签库</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;%@ taglib prefix=<span class="string">&quot;c&quot;</span> uri=<span class="string">&quot;jakarta.tags.core&quot;</span> %&gt;</span><br><span class="line">&lt;%@ page isELIgnored=<span class="string">&quot;false&quot;</span>%&gt;</span><br><span class="line">&lt;%@ page contentType=<span class="string">&quot;text/html;charset=UTF-8&quot;</span> language=<span class="string">&quot;java&quot;</span> %&gt;</span><br></pre></td></tr></table></figure>
+
+<p>b.使用：</p>
+<p>​           1）&lt;c:if  判断表达式&gt;  执行代码 &lt;&#x2F; c:if&gt; 类似于Java中的if语句</p>
+<p>​            2）&lt;c:forEach items&#x3D;”${key}” var&#x3D;”临时变量”&gt;   执行代码    &lt;&#x2F; c:forEach&gt; 类似于Java中的for循环语句</p>
+<p>​                 ${key}：通过key获取的域对象中的容器</p>
+<h2 id="九-Filter（过滤器）"><a href="#九-Filter（过滤器）" class="headerlink" title="九.Filter（过滤器）"></a>九.Filter（过滤器）</h2><h3 id="1-Filter概念："><a href="#1-Filter概念：" class="headerlink" title="1.Filter概念："></a>1.Filter概念：</h3><p>Filter表示过滤器，是JavaWeb三大组件（Servlet,Filter,Listener）之一。过滤器可以把对资源的请求<strong>拦截</strong>下来，从而实现一些特殊的功能。</p>
+<p><strong>过滤器一般完成一些通用的操作</strong>，比如：权限控制，统一编码处理，敏感字符处理等等……</p>
+<h3 id="2-Filter快速入门"><a href="#2-Filter快速入门" class="headerlink" title="2.Filter快速入门"></a>2.Filter快速入门</h3><p>1）定义一个类，实现Filter接口，并重写其所有方法。</p>
+<p>2）配置Filter拦截资源的路径，在类上定义@WebFilter注解。</p>
+<p>3）在doFilter中先执行需要特殊处理的功能，再放行。</p>
+<h3 id="3-Filter的执行流程"><a href="#3-Filter的执行流程" class="headerlink" title="3.Filter的执行流程"></a>3.Filter的执行流程</h3><p><img src="/images/image-20240520203334723.png" alt="javaweb基础"></p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20240520204230769.png" alt="image-20240520204230769"></p>
+<h3 id="4-Filter使用细节"><a href="#4-Filter使用细节" class="headerlink" title="4.Filter使用细节"></a>4.Filter使用细节</h3><p>Filter拦截路径配置</p>
+<p>​        1）拦截具体资源：&#x2F;index.jsp 只有访问index.jsp时才会被拦截</p>
+<p>​        2）目录拦截：&#x2F;user&#x2F;*  访问&#x2F;user下的所有资源，都会被拦截</p>
+<p>​        3）后缀名拦截：*.jsp  访问后缀名为jsp的资源，都会被拦截</p>
+<p>​        4）拦截所有： &#x2F;*   访问所有资源，都会被拦截</p>
+<p>过滤器链：</p>
+<p>一个Web应用，可以配置多个过滤器，这多个过滤器称为过滤器链。多个过滤器：执行顺序为：Filter名字的排序 eg.a优先于b优先于bc</p>
+<p><img src="/images/image-20240520205101358.png" alt="javaweb基础"></p>
+<h2 id="十-Listener（监听器）"><a href="#十-Listener（监听器）" class="headerlink" title="十.Listener（监听器）"></a>十.Listener（监听器）</h2><h3 id="1-Listener概念"><a href="#1-Listener概念" class="headerlink" title="1.Listener概念"></a>1.Listener概念</h3><p>触发某个事件，自动执行代码</p>
+<p>事件监听机制：事件（一件事情），事件源：（事件发生的地方），监听器（一个对象），注册监听（将事件，事件源，监听器绑定在一起，当事件源上发生某个事件后，执行监听器代码）</p>
+<p>监听器可以监听application（代表当前整个web应用）,session,request三个对象创建，销毁或者往其中添加修改删除属性时<strong>自动</strong>执行代码的功能组件。</p>
+<p><img src="/images/image-20240527081733120.png" alt="javaweb基础"></p>
+<h3 id="2-Listener的使用场景"><a href="#2-Listener的使用场景" class="headerlink" title="2.Listener的使用场景"></a>2.Listener的使用场景</h3><p>监听器的用途： 1.统计在线人数和用户(HttpSession)</p>
+<p>​                           2.系统启动的时候加载初始化信息（加密数据库密码，当部署服务器时Servletcontext会被创建，自动去另外一个Servlet去解密密码） </p>
+<p>​                          3.统计访问量（HttpSession&#x2F;HttpRequest）</p>
+<h3 id="3-Listener的使用"><a href="#3-Listener的使用" class="headerlink" title="3.Listener的使用"></a>3.Listener的使用</h3><p><img src="/images/image-20240603100129182.png" alt="javaweb基础"></p>
+<p>1）定义类，实现ServletContextListener接口</p>
+<p>2）复写方法</p>
+<p>3）配置@WebListener</p>
+<p>在类上添加@WebListener注解（不用配置路径，监听思想，自动执行）</p>
+<h2 id="十一-AJAX"><a href="#十一-AJAX" class="headerlink" title="十一.AJAX"></a>十一.AJAX</h2><h3 id="1-AJAX概念"><a href="#1-AJAX概念" class="headerlink" title="1.AJAX概念"></a>1.AJAX概念</h3><p>​                     AJAX是浏览器与服务器进行数据通信的技术</p>
+<p>​                     AJAX（Asynchronous JavaScript And XML）:异步的JavaScript和XML</p>
+<p>​                   AJAX就是使用XMLHttpRequest对象与服务器通信。</p>
+<h3 id="2-AJAX作用"><a href="#2-AJAX作用" class="headerlink" title="2.AJAX作用"></a>2.AJAX作用</h3><p>​                1.与服务器进行数据交换，通过AJAX可以给服务器发送请求，并<strong>获取服务器响应的数据</strong>。</p>
+<p>​                   使用了AJAX和服务器进行通信，就<strong>可以使用HTML+AJAX替换JSP页面</strong>了</p>
+<p> <img src="/images/image-20240603155753939.png" alt="javaweb基础"></p>
+<p><img src="/images/image-20240603155950268.png" alt="javaweb基础"></p>
+<p>使用html+AJAX可以前后端分离：目前的主流方式</p>
+<p><img src="/images/image-20240603160049927.png" alt="javaweb基础"></p>
+<p>2.异步交互：可以在不重新加载整个页面的情况下，与服务器交换数据并更新部分网页的技术，如:搜索联想，用户名是否可用校验等等….</p>
+<p><img src="/images/image-20240603160349461.png" alt="javaweb基础"></p>
+<p><img src="/images/image-20240603160545750.png" alt="javaweb基础"></p>
+<p><img src="/images/image-20240603160842817.png" alt="javaweb基础"></p>
+<h3 id="3-AJAX快速入门"><a href="#3-AJAX快速入门" class="headerlink" title="3.AJAX快速入门"></a>3.AJAX快速入门</h3><p>步骤：1.编写Servelt并使用response.getWriter().write(“输出字符串”)</p>
+<p>​            2.在html中创建XMLHttpRequest对象：用于和服务器交换数据</p>
+<p>​            3..在html中向服务器发送请求（注意路径要写全路径–&gt;绝对路径）</p>
+<p>​            4..在html中获取服务器响应数据</p>
+<h2 id="十二-Axios库"><a href="#十二-Axios库" class="headerlink" title="十二.Axios库"></a>十二.Axios库</h2><p>步骤：1.引入axios的js文件</p>
+<p>​            2.使用axios发送请求，并获取响应结果</p>
+<p><img src="/images/image-20240603162959408.png" alt="javaweb基础"></p>
+<p><img src="/images/image-20240603163911318.png" alt="javaweb基础"></p>
+<h2 id="十三-正则表达式"><a href="#十三-正则表达式" class="headerlink" title="十三.正则表达式"></a>十三.正则表达式</h2><h3 id="1-正则表达式概念："><a href="#1-正则表达式概念：" class="headerlink" title="1.正则表达式概念："></a>1.正则表达式概念：</h3><p>正则表达式定义了字符串组成的规则。是用来描述匹配一个字符串集合的模式，可以用来匹配、替换和拆分字符串。</p>
+<h3 id="2-正则表达式语法："><a href="#2-正则表达式语法：" class="headerlink" title="2.正则表达式语法："></a>2.正则表达式语法：</h3><p><img src="/images/image-20240521092357935.png" alt="javaweb基础"></p>
+
+    </article>
+    
+    <div class="read-nums">
+      <!-- id 将作为查询条件 -->
+      <span id="2024/03/27/JAVA WEB/" class="leancloud_visitors" data-flag-title="Your Article Title">
+        <em class="post-meta-item-text">浏览量</em>
+        <i class="leancloud-visitors-count"></i>
+      </span>
+    </div>
+    <div class="comments-intro">
+      <h2>评论区</h2>
+      <p>欢迎你留下宝贵的意见，昵称输入QQ号会显示QQ头像哦~</p>
+    </div>
+    <div id="vcomments" class="vcomments"></div>
+    
+  </div>
+  <div class="article-catelogue">
+    <div class="article-catelogue--wrapper">
+      <div class="catelogue catelogue-1">
+        <h3>目录</h3>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#JAVA-WEB%E5%9F%BA%E7%A1%80"><span class="toc-number">1.</span> <span class="toc-text">JAVA WEB基础</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-Servlet"><span class="toc-number">1.1.</span> <span class="toc-text">一.Servlet</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-Servlet%E6%A6%82%E5%BF%B5"><span class="toc-number">1.1.1.</span> <span class="toc-text">1.Servlet概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E9%85%8D%E7%BD%AEServlet"><span class="toc-number">1.1.2.</span> <span class="toc-text">2.配置Servlet</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-1-%E5%9C%A8web-xml%E4%B8%AD%E9%85%8D%E7%BD%AE"><span class="toc-number">1.1.2.1.</span> <span class="toc-text">2.1 在web.xml中配置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2-%E6%B3%A8%E8%A7%A3%E9%85%8D%E7%BD%AE%EF%BC%883-0%E7%89%88%E6%9C%AC%E4%BB%A5%E4%B8%8A%EF%BC%89"><span class="toc-number">1.1.2.2.</span> <span class="toc-text">2.2 注解配置（3.0版本以上）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-Servlet%E5%8E%9F%E7%90%86"><span class="toc-number">1.1.3.</span> <span class="toc-text">3.Servlet原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-Servlet%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F"><span class="toc-number">1.1.4.</span> <span class="toc-text">4.Servlet生命周期</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-Servlet%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84"><span class="toc-number">1.1.5.</span> <span class="toc-text">5.Servlet体系结构</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-doGet%EF%BC%8CdoPost%EF%BC%8CdoPut%EF%BC%8CdoDelete%E6%96%B9%E6%B3%95"><span class="toc-number">1.2.</span> <span class="toc-text">二.doGet，doPost，doPut，doDelete方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-Request%E5%AF%B9%E8%B1%A1%E5%92%8CResponse%E5%AF%B9%E8%B1%A1"><span class="toc-number">1.3.</span> <span class="toc-text">三.Request对象和Response对象</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-request%E5%92%8Cresponse%E5%8E%9F%E7%90%86"><span class="toc-number">1.3.1.</span> <span class="toc-text">1.request和response原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-request%E5%AF%B9%E8%B1%A1"><span class="toc-number">1.3.2.</span> <span class="toc-text">2.request对象</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-1-request%E5%AF%B9%E8%B1%A1%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84"><span class="toc-number">1.3.2.1.</span> <span class="toc-text">2.1 request对象体系结构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2-request%E5%AF%B9%E8%B1%A1%E5%8A%9F%E8%83%BD"><span class="toc-number">1.3.2.2.</span> <span class="toc-text">2.2 request对象功能</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#2-2-1-%E8%AF%B7%E6%B1%82%E8%A1%8C"><span class="toc-number">1.3.2.2.1.</span> <span class="toc-text">2.2.1 请求行</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2-2-2-%E8%AF%B7%E6%B1%82%E5%A4%B4"><span class="toc-number">1.3.2.2.2.</span> <span class="toc-text">2.2.2 请求头</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2-2-3-%E8%AF%B7%E6%B1%82%E4%BD%93"><span class="toc-number">1.3.2.2.3.</span> <span class="toc-text">2.2.3 请求体</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2-2-4-%E9%80%9A%E7%94%A8%E6%96%B9%E5%BC%8F%E8%8E%B7%E5%8F%96%E8%AF%B7%E6%B1%82%E5%8F%82%E6%95%B0%EF%BC%88%E5%85%BC%E5%AE%B9get%E5%92%8Cpost%EF%BC%89"><span class="toc-number">1.3.2.2.4.</span> <span class="toc-text">*2.2.4 通用方式获取请求参数（兼容get和post）</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2-2-5-%E8%AF%B7%E6%B1%82%E8%BD%AC%E5%8F%91"><span class="toc-number">1.3.2.2.5.</span> <span class="toc-text">*2.2.5 请求转发</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2-2-6-%E5%85%B1%E4%BA%AB%E6%95%B0%E6%8D%AE"><span class="toc-number">1.3.2.2.6.</span> <span class="toc-text">*2.2.6 共享数据</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2-2-7-%E8%8E%B7%E5%8F%96ServletContext"><span class="toc-number">1.3.2.2.7.</span> <span class="toc-text">*2.2.7 获取ServletContext</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A1%88%E4%BE%8B%EF%BC%9A%E7%99%BB%E5%BD%95%E9%A1%B5%E9%9D%A2"><span class="toc-number">1.4.</span> <span class="toc-text">案例：登录页面</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-Response%E5%AF%B9%E8%B1%A1"><span class="toc-number">1.4.1.</span> <span class="toc-text">3.Response对象</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-1-response%E5%AF%B9%E8%B1%A1%E5%8A%9F%E8%83%BD"><span class="toc-number">1.4.1.1.</span> <span class="toc-text">3.1 response对象功能</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#3-1-1-%E5%93%8D%E5%BA%94%E8%A1%8C"><span class="toc-number">1.4.1.1.1.</span> <span class="toc-text">3.1.1 响应行</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3-1-2-%E5%93%8D%E5%BA%94%E5%A4%B4"><span class="toc-number">1.4.1.1.2.</span> <span class="toc-text">3.1.2 响应头</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3-1-3-%E5%93%8D%E5%BA%94%E4%BD%93"><span class="toc-number">1.4.1.1.3.</span> <span class="toc-text">3.1.3 响应体</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E8%BD%AC%E5%8F%91%E5%92%8C%E9%87%8D%E5%AE%9A%E5%90%91"><span class="toc-number">1.5.</span> <span class="toc-text">三.转发和重定向</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E8%BD%AC%E5%8F%91"><span class="toc-number">1.5.1.</span> <span class="toc-text">1.转发</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E9%87%8D%E5%AE%9A%E5%90%91"><span class="toc-number">1.5.2.</span> <span class="toc-text">2.重定向</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E4%BC%9A%E8%AF%9D%E8%B7%9F%E8%B8%AA%E6%8A%80%E6%9C%AF"><span class="toc-number">1.6.</span> <span class="toc-text">四.会话跟踪技术</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E4%BC%9A%E8%AF%9D%EF%BC%9F"><span class="toc-number">1.6.1.</span> <span class="toc-text">什么是会话？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Http%E5%8D%8F%E8%AE%AE-%EF%BC%88%E6%97%A0%E7%8A%B6%E6%80%81%E5%8D%8F%E8%AE%AE%EF%BC%89"><span class="toc-number">1.6.2.</span> <span class="toc-text">Http协议:（无状态协议）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Cookie%EF%BC%88%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%BC%9A%E8%AF%9D%E8%B7%9F%E8%B8%AA%E6%8A%80%E6%9C%AF%EF%BC%89"><span class="toc-number">1.6.3.</span> <span class="toc-text">Cookie（客户端会话跟踪技术）</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1-%E4%BB%80%E4%B9%88%E6%98%AFCookie"><span class="toc-number">1.6.3.0.1.</span> <span class="toc-text">1.什么是Cookie</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2-Cookie%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="toc-number">1.6.3.0.2.</span> <span class="toc-text">2.Cookie的工作原理</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3-Cookie%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="toc-number">1.6.3.0.3.</span> <span class="toc-text">3.Cookie的使用</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Session%EF%BC%88%E6%9C%8D%E5%8A%A1%E7%AB%AF%E4%BC%9A%E8%AF%9D%E8%B7%9F%E8%B8%AA%E6%8A%80%E6%9C%AF%EF%BC%89"><span class="toc-number">1.6.4.</span> <span class="toc-text">Session（服务端会话跟踪技术）</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1-%E4%BB%80%E4%B9%88%E6%98%AFSession"><span class="toc-number">1.6.4.0.1.</span> <span class="toc-text">1. 什么是Session</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2-Session%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86%EF%BC%9F"><span class="toc-number">1.6.4.0.2.</span> <span class="toc-text">2. Session的工作原理？</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3-Session%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="toc-number">1.6.4.0.3.</span> <span class="toc-text">3.Session的使用</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#URL%E9%87%8D%E5%86%99"><span class="toc-number">1.6.5.</span> <span class="toc-text">URL重写:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-ServeltContext%E5%AF%B9%E8%B1%A1"><span class="toc-number">1.7.</span> <span class="toc-text">五.ServeltContext对象</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-ServeltContext%E6%A6%82%E5%BF%B5%EF%BC%9A"><span class="toc-number">1.7.1.</span> <span class="toc-text">1.ServeltContext概念：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E8%8E%B7%E5%8F%96ServeltContext%EF%BC%9A"><span class="toc-number">1.7.2.</span> <span class="toc-text">2.获取ServeltContext：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-ServeltContext%E7%9A%84%E5%8A%9F%E8%83%BD%EF%BC%9A"><span class="toc-number">1.7.3.</span> <span class="toc-text">3.ServeltContext的功能：</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-1-%E8%8E%B7%E5%8F%96MIME%E7%B1%BB%E5%9E%8B"><span class="toc-number">1.7.3.1.</span> <span class="toc-text">3.1 获取MIME类型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-2-%E5%9F%9F%E5%AF%B9%E8%B1%A1"><span class="toc-number">1.7.3.2.</span> <span class="toc-text">3.2 域对象</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-%E8%8E%B7%E5%8F%96%E6%96%87%E4%BB%B6%E7%9A%84%E7%9C%9F%E5%AE%9E%EF%BC%88%E6%9C%8D%E5%8A%A1%E5%99%A8%EF%BC%89%E8%B7%AF%E5%BE%84"><span class="toc-number">1.7.3.3.</span> <span class="toc-text">*3.3  获取文件的真实（服务器）路径</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD-JSP"><span class="toc-number">1.8.</span> <span class="toc-text">六.JSP</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-JSP%E6%A6%82%E5%BF%B5"><span class="toc-number">1.8.1.</span> <span class="toc-text">1.JSP概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-JSP%E4%BD%9C%E7%94%A8"><span class="toc-number">1.8.2.</span> <span class="toc-text">2.JSP作用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-JSP%E5%8E%9F%E7%90%86"><span class="toc-number">1.8.3.</span> <span class="toc-text">3.JSP原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-JSP%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8"><span class="toc-number">1.8.4.</span> <span class="toc-text">4.JSP快速入门</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-JSP%E8%84%9A%E6%9C%AC"><span class="toc-number">1.8.5.</span> <span class="toc-text">5.JSP脚本</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83-EL%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="toc-number">1.9.</span> <span class="toc-text">七.EL表达式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-EL%E8%A1%A8%E8%BE%BE%E5%BC%8F%E4%BD%9C%E7%94%A8"><span class="toc-number">1.9.1.</span> <span class="toc-text">1.EL表达式作用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E8%AF%AD%E6%B3%95"><span class="toc-number">1.9.2.</span> <span class="toc-text">2.语法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AB-JSTL%E6%A0%87%E7%AD%BE"><span class="toc-number">1.10.</span> <span class="toc-text">八.JSTL标签</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-JSTL%E6%A0%87%E7%AD%BE%E4%BD%9C%E7%94%A8"><span class="toc-number">1.10.1.</span> <span class="toc-text">1.JSTL标签作用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-JSTL%E6%A0%87%E7%AD%BE%E4%BD%BF%E7%94%A8"><span class="toc-number">1.10.2.</span> <span class="toc-text">2.JSTL标签使用</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B9%9D-Filter%EF%BC%88%E8%BF%87%E6%BB%A4%E5%99%A8%EF%BC%89"><span class="toc-number">1.11.</span> <span class="toc-text">九.Filter（过滤器）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-Filter%E6%A6%82%E5%BF%B5%EF%BC%9A"><span class="toc-number">1.11.1.</span> <span class="toc-text">1.Filter概念：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-Filter%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8"><span class="toc-number">1.11.2.</span> <span class="toc-text">2.Filter快速入门</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-Filter%E7%9A%84%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B"><span class="toc-number">1.11.3.</span> <span class="toc-text">3.Filter的执行流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-Filter%E4%BD%BF%E7%94%A8%E7%BB%86%E8%8A%82"><span class="toc-number">1.11.4.</span> <span class="toc-text">4.Filter使用细节</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%81-Listener%EF%BC%88%E7%9B%91%E5%90%AC%E5%99%A8%EF%BC%89"><span class="toc-number">1.12.</span> <span class="toc-text">十.Listener（监听器）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-Listener%E6%A6%82%E5%BF%B5"><span class="toc-number">1.12.1.</span> <span class="toc-text">1.Listener概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-Listener%E7%9A%84%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-number">1.12.2.</span> <span class="toc-text">2.Listener的使用场景</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-Listener%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="toc-number">1.12.3.</span> <span class="toc-text">3.Listener的使用</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%81%E4%B8%80-AJAX"><span class="toc-number">1.13.</span> <span class="toc-text">十一.AJAX</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-AJAX%E6%A6%82%E5%BF%B5"><span class="toc-number">1.13.1.</span> <span class="toc-text">1.AJAX概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-AJAX%E4%BD%9C%E7%94%A8"><span class="toc-number">1.13.2.</span> <span class="toc-text">2.AJAX作用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-AJAX%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8"><span class="toc-number">1.13.3.</span> <span class="toc-text">3.AJAX快速入门</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%81%E4%BA%8C-Axios%E5%BA%93"><span class="toc-number">1.14.</span> <span class="toc-text">十二.Axios库</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%81%E4%B8%89-%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="toc-number">1.15.</span> <span class="toc-text">十三.正则表达式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%A6%82%E5%BF%B5%EF%BC%9A"><span class="toc-number">1.15.1.</span> <span class="toc-text">1.正则表达式概念：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E8%AF%AD%E6%B3%95%EF%BC%9A"><span class="toc-number">1.15.2.</span> <span class="toc-text">2.正则表达式语法：</span></a></li></ol></li></ol></li></ol>
+      </div>
+      
+        <div class="catelogue catelogue-2">
+          
+            <p>
+              <span>上一篇：</span>
+              <a href="/2024/04/03/Python/">python应用</a>
+            </p>
+           
+          
+            <p>
+              <span>下一篇</span>
+              <a href="/2023/10/25/数据库知识/">mysql</a>
+            </p>
+          
+        </div>
+      
+    </div>
+  </div>
+</div>
+
+
+<script>
+  // var定义，避免pjax重新进来造成的重复声明错误
+  var config = JSON.parse('{"enable":true,"appId":"Pf8zCXGEH1qsprnWfikVVujL-gzGzoHsz","appKey":"qOqoiUHhH1TGtLRUYURkLRQX","placeholder":"请留下你宝贵的意见吧~","meta":["nick"],"recordIP":true,"visitor":true,"enableQQ":true}')
+  new Valine({
+    el: '#vcomments',
+    appId: config.appId,
+    appKey: config.appKey,
+    placeholder: config.placeholder,
+    meta: config.meta,
+    recordIP: config.recordIP,
+    visitor: config.visitor,
+    enableQQ: config.enableQQ,
+    path: '2024/03/27/JAVA WEB/'
+  })
+</script>
+
+
+<script>
+  $(document).on('pjax:complete', function() {
+    const tocs = document.querySelector('.toc')
+    const links = tocs ? tocs.querySelectorAll('a') : []
+    links.forEach(link => {
+      link.addEventListener('click', e => {
+        const href = decodeURIComponent(e.href)
+        href.search(/#(.*)/)
+        const id = RegExp.$1
+        const target = document.querySelector('#' + id)
+        const top = target.offsetTop
+        document.documentElement.scrollTo({
+          top: top - 100,
+          behavior: 'smooth'
+        })
+        e.preventDefault()
+      })
+    })
+  })
+</script> 
+
+</div>
+      <div class="main-right-wrapper"><div class="main-right">
+  <div class="main-right--board">
+    <div class="main-right--title">
+      <h5>公告栏</h5>
+      <i class="iconfont icon-gonggao"></i>
+    </div>
+    <div class="main-right--content">
+      Hello~大噶好。我是gcbsh，欢迎你们来到我的博客小站，希望能在这里收获到有用的东西哦！ 
+    </div>
+  </div>
+
+  <div id="aplayer" class="main-right--music"></div>
+
+  <div class="operate-items">
+    <div class="operate-item backtop">
+      <i class="iconfont icon-huidaodingbu"></i>
+      <span>回到顶部</span>
+    </div>
+    
+    <div class="operate-item turn-comment hidden">
+      <i class="iconfont icon-pinglun"></i>
+      <span>查看评论</span>
+    </div>
+    
+  </div>
+
+  <div class="main-right--site">
+    <div class="main-right--power">
+      <p>Power By <a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/">Hexo</a>.</p>
+      <p>Theme：<a target="_blank" rel="noopener" href="https://github.com/Aizener/hexo-theme-cola">Cola.</a></p>
+    </div>
+    <p class="main-right--refer"><a target="_blank" rel="noopener" href="https://beian.miit.gov.cn/#/Integrated/index">蜀ICP备2022005384号-1</a> </p>
+  </div>
+</div>
+
+<script>
+  function setOperateItem () {
+    const reg = /\d{4}\/\d{2}\/\d{2}\/.+/
+    const path = location.pathname
+    const operateDom = document.querySelector('.main-right .operate-items')
+    const commentDom = document.querySelector('.turn-comment')
+    const cateloguDom = document.querySelector('.article-catelogue > .article-catelogue--wrapper');
+
+    if (commentDom) {
+      if (reg.test(path) || path.match(/\/log\/.+/)) {
+        commentDom.classList.remove('hidden')
+        const newDom = operateDom.cloneNode(true);
+        const _backtopDom = newDom.querySelector('.backtop');
+        const _commentDom = newDom.querySelector('.turn-comment');
+        _backtopDom.addEventListener('click', () => backTopEvent());
+        _commentDom.addEventListener('click', () => commentDomEvent());
+        cateloguDom.appendChild(newDom);
+      } else {
+        commentDom.classList.add('hidden')
+      }
+    }
+  }
+
+  setOperateItem()
+  const musics = JSON.parse(`[{"name":"安河桥","artist":"宋冬野","url":"http://ting6.yymp3.net:82/new25/songdongye/11.mp3","cover":"https://img2.baidu.com/it/u=1260056724,1076343118&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500"},{"name":"卡布达","artist":"暂无","url":"music/kabuda.mp3","cover":"https://img2.baidu.com/it/u=705831265,2862720033&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500"}]`)
+  const ap = new APlayer({
+    container: document.querySelector('#aplayer'),
+    audio: musics,
+  })
+
+  $(document).on('pjax:complete', function() {
+    setOperateItem()
+  })
+
+  document.querySelector('.backtop').addEventListener('click', () => {
+    backTopEvent();
+  })
+  const dom = document.querySelector('.turn-comment')
+  dom && dom.addEventListener('click', () => {
+    commentDomEvent();
+  })
+
+  function backTopEvent() {
+    document.documentElement.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    })
+  }
+
+  function commentDomEvent() {
+    const commentDom = document.querySelector('.comments-intro')
+    if (!commentDom) return
+    const top = commentDom.offsetTop, height = commentDom.offsetHeight
+    document.documentElement.scrollTo({
+      top: top - 2 * height,
+      behavior: 'smooth'
+    })
+  }
+</script></div>
+    </section>
+  </div>
+  <div id="progress" class="progress"></div>
+  <div id="gray" class="gray"></div>
+
+  <script>
+    function initScroll () {
+      document.addEventListener('scroll', () => {
+        const doc = document.documentElement
+        const scrollTop = doc.scrollTop
+        const pageHeight = doc.offsetHeight
+        const clientHeight = doc.clientHeight
+        const ratio = scrollTop / (pageHeight - clientHeight)
+        const progress = document.querySelector('#progress')
+        const avatarImg = document.querySelector('.main-left--avatar')
+        progress.style.width = (100 * ratio) + '%'
+        avatarImg.style.transform = `rotate(${360 * ratio}deg)`
+      })
+    }
+
+    const rootPath = "/"
+
+    const checkAndSetArticlePageLayout = () => {
+      const path = location.pathname.replace(rootPath, '');
+      if (
+        /^\/?\d{4}\/\d{2}\/\d{2}\/.*/.test(path) ||
+        /^log\/.+/.test(path)
+      ) {
+        $('.main-container, .main-right, .main-right-wrapper').addClass('is-article')
+      } else {
+        $('.main-container, .main-right, .main-right-wrapper').removeClass('is-article')
+      }
+    }
+
+    const gray = "none"
+    const setGrayStyle = () => {
+      if (gray === 'none') {
+        return
+      } else if (gray === 'index') {
+        location.pathname === '/' ? $('#gray').show() : $('#gray').hide()
+      } else if (gray === 'all') {
+        $('#gray').show()
+      }
+    }
+    setGrayStyle()
+
+
+    window.onload = function () {
+      checkAndSetArticlePageLayout()
+      setTimeout(() => {
+        $('#load').slideUp()
+        $('#container').slideToggle()
+        setTimeout(() => {
+          initScroll();
+        }, 500)
+      }, 500)
+    }
+    
+    let status = 0
+    // 对所有链接跳转事件绑定pjax容器container
+    $(document).pjax('a[target!=_blank]', '#main-container', {
+      container: '#main-container',
+      fragment: '#main-container',
+      timeout: 8000
+    })
+
+    $(document).on('pjax:start', function() {
+    })
+    $(document).on('pjax:complete', function() {
+      status = 0
+      $('.main-container').addClass('to-up').on('animationend', function() {
+        $(this).removeClass('to-up')
+      })
+      setGrayStyle()
+      checkAndSetArticlePageLayout()
+    })
+    $(document).on('pjax:popstate', function() {
+      status = -1
+      checkAndSetArticlePageLayout()
+    });
+  </script>
+</body>
+</html>

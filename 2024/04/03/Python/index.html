@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>我的技术与生活——python应用 | 欢迎来到小韩的学习博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="shortcut icon" href="/imgs/shortcut-icon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="/css/public.css" />
+  <link rel="stylesheet" href="/css/layout.css" />
+  <link rel="stylesheet" href="/css/iconfont.css" />
+  <link rel="stylesheet" href="/css/APlayer.min.css" />
+  <script src="/js/APlayer.min.js"></script>
+  <script src="/js/jquery.min.js"></script>
+  <script src="/js/jquery.pjax.min.js"></script>
+
+  <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+  <script>
+    document.title = `我的技术与生活——python应用`
+  </script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<style>
+  .load {
+    width: 100%;
+    height: 100vh;
+    background-color: rgb(37, 35, 40);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 9999;
+  }
+  .load-circle {
+    width: 80px;
+    height: 80px;
+    border: 8px solid orange;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: rotate 1s linear infinite;
+    filter: drop-shadow(0 0 3px orange);
+  }
+  .load-circle-inner {
+    width: 40px;
+    height: 40px;
+    border: 8px solid orange;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: rotate-reverse .5s linear infinite;
+  }
+  .load-text {
+    margin-top: 20px;
+    font-size: 24px;
+    color: orange;
+    display: flex;
+  }
+  .load-text span {
+    margin: 0 5px;
+    text-shadow: 5px 5px 5px orange;
+    animation: move 1s linear infinite;
+  }
+  .load-text span:nth-child(1) {
+    animation-delay: -0.6s;
+  }
+  .load-text span:nth-child(2) {
+    animation-delay: -0.5s;
+  }
+  .load-text span:nth-child(3) {
+    animation-delay: -0.4s;
+  }
+  .load-text span:nth-child(4) {
+    animation-delay: -0.3s;
+  }
+  .load-text span:nth-child(5) {
+    animation-delay: -0.2s;
+  }
+  .load-text span:nth-child(6) {
+    animation-delay: -0.1s;
+  }
+  @keyframes rotate {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(360deg); }
+  }
+  @keyframes rotate-reverse {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(-360deg); }
+  }
+  @keyframes move {
+    0% { transform: translateY(0%) rotate(0) scale(1); }
+    20% { transform: translateY(20%) rotate(10deg) scale(1.2); }
+    80% { transform: translateY(-10%) rotate(-20deg) scale(.8);}
+    100% { transform: translateY(0) rotate(0) scale(1); }
+  }
+
+  .progress {
+    position: fixed;
+    left: 0; top: 0;
+    width: 0;
+    height: 3px;
+    background-color: green;
+    transition: all cubic-bezier(0.215, 0.610, 0.355, 1) .1s;
+    z-index: 9999;
+  }
+
+  .to-up {
+    animation: toUp .5s 1;
+  }
+  .gray {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 9999;
+    display: none;
+    pointer-events: none;
+    background-color: #000;
+    mix-blend-mode: color;
+  }
+  @keyframes toUp {
+    from { transform: translateY(15px); opacity: 0; }
+    to { transform: translateY(0) ; opacity: 1; }
+  }
+</style>
+<body>
+  <div id="load" class="load">
+    <div class="load-circle">
+      <div class="load-circle-inner"></div>
+    </div>
+    <p class="load-text">
+      <span>L</span>
+      <span>O</span>
+      <span>A</span>
+      <span>D</span>
+      <span>I</span>
+      <span>N</span>
+      <span>G</span>
+    </p>
+  </div>
+  <div id="container" class="container w-100 vh-100" style="display: none;">
+    <header class="header">
+  <div class="header-wrapper">
+    <div class="header-left">
+      <div class="header-search">
+        <input id="search-input" type="text" class="header-search--input" placeholder="请输入要检索的文章标题" />
+        <span id="search-btn" class="header-search--icon"><i class="iconfont icon-sousuo"></i></span>
+      </div>
+      <div id="search-layer" class="header-search--layer hidden">
+        <p class="title">
+          <span>以下是搜索内容：</span>
+          <span id="close-layer-btn">关闭</span>
+        </p>
+        <ul>
+        </ul>
+      </div>
+    </div>
+    <div class="header-right">
+      <ul class="header-menu">
+        <li>
+          <a href="http://example.com/">
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+            <span class="header-menu--span">首页</span>
+          </a>
+        </li>
+        <li>
+          <a href="http://example.com/log">
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+            <span class="header-menu--span">日志</span>
+          </a>
+        </li>
+        <li>
+          <a href="http://example.com/link">
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+            <span class="header-menu--span">友情链接</span>
+          </a>
+        </li>
+        <li>
+          <a href="http://example.com/about">
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+            <span class="header-menu--span">关于我</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<script>
+  const ipt = document.querySelector('#search-input')
+  const btn = document.querySelector('#search-btn')
+  const layer = document.querySelector('#search-layer')
+  const posts = JSON.parse(`[{"title":"学习javaweb框架","cover":"/images/javaweb-cover.jpg","path":"2024/11/27/JAVAWEB框架/"},{"title":"学习javaweb基础","cover":"/images/javaweb-cover.jpg","path":"2024/03/27/JAVA WEB/"},{"title":"python应用","cover":"/images/python.jpg","path":"2024/04/03/Python/"},{"title":"c++竞赛","cover":"/images/c++.jpg","path":"2023/03/27/ACM暑假集训笔记/"},{"title":"学习git指令","cover":"/images/git.jpg","path":"2024/04/11/git项目管理工具/"},{"title":"python基础","cover":"/images/python.jpg","path":"2024/05/12/python详细版本/"},{"title":"学习Redis","cover":"/images/redis-cover.jpg","path":"2025/03/27/学习Redis/"},{"title":"微信小程序","cover":"/images/wx.jpg","path":"2024/09/09/微信小程序/"},{"title":"mysql","cover":"/images/mysql.jpg","path":"2023/10/25/数据库知识/"}]`)
+  ipt.addEventListener('keyup', e => {
+    if (e.key === 'Enter') {
+      handleSearch()
+    }
+  })
+  btn.addEventListener('click', () => {
+    handleSearch()
+  })
+
+  document.querySelector('#close-layer-btn').addEventListener('click', () => {
+    layer.classList.toggle('hidden')
+  })
+
+  function handleSearch() {
+    if (ipt.value.trim() === '') {
+      return
+    }
+    let html = ''
+    const targetPosts = posts.filter(post => post.title.includes(ipt.value))
+    targetPosts.forEach(post => {
+      html += `
+        <li>
+          <div>
+            <a href="/${post.path}">${post.title.replace(new RegExp(ipt.value), `<span>${ipt.value}</span>`)}</a>
+          </div>
+          <img src="${post.cover || '/imgs/default-cover.webp' }" />
+        </li>
+      `
+    })
+    if (html.trim () === '') {
+      html += '<p class="empty">没有搜索到内容</p>'
+    }
+    layer.querySelector('ul').innerHTML = html
+    layer.classList.remove('hidden')
+  }
+</script> 
+    <section id="main" class="main">
+      <div class="main-left-wrapper">
+<div class="main-left">
+  <div class="main-left--block">
+    <div class="main-left--info">
+      <img src="/imgs/avatar.jpg"" class="main-left--avatar" />
+      <div class="main-left--intro">
+        <p class="main-left--name">gcbsh</p>
+        <div class="main-left--tags">
+          <span class="main-left--tag">减肥</span>
+          <span class="main-left--tag">学习</span>
+        </div>
+      </div>
+    </div>
+  
+    <div>
+      <div class="main-left--motto">
+        <p>“关关难过关关过，前路漫漫亦灿灿”</p>
+        <p>“愿望是宅家睡大觉”</p>
+      </div>
+      <div class="main-left--github">
+        <span class="line"></span>
+        <a target="_blank" rel="noopener" href="https://github.com/Aizener"><i class="logo iconfont icon-github-fill"></i></a>
+        <span class="line"></span>
+      </div>
+      <div class="main-left--statics">
+        <a href="/categories">
+          <div>
+            <span>7</span>
+            <span>分类</span>
+          </div>
+        </a>
+        <a href="/tags">
+          <div>
+            <span>0</span>
+            <span>标签</span>
+          </div>
+        </a>
+        <a href="/archives">
+          <div>
+            <span>8 </span>
+            <span>归档</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-left--block">
+    <ul class="main-left--menu">
+      
+        <li>
+          <a href="/">
+            <span class="header-menu--span">小站首页</span>
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/log">
+            <span class="header-menu--span">个人日志</span>
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/link">
+            <span class="header-menu--span">友情链接</span>
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/about">
+            <span class="header-menu--span">关于自己</span>
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/tools">
+            <span class="header-menu--span">我的工具</span>
+            <i class="header-menu--icon iconfont icon-gongju"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+  <div class="main-left--block">
+    <div class="main-left--site">
+      <h5 class="main-left--title">
+        <span>站点信息</span>
+        <i class="iconfont icon-zhandian"></i>
+      </h5>
+      <p class="main-left--subtitle">
+        <span>文章数目：</span>
+        <span>9 篇</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>最近动态：</span>
+        <span>今天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>上线时间：</span>
+        <span>1天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>当前版本：</span>
+        <span>v1.0.2</span>
+      </p>
+    </div>
+  </div>
+</div></div>
+      <div id="main-container" class="main-container">
+
+
+  <link rel="stylesheet" href="/css/partial/article.css" />
+
+<div class="article-container">
+  <div class="article">
+    <h1 class="article-title">python应用</h1>
+    <div class="article-info">
+      <div class="article-info--item">
+        <div class="article-info--info">
+          
+          <div class="article-info--categories">
+            <span>分类：</span>
+            <a class="category-link" href="/categories/python/">Python</a>
+          </div>
+          
+          
+          <div class="article-info--tags">
+            <span>标签：</span>
+            
+          </div>
+          
+          <p class="article-info--date">日期：2024-04-03 00:00:00</p>
+        </div>
+        <img src="/images/python.jpg" alt="" class="article-cover">
+      </div>
+    </div>
+    <article class="article-content markdown-body">
+      <h1 id="Python-网络爬虫与数据可视化实战"><a href="#Python-网络爬虫与数据可视化实战" class="headerlink" title="Python 网络爬虫与数据可视化实战"></a>Python 网络爬虫与数据可视化实战</h1><h2 id="爬虫的概念："><a href="#爬虫的概念：" class="headerlink" title="爬虫的概念："></a>爬虫的概念：</h2><p>爬虫：（<strong>抓取网页的数据</strong>）1.使用程序模拟浏览器，去向服务器发送请求，获取响应信息。&#x2F;2.通过一个程序，根据url进行爬取网页，获取有用信息。</p>
+<p>反爬虫机制：门户网站，可以通过制定相应的策略或者技术手段，<strong>防止爬虫程序进行网站数据的爬取。</strong></p>
+<p>反反爬策略：爬虫程序可以通过制定相应的策略或者技术手段，<strong>破解门户网站中具备的反爬机制，从而可以获取门户网站中相关的数据。</strong></p>
+<p><img src="/images/image-20240403104002511.png" alt="python图"></p>
+<p><img src="/images/image-20240418201158257.png" alt="python图"></p>
+<p><img src="/images/image-20240418201314557.png" alt="python图"></p>
+<h2 id="urllib库"><a href="#urllib库" class="headerlink" title="urllib库"></a>urllib库</h2><h3 id="1-urllib库使用："><a href="#1-urllib库使用：" class="headerlink" title="1.urllib库使用："></a>1.urllib库使用：</h3><p>urllib不需要安装，本身自带。</p>
+<p>urllib.request.urlopen() 模拟浏览器向服务器发送请求，服务器返回response对象数据（HttpResponse）。</p>
+<p><strong>字节—》字符   解码decode</strong></p>
+<p><strong>字符串—》字节 编码encode</strong></p>
+<p><strong>1个类型和六个方法：</strong></p>
+<p><strong>response是HttpResponse的类型</strong></p>
+<p><strong>response的六个方法</strong>：</p>
+<p><strong>read readline readlines getcode geturl getheaders</strong></p>
+<p>read() 字节形式读取二进制  read(5) 返回前5个字节</p>
+<p>readline()读一行</p>
+<p>readlines() 一行一行读取 直到结束</p>
+<p>getcode() 获取状态码  </p>
+<p>geturl() 获取url</p>
+<p>getheaders() 获取headers</p>
+<p>下载：</p>
+<p>urllib.request.urlretrieve()</p>
+<p>请求网页</p>
+<p>请求图片</p>
+<p>请求视频</p>
+<p><img src="/images/image-20240418203907212.png" alt="python图"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> urllib.request <span class="keyword">import</span> urlopen</span><br><span class="line">url = <span class="string">&quot;http://www.baidu.com&quot;</span></span><br><span class="line"><span class="comment"># urlopen代开网页地址</span></span><br><span class="line">resp = urlopen(url);</span><br><span class="line"><span class="comment"># resp:返回页面源代码</span></span><br><span class="line"><span class="comment"># decode解码：utf-8</span></span><br><span class="line"><span class="comment"># print(resp.read().decode(&quot;utf-8&quot;));</span></span><br><span class="line"><span class="comment">#用withopen的方式写入本地文件mybaidu.html</span></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;mybaidu.html&quot;</span>, mode=<span class="string">&quot;w&quot;</span>, encoding=<span class="string">&quot;utf-8&quot;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    f.write(resp.read().decode(<span class="string">&quot;utf-8&quot;</span>))</span><br></pre></td></tr></table></figure>
+
+<p>当获取到resp时，我们read发现编码看不懂时，我们可以run的控制台，<strong>ctrl+f搜索charset</strong>,字符编码方式，来<strong>decode解码</strong></p>
+<p><img src="/images/image-20240403110204466.png" alt="python图"></p>
+<p>就爬取到了网页的源码，并且可以用浏览器访问。</p>
+<p><img src="/images/image-20240403105824708.png%22" alt="python图"></p>
+<p><img src="/images/image-20240403105915483.png%22" alt="python图"></p>
+<h3 id="2-下载"><a href="#2-下载" class="headerlink" title="2.下载"></a>2.下载</h3><h4 id="2-1-下载网页"><a href="#2-1-下载网页" class="headerlink" title="2.1 下载网页"></a>2.1 下载网页</h4><h4 id="2-2-下载图片"><a href="#2-2-下载图片" class="headerlink" title="2.2 下载图片"></a>2.2 下载图片</h4><h4 id="2-3-下载视频"><a href="#2-3-下载视频" class="headerlink" title="2.3 下载视频"></a>2.3 下载视频</h4><h3 id="3-请求对象定制"><a href="#3-请求对象定制" class="headerlink" title="3.请求对象定制"></a>3.请求对象定制</h3><p>第一个处理反爬机制，让程序伪装成浏览器。</p>
+<p><img src="/images/image-20240419094050232.png" alt="python图"></p>
+<h3 id="4-编解码问题"><a href="#4-编解码问题" class="headerlink" title="4.编解码问题"></a>4.编解码问题</h3><p>get请求方式：urllib.parse.quote()—-&gt;转化为unicode编码</p>
+<p><img src="/images/image-20240419094336085.png" alt="python图"></p>
+<p>get请求方式：urllib.parse.urlencode()—-&gt;转化为unicode编码</p>
+<h2 id="Requests爬虫（获取数据）"><a href="#Requests爬虫（获取数据）" class="headerlink" title="Requests爬虫（获取数据）"></a>Requests爬虫（获取数据）</h2><h3 id="1-web请求全过程剖析"><a href="#1-web请求全过程剖析" class="headerlink" title="1.web请求全过程剖析"></a>1.web请求全过程剖析</h3><p>数据<strong>直接</strong>与html一起响应给用户</p>
+<p><img src="/images/image-20240403113209406.png" alt="python图"></p>
+<p><strong>先</strong>返回页面结构（空壳），<strong>再</strong>返回数据 eg.豆瓣</p>
+<p><img src="/images/image-20240403113600591.png" alt="python图"></p>
+<h3 id="2-requests模块入门"><a href="#2-requests模块入门" class="headerlink" title="2.requests模块入门"></a>2.requests模块入门</h3><h4 id="2-1-requests的定义"><a href="#2-1-requests的定义" class="headerlink" title="2.1 requests的定义"></a>2.1 requests的定义</h4><p>requests:python中的http库,用于向web服务器发送http请求并获取响应。</p>
+<h4 id="2-2-requests的使用"><a href="#2-2-requests的使用" class="headerlink" title="2.2 requests的使用"></a>2.2 requests的使用</h4><p>url&#x3D;”页面网址”</p>
+<p>发送get请求： Class Response requests.get(url) &#x2F;&#x2F;返回值为Response对象</p>
+<p>Response对象.encoding &#x3D; “..”&#x2F;&#x2F;设置编码</p>
+<p>Response对象.text &#x2F;&#x2F;将内容转为文本格式(文本字符串)</p>
+<p>Response对象.json()&#x2F;&#x2F;转为json文件</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 获取百度的网页源代码</span></span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line">url = <span class="string">&quot;http://www.baidu.com&quot;</span></span><br><span class="line">resp = requests.get(url)</span><br><span class="line"><span class="comment"># 返回值是Requests模块下的Response对象</span></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(resp))</span><br><span class="line"><span class="comment"># 设置编码 为utf-8</span></span><br><span class="line">resp.encoding = <span class="string">&quot;utf-8&quot;</span></span><br><span class="line"><span class="comment"># 拿到页面源码</span></span><br><span class="line"><span class="built_in">print</span>(resp.text)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line">content = <span class="built_in">input</span>(<span class="string">&quot;请输入你要检索的内容&quot;</span>)</span><br><span class="line"><span class="comment">#get请求参数直接挂在访问url的屁股后面，所以可以采用string拼接。</span></span><br><span class="line">url = <span class="string">&quot;https://www.sogou.com/web?query=&quot;</span></span><br><span class="line">contenturl = url + content</span><br><span class="line">headers = &#123;</span><br><span class="line"><span class="comment">#     添加请求头信息 伪装正常浏览器</span></span><br><span class="line"><span class="string">&quot;User-Agent&quot;</span>: <span class="string">&quot;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36 Edg/123.0.0.0&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment"># 处理一个小小的反爬</span></span><br><span class="line">response = requests.get(contenturl,headers = headers)</span><br><span class="line"><span class="built_in">print</span>(response.text)</span><br><span class="line"><span class="comment"># 获取请求头信息</span></span><br><span class="line"><span class="built_in">print</span>(response.request.headers)</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-3-get请求和post请求"><a href="#2-3-get请求和post请求" class="headerlink" title="2.3 get请求和post请求"></a>2.3 get请求和post请求</h4><p>get请求 请求数据用params;</p>
+<p>post请求 请求数据用data</p>
+<h3 id="3-数据解析"><a href="#3-数据解析" class="headerlink" title="3.数据解析"></a>3.数据解析</h3><h4 id="3-1-re解析"><a href="#3-1-re解析" class="headerlink" title="*3.1 re解析"></a>*3.1 re解析</h4><p><img src="/images/image-20240410195632526.png" alt="python图"></p>
+<h4 id="3-2-bs4解析"><a href="#3-2-bs4解析" class="headerlink" title="3.2 bs4解析"></a>3.2 bs4解析</h4><h4 id="3-3-xpath解析"><a href="#3-3-xpath解析" class="headerlink" title="*3.3 xpath解析"></a>*3.3 xpath解析</h4><h4 id="3-4-pyquery解析"><a href="#3-4-pyquery解析" class="headerlink" title="3.4 pyquery解析"></a>3.4 pyquery解析</h4><h2 id="beautifulsoup4（解析数据）"><a href="#beautifulsoup4（解析数据）" class="headerlink" title="beautifulsoup4（解析数据）"></a>beautifulsoup4（解析数据）</h2><h3 id="1-beautifulsoup4的概念"><a href="#1-beautifulsoup4的概念" class="headerlink" title="1.beautifulsoup4的概念"></a>1.beautifulsoup4的概念</h3><p>beautifulsoup库是一个可以<strong>解析HTML文件和XML文件</strong>的python库。</p>
+<p>特点：</p>
+<p>(1).beautifulsoup4提供了用于浏览，搜索和修改解析树的简洁函数，可以通过解析文档为用户提供需要抓取的数据。</p>
+<p>(2).beautifulsoup4自动将输入文档稳定转化为Unicode编码，将输出文档转换为UTF-8编码，因此使用者不需要考虑编码方式。除非文档没有指定编码方式， 此时beautifulsoup4库不能自动识别编码方式， 需要说明原始编码方式。</p>
+<p>(3) beautifulsoup4库能够为用户灵活地提供不同的解析策略或较快的交互速度。</p>
+<p>beautifulsoup4库中的BeautifulSoup类非常重要, 一般通过导入此类来解析网页内容。导入此类的语法格式为：</p>
+<p>from bs4 import BeautifulSoup</p>
+<h3 id="2-beautifulsoup4的基本使用"><a href="#2-beautifulsoup4的基本使用" class="headerlink" title="2.beautifulsoup4的基本使用"></a>2.beautifulsoup4的基本使用</h3><p><img src="/images/image-20240416082911811.png" alt="python图"></p>
+<p>导入BeautifulSoup类  from bs4 import BeautifulSoup</p>
+<p>初始化：soup &#x3D; BeautifulSoup(<strong>html代码，html解析器</strong>)</p>
+<p>​              初始化时，要传递<strong>html代码，html解析器</strong>这俩个参数。</p>
+<p>​             <strong>html代码参数</strong>可以是字<strong>符串变量</strong>也可以使用<strong>open()函数打开文件</strong></p>
+<p><img src="/images/image-20240416083244973.png" alt="python图"></p>
+<p>​          <strong>html解析器：</strong></p>
+<p><img src="/images/image-20240416083359066.png" alt="python图"></p>
+<h3 id="3-BeautifulSoup选择器"><a href="#3-BeautifulSoup选择器" class="headerlink" title="*3.BeautifulSoup选择器"></a>*3.BeautifulSoup选择器</h3><p>BeautifulSoup选择器：用来查找定位元素，并获取数据。</p>
+<p><img src="/images/image-20240416083559477.png" alt="python图"></p>
+<p>BeautifulSoup选择器分类：节点选择器，方法选择器，CSS选择器</p>
+<h4 id="3-1节点选择器"><a href="#3-1节点选择器" class="headerlink" title="3.1节点选择器"></a>3.1节点选择器</h4><h5 id="3-1-1-选取元素方法："><a href="#3-1-1-选取元素方法：" class="headerlink" title="3.1.1 选取元素方法："></a>3.1.1 选取元素方法：</h5><p><img src="/images/image-20240416084015937.png" alt="python图"></p>
+<p>当html中<strong>存在多个相同节点</strong>的时候，只会<strong>提取第一个节点内容</strong>。</p>
+<p>返回值为tag对象</p>
+<p>可以嵌套使用：soup.div.p-&gt;返回第一个div里面的p标签的内容，返回值任然是一个tag对象</p>
+<h5 id="3-1-2-tag对象常用属性："><a href="#3-1-2-tag对象常用属性：" class="headerlink" title="3.1.2 tag对象常用属性："></a>3.1.2 tag对象常用属性：</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">tag对象的常用属性:</span><br><span class="line">        string tag对象.name 获取标签名 soup.title.name-&gt;title</span><br><span class="line">        <span class="built_in">dict</span>   tag对象.attrs 获取标签下所有内容（所有属性）</span><br><span class="line">        <span class="built_in">list</span>   tag对象.comtents 获取标签下所有子标签的内容</span><br><span class="line">        string tag对象.string 获取标签所包含的文本</span><br></pre></td></tr></table></figure>
+
+<h5 id="3-1-3-代码演示"><a href="#3-1-3-代码演示" class="headerlink" title="3.1.3 代码演示"></a>3.1.3 代码演示</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="comment"># @Time    : 2024/4/16 8:46</span></span><br><span class="line"><span class="comment"># @Author  : 韩俊兰</span></span><br><span class="line"><span class="comment"># @File    : demo1.py</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 学习初始化beautifulsoup</span></span><br><span class="line"><span class="comment"># 1.导入beautifulsoup4中的beautifulsoup类</span></span><br><span class="line"><span class="comment"># 2.初始化 soup = BeautifulSoup(HTML代码，HTML解析器)</span></span><br><span class="line"><span class="comment"># 3.解析数据 节点选择器，方法选择器，CSS选择器</span></span><br><span class="line"><span class="comment">#     节点选择器：soup.title 获取title标签里面的内容返回值是一个tag对象</span></span><br><span class="line"><span class="comment">#              嵌套使用</span></span><br><span class="line"><span class="comment">#              soup.div.p获取第一个div里面的p标签的内容，返回值任然是一个tag对象</span></span><br><span class="line"><span class="comment">#              tag对象的常用属性</span></span><br><span class="line"><span class="comment">#              string tag对象.name 获取标签名 soup.title.name-&gt;title</span></span><br><span class="line"><span class="comment">#              dict   tag对象.attrs 获取标签下所有内容（所有属性）</span></span><br><span class="line"><span class="comment">#              list   tag对象.comtents 获取标签下所有子标签的内容</span></span><br><span class="line"><span class="comment">#              string tag对象.string 获取标签所包含的文本</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> bs4 <span class="keyword">import</span> BeautifulSoup</span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line">url = <span class="string">&quot;https://www.baidu.com/&quot;</span></span><br><span class="line">response = requests.get(url)</span><br><span class="line"><span class="comment"># 爬取网页源码 看不懂 ctrl+f搜索charset 设置response对象的编码为charset 再转化为text</span></span><br><span class="line">response.encoding = <span class="string">&quot;utf-8&quot;</span></span><br><span class="line"><span class="comment"># 获取网页html源码</span></span><br><span class="line">content = response.text</span><br><span class="line"><span class="comment"># print(content)</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">content中的html文本：</span></span><br><span class="line"><span class="string">&lt;html&gt;</span></span><br><span class="line"><span class="string">&lt;head&gt;</span></span><br><span class="line"><span class="string">   &lt;script&gt;</span></span><br><span class="line"><span class="string">      location.replace(location.href.replace(&quot;https://&quot;,&quot;http://&quot;));</span></span><br><span class="line"><span class="string">   &lt;/script&gt;</span></span><br><span class="line"><span class="string">&lt;/head&gt;</span></span><br><span class="line"><span class="string">&lt;body&gt;</span></span><br><span class="line"><span class="string">   &lt;noscript&gt;&lt;meta http-equiv=&quot;refresh&quot; content=&quot;0;url=http://www.baidu.com/&quot;&gt;&lt;/noscript&gt;</span></span><br><span class="line"><span class="string">&lt;/body&gt;</span></span><br><span class="line"><span class="string">&lt;/html&gt;</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 初始化</span></span><br><span class="line">soup = BeautifulSoup(content, <span class="string">&quot;html.parser&quot;</span>)</span><br><span class="line"><span class="comment"># 节点选择器获取数据</span></span><br><span class="line"><span class="comment"># 获取body里面的内容</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;==================获取body里面的内容=============================================================================&quot;</span>)</span><br><span class="line">title1 = soup.body</span><br><span class="line"><span class="built_in">print</span>(title1)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;获取节点的元素类型为tag类型对象：<span class="subst">&#123;<span class="built_in">type</span>(title1)&#125;</span>&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;==================嵌套选择：获取head.script里面的内容==================================================================&quot;</span>)</span><br><span class="line">title2 = soup.head.script</span><br><span class="line"><span class="built_in">print</span>(title2)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;获取节点的元素类型任然为tag类型对象：<span class="subst">&#123;<span class="built_in">type</span>(title2)&#125;</span>&quot;</span>)</span><br><span class="line"><span class="comment"># tag属性</span></span><br><span class="line"><span class="built_in">print</span>(title2.name)</span><br><span class="line"><span class="built_in">print</span>(soup.body.attrs)</span><br><span class="line"><span class="built_in">print</span>(title2.contents)</span><br><span class="line"><span class="built_in">print</span>(title2.string)</span><br></pre></td></tr></table></figure>
+
+<h5 id="3-1-4-关联选择器"><a href="#3-1-4-关联选择器" class="headerlink" title="3.1.4 关联选择器"></a>3.1.4 关联选择器</h5><p><img src="/images/image-20240416094415466.png" alt="python图"></p>
+<p>子节点： list     tag对象.contents</p>
+<p>​               生成器  tag对象.children</p>
+<p><img src="/images/image-20240416094922498.png" alt="python图"></p>
+<p>父节点：节点元素   tag对象.parent</p>
+<h2 id="Tkinter图形用户界面"><a href="#Tkinter图形用户界面" class="headerlink" title="Tkinter图形用户界面"></a>Tkinter图形用户界面</h2><h3 id="1-Tkinter概念"><a href="#1-Tkinter概念" class="headerlink" title="1. Tkinter概念"></a>1. Tkinter概念</h3><p>Tkinter（即 tk interface） <strong>是 Python 标准 GUI 库</strong>，简称 “Tk”。Tkinter 编写的程序，也称为 GUI 程序，<strong>GUI</strong> （Graphical User Interface）指的是“<strong>图形用户界面</strong>”，在计算机中表示图形，以及利用计算机进行图形的计算、处理和显示等相关工作。</p>
+<p>一个 GUI 程序一般由窗口、下拉菜单或者对话框等图形化组件构成， 通过鼠标点击菜单栏、按钮或者弹出对话框的形式来实现人机互动，从而<strong>提升人机交互的体验</strong>，让“冰冷”的程序变得有“温度”。</p>
+<h3 id="2-基于Tkinter模块创建GUI程序的步骤"><a href="#2-基于Tkinter模块创建GUI程序的步骤" class="headerlink" title="2. 基于Tkinter模块创建GUI程序的步骤"></a>2. 基于Tkinter模块创建GUI程序的步骤</h3><p>1.创建应用程序主窗口对象（跟窗口）</p>
+<p>（1）通过类Tk的无参构造 root&#x3D;Tk()</p>
+<p>2.在主窗口中，添加各种可视化组件。比如按钮(Button)&#x2F;文本框(Label)等</p>
+<p>btn01&#x3D;Button(root)</p>
+<p>3.通过几何布局管理器，管理组件大小和位置</p>
+<p>btn01.pack()</p>
+<p>4.事件处理</p>
+<p>通过绑定事件处理程序，响应用户操作所触发的事件。（比如单机或双击）</p>
+<p>button1.bind(“<Button-1>“,sendflower)</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="comment"># @Time    : 2024/4/7 9:19</span></span><br><span class="line"><span class="comment"># @Author  : 韩俊兰</span></span><br><span class="line"><span class="comment"># @File    : send_flower1.py</span></span><br><span class="line"><span class="keyword">from</span> tkinter <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">from</span> tkinter <span class="keyword">import</span> messagebox</span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    root = Tk()</span><br><span class="line">    root.title(<span class="string">&quot;送你一朵小红花&quot;</span>)</span><br><span class="line">    button1 = Button(root)</span><br><span class="line">    button1[<span class="string">&quot;text&quot;</span>] = <span class="string">&quot;点我就送花&quot;</span></span><br><span class="line">    <span class="comment"># 定义一个事件 e是事件对象</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">sendflower</span>(<span class="params">e</span>):</span><br><span class="line">        messagebox.showinfo(<span class="string">&quot;Message&quot;</span>,<span class="string">&quot;送给你花花&quot;</span>);</span><br><span class="line">        <span class="comment"># 后台答应内容</span></span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;花花给你~~~~~~~~~~~&quot;</span>)</span><br><span class="line">    <span class="comment"># 按钮绑定事件</span></span><br><span class="line">    button1.bind(<span class="string">&quot;&lt;Button-1&gt;&quot;</span>,sendflower)</span><br><span class="line">    button1.pack()</span><br><span class="line">    <span class="comment"># 调用组件的mainloop()方法，进入事件循环</span></span><br><span class="line">    root.mainloop()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-主窗口位置和大小"><a href="#3-主窗口位置和大小" class="headerlink" title="3. 主窗口位置和大小"></a>3. 主窗口位置和大小</h3><p>root.geometry(“宽度x高度+&#x2F;-x+&#x2F;-y”) 进行设置</p>
+<p>+x 表示距屏幕左边距离     -x 表示距屏幕右边距离</p>
+<p>+y 表示距屏幕上边距离    -y 表示距屏幕下边距离</p>
+<p><img src="/images/image-20240408203230348.png" alt="python图"></p>
+<h3 id="4-常用root方法"><a href="#4-常用root方法" class="headerlink" title="4.常用root方法"></a>4.常用root方法</h3><p>1.设置窗口名：root.title(“窗口名”)</p>
+<p>2.设置窗口大小和位置：root.geometry(“宽度x高度+&#x2F;-x+&#x2F;-y”) -&gt;宽度和高度是窗口大小，x,y是位置。</p>
+<p>3.进入事件循环:root.mainloop()</p>
+<h3 id="5-GUI窗口面向对象写法"><a href="#5-GUI窗口面向对象写法" class="headerlink" title="5.GUI窗口面向对象写法"></a>5.GUI窗口面向对象写法</h3><h3 id="6-Lable标签"><a href="#6-Lable标签" class="headerlink" title="6.Lable标签"></a>6.Lable标签</h3><p>1.Lable标签主要用于<strong>显示文本信息</strong>,<strong>也可以显示图像信息</strong>。</p>
+<p>2.Lable标签常用属性：</p>
+<p>（1). <strong>width,height</strong> 指定文本区域大小，单位字符，一个汉字占俩个字符。如果是图片单位为像素。</p>
+<p>  (2)<strong>.font</strong> 指定字体和字体大小  <strong>font&#x3D;(字体,字号)</strong></p>
+<p>   (3).<strong>image</strong> 显示在Label上的图像，目前tkinter<strong>只支持gif格式</strong></p>
+<p>   (4).fg和bg </p>
+<p>​        <strong>fg(foreground)</strong>:前景色(字体颜色)，<strong>bg(background)</strong>:背景色</p>
+<p>  (5). <strong>justify</strong> 针对多行文字的对齐，可设置 justify属性，参数 left&#x2F;right&#x2F;center</p>
+<p>  （6）<strong>borderwidth&#x3D;? 边框的大小</strong></p>
+<p>   （7）relief&#x3D;”参数”  参数：solid（实线）&#x2F;groove&#x2F;ridge&#x2F;flat&#x2F;sunken&#x2F;raised 边框线条</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">createWidget</span>(<span class="params">self</span>):</span><br><span class="line">       <span class="comment"># 创建标签</span></span><br><span class="line">       <span class="variable language_">self</span>.label1 = TK.Label(<span class="variable language_">self</span>,text=<span class="string">&quot;xiaohan&quot;</span>,width=<span class="number">10</span>,height=<span class="number">2</span>, bg=<span class="string">&quot;black&quot;</span>, fg=<span class="string">&quot;red&quot;</span>, font=(<span class="string">&quot;楷体&quot;</span>,<span class="number">30</span>) )</span><br><span class="line">       <span class="variable language_">self</span>.label1.pack()</span><br><span class="line">       <span class="comment"># 显示图像</span></span><br><span class="line">       <span class="keyword">global</span> photo</span><br><span class="line">       photo = PhotoImage(file=<span class="string">&quot;./img/hh.gif&quot;</span>)</span><br><span class="line">       <span class="variable language_">self</span>.label2 = TK.Label(<span class="variable language_">self</span>, image=photo)</span><br><span class="line">       <span class="variable language_">self</span>.label2.pack()</span><br><span class="line"></span><br><span class="line">       <span class="variable language_">self</span>.label3 = TK.Label(<span class="variable language_">self</span>, text=<span class="string">&quot;哈哈\n兰鑫~~\n是猪!!&quot;</span>, borderwidth=<span class="number">5</span>, relief=<span class="string">&quot;groove&quot;</span>, justify=<span class="string">&quot;center&quot;</span>)</span><br><span class="line">       <span class="variable language_">self</span>.label3.pack()</span><br></pre></td></tr></table></figure>
+
+<h3 id="7-options选项"><a href="#7-options选项" class="headerlink" title="7.options选项"></a>7.options选项</h3><p>1.可以通过<strong>options设置组件的属性</strong>，从而<strong>控制组件的各种状态</strong>，比如，宽度，高度，颜色，位置等等</p>
+<p>2.<strong>设置options选项三种方式</strong>：</p>
+<p>​    (1).<strong>创建对象时</strong>，<strong>使用命名参数</strong>（也叫关键字参数）</p>
+<p>​    fred &#x3D; Button(self, fg&#x3D;”red”, bg&#x3D;”blue”)</p>
+<p>  （2).创建对象后，<strong>使用字典索引方式</strong></p>
+<p>​     fred[“fg”] &#x3D; “red”</p>
+<p>​     fred[“bg”] &#x3D; “blue”</p>
+<p>​    (3)创建对象后，<strong>使用config()方法</strong></p>
+<p>​      fred.config(fg&#x3D;”red”,bg&#x3D;”blue”)</p>
+<h3 id="8-Button"><a href="#8-Button" class="headerlink" title="8.Button"></a>8.Button</h3><p>Button(按钮)用来执行用户的单击操作，Button可以包含文本，也可以包含图像，<strong>按钮被单击后会自动调用对应事件绑定的方法</strong>。</p>
+<p>button &#x3D; Button(root,text&#x3D;”按钮名字”，command&#x3D;绑定事件函数)</p>
+<p>绑定一个事件的图片按钮</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 把photo声名成全局变量，如果是局部变量本方法执行完毕之后，图像对象销毁，窗口显示不出来</span></span><br><span class="line"><span class="keyword">global</span> photo</span><br><span class="line">photo = PhotoImage(file=<span class="string">&quot;./img/hh.gif&quot;</span>)</span><br><span class="line"><span class="comment"># command参数 进行按钮与事件的绑定</span></span><br><span class="line">button = Button(<span class="variable language_">self</span>, command=<span class="variable language_">self</span>.myentry)</span><br><span class="line">button[<span class="string">&quot;image&quot;</span>] = photo</span><br><span class="line">button.pack()</span><br></pre></td></tr></table></figure>
+<p><img src="/images/image-20240409084157463.png" alt="python图"></p>
+<h3 id="9-Entry单行文本框"><a href="#9-Entry单行文本框" class="headerlink" title="9.Entry单行文本框"></a>9.Entry单行文本框</h3><p><strong>Entry用来接受一行字符串控件</strong>。如果用户输入的文字长度长于Entry控件的宽度时，文字会自动向后滚动，如果想输入多行文本，需要使用Text控件。</p>
+<p><strong>entry.get() 获得文本框输入的内容</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="comment"># @Time    : 2024/4/9 8:51</span></span><br><span class="line"><span class="comment"># @Author  : 韩俊兰</span></span><br><span class="line"><span class="comment"># @File    : logoin.py</span></span><br><span class="line"><span class="keyword">from</span> tkinter <span class="keyword">import</span>*</span><br><span class="line"><span class="keyword">from</span> tkinter <span class="keyword">import</span> messagebox</span><br><span class="line"><span class="keyword">import</span> tkinter <span class="keyword">as</span> TK</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Applocation</span>(<span class="title class_ inherited__">Frame</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self,master=<span class="literal">None</span></span>):</span><br><span class="line">        <span class="built_in">super</span>(Applocation, <span class="variable language_">self</span>).__init__(master)</span><br><span class="line">        <span class="variable language_">self</span>.master = master</span><br><span class="line">        <span class="variable language_">self</span>.pack()</span><br><span class="line">        <span class="variable language_">self</span>.createWidget()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">myentry</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="variable language_">self</span>.entry.get())</span><br><span class="line">        <span class="built_in">print</span>(<span class="variable language_">self</span>.entry2.get())</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">createWidget</span>(<span class="params">self</span>):</span><br><span class="line">        </span><br><span class="line">        <span class="comment">#用户名标签</span></span><br><span class="line">        <span class="variable language_">self</span>.lable = Label(<span class="variable language_">self</span>, width=<span class="number">20</span>, text=<span class="string">&quot;用户名&quot;</span>)</span><br><span class="line">        <span class="variable language_">self</span>.lable.pack()</span><br><span class="line"></span><br><span class="line">        <span class="comment">#用户输入单行文本框</span></span><br><span class="line">        <span class="variable language_">self</span>.entry = Entry(<span class="variable language_">self</span>, width=<span class="number">20</span>)</span><br><span class="line">        <span class="variable language_">self</span>.entry.pack()</span><br><span class="line">        </span><br><span class="line">         <span class="comment">#密码标签</span></span><br><span class="line">        <span class="variable language_">self</span>.lable2 = Label(<span class="variable language_">self</span>, width=<span class="number">20</span>, text=<span class="string">&quot;密码&quot;</span>)</span><br><span class="line">        <span class="variable language_">self</span>.lable2.pack()</span><br><span class="line">        </span><br><span class="line">         <span class="comment">#密码输入单行文本框</span></span><br><span class="line">        <span class="comment"># show=&quot;*&quot; 输入密码 文本框展示为*</span></span><br><span class="line">        <span class="variable language_">self</span>.entry2 = Entry(<span class="variable language_">self</span>, width=<span class="number">20</span>, show=<span class="string">&quot;*&quot;</span>)</span><br><span class="line">        <span class="variable language_">self</span>.entry2.pack()</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 打印文本框输入的内容</span></span><br><span class="line">        <span class="variable language_">self</span>.myentry()</span><br><span class="line"></span><br><span class="line">        <span class="comment"># gif格式图片按钮</span></span><br><span class="line">        <span class="comment"># 把photo声名成全局变量，如果是局部变量本方法执行完毕之后，图像对象销毁，窗口显示不出来</span></span><br><span class="line">        <span class="keyword">global</span> photo</span><br><span class="line">        photo = PhotoImage(file=<span class="string">&quot;./img/hh.gif&quot;</span>)</span><br><span class="line">        <span class="comment"># command参数 进行按钮与事件的绑定</span></span><br><span class="line">        button = Button(<span class="variable language_">self</span>, command=<span class="variable language_">self</span>.myentry)</span><br><span class="line">        button[<span class="string">&quot;image&quot;</span>] = photo</span><br><span class="line">        button.pack()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        <span class="comment"># photo = PhotoImage(file=&quot;./img/hh.gif&quot;)</span></span><br><span class="line">        <span class="comment"># lable = Label(self, image=photo)</span></span><br><span class="line">        <span class="comment"># lable.pack()</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    root = TK.Tk()</span><br><span class="line">    root.title(<span class="string">&quot;小韩登录界面&quot;</span>)</span><br><span class="line">    root.geometry(<span class="string">&quot;500x500&quot;</span>)</span><br><span class="line">    app = Applocation(root)</span><br><span class="line">    root.mainloop()</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/image-20240410104947786.png" alt="python图"></p>
+<p>**Stringvar()**是tkinter里面的一个类型，<strong>用于获取文本框里面输入的内容</strong></p>
+<p>Doublevar(),Intvar(),Booleanvar()</p>
+<p>用法：</p>
+<p>Stringvar变量绑定到指定组件，Stringvar的值发生改变，组件内容文本框的值也发生改变；组件内容文本框的值发生改变，Stringvar的值也发生改变。（双向绑定）</p>
+<p>n &#x3D; Stringvar() -&gt;定义一个Stringvar类型的变量</p>
+<p> self.entry &#x3D; Entry(self,textvariable&#x3D;n)-&gt;textvariable属性 将变量n与文本框关联</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="comment"># @Time    : 2024/4/9 8:51</span></span><br><span class="line"><span class="comment"># @Author  : 韩俊兰</span></span><br><span class="line"><span class="comment"># @File    : logoin.py</span></span><br><span class="line"><span class="keyword">from</span> tkinter <span class="keyword">import</span>*</span><br><span class="line"><span class="keyword">from</span> tkinter <span class="keyword">import</span> messagebox</span><br><span class="line"><span class="keyword">import</span> tkinter <span class="keyword">as</span> TK</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Applocation</span>(<span class="title class_ inherited__">Frame</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self,master=<span class="literal">None</span></span>):</span><br><span class="line">        <span class="built_in">super</span>(Applocation, <span class="variable language_">self</span>).__init__(master)</span><br><span class="line">        <span class="variable language_">self</span>.master = master</span><br><span class="line">        <span class="variable language_">self</span>.pack()</span><br><span class="line">        <span class="variable language_">self</span>.createWidget()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">createWidget</span>(<span class="params">self</span>):</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 用户名标签</span></span><br><span class="line">        <span class="variable language_">self</span>.lable = Label(<span class="variable language_">self</span>, width=<span class="number">20</span>, text=<span class="string">&quot;用户名&quot;</span>)</span><br><span class="line">        <span class="variable language_">self</span>.lable.pack()</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 用户输入单行文本框</span></span><br><span class="line">        <span class="comment"># Stringvar username变量绑定到指定组件 获取文本框里面输入的内容</span></span><br><span class="line">        <span class="variable language_">self</span>.username = StringVar()</span><br><span class="line">        <span class="comment"># username.set(&quot;值&quot;) 给文本框赋值</span></span><br><span class="line">        <span class="comment"># username.get() 获取文本框的值</span></span><br><span class="line">        <span class="comment"># username.set(&quot;admin&quot;)</span></span><br><span class="line">        <span class="variable language_">self</span>.entry = Entry(<span class="variable language_">self</span>, width=<span class="number">20</span>, textvariable=<span class="variable language_">self</span>.username)</span><br><span class="line">        <span class="variable language_">self</span>.entry.pack()</span><br><span class="line">        <span class="comment"># print(username.get())</span></span><br><span class="line">        <span class="comment"># print(self.entry.get())</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># 密码标签</span></span><br><span class="line">        <span class="variable language_">self</span>.lable2 = Label(<span class="variable language_">self</span>, width=<span class="number">20</span>, text=<span class="string">&quot;密码&quot;</span>)</span><br><span class="line">        <span class="variable language_">self</span>.lable2.pack()</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 密码输入单行文本框</span></span><br><span class="line">        <span class="comment"># show=&quot;*&quot; 输入密码 文本框展示为*</span></span><br><span class="line">        <span class="comment"># Stringvar password变量绑定到指定组件 获取文本框里面输入的内容</span></span><br><span class="line">        <span class="variable language_">self</span>.password = StringVar()</span><br><span class="line">        <span class="variable language_">self</span>.entry2 = Entry(<span class="variable language_">self</span>, width=<span class="number">20</span>, show=<span class="string">&quot;*&quot;</span>, textvariable=<span class="variable language_">self</span>.password)</span><br><span class="line">        <span class="variable language_">self</span>.entry2.pack()</span><br><span class="line"></span><br><span class="line">        <span class="comment"># gif格式图片按钮</span></span><br><span class="line">        <span class="comment"># 把photo声名成全局变量，如果是局部变量本方法执行完毕之后，图像对象销毁，窗口显示不出来</span></span><br><span class="line">        <span class="keyword">global</span> photo</span><br><span class="line">        photo = PhotoImage(file=<span class="string">&quot;./img/hh.gif&quot;</span>)</span><br><span class="line">        <span class="comment"># command参数 进行按钮与事件的绑定</span></span><br><span class="line">        button = Button(<span class="variable language_">self</span>, command=<span class="variable language_">self</span>.login)</span><br><span class="line">        button[<span class="string">&quot;image&quot;</span>] = photo</span><br><span class="line">        button.pack()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">login</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">if</span> (<span class="variable language_">self</span>.username.get() == <span class="string">&quot;xiaohan&quot;</span> <span class="keyword">and</span> <span class="variable language_">self</span>.password.get() == <span class="string">&quot;123456&quot;</span>):</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;欢迎登录星星蝶舞系统！！&quot;</span>)</span><br><span class="line">            messagebox.showinfo(<span class="string">&quot;星星蝶舞系统提醒您&quot;</span>, <span class="string">&quot;欢迎登录星星蝶舞系统！！&quot;</span>)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;登录失败，用户名或密码错误！！&quot;</span>)</span><br><span class="line">            messagebox.showerror(<span class="string">&quot;星星蝶舞系统提醒您&quot;</span>, <span class="string">&quot;登录失败，用户名或密码错误！！&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    root = TK.Tk()</span><br><span class="line">    root.title(<span class="string">&quot;小韩登录界面&quot;</span>)</span><br><span class="line">    root.geometry(<span class="string">&quot;500x500&quot;</span>)</span><br><span class="line">    app = Applocation(root)</span><br><span class="line">    root.mainloop()</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/image-20240410125331534.png" alt="python图"></p>
+<p><img src="/images/image-20240410125251826.png" alt="python图"></p>
+<p>注意：messagebox.showinfo(“星星蝶舞系统提醒您”, “欢迎登录星星蝶舞系统！！”)  消息弹框名：星星蝶舞系统提醒您  弹框内容为：欢迎登录星星蝶舞系统！！</p>
+<h3 id="10-Text-多行文本框"><a href="#10-Text-多行文本框" class="headerlink" title="*10.Text 多行文本框"></a>*10.Text 多行文本框</h3><p>[csdn详细教程](<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43708622/article/details/107303149?ops_request_misc=%7B%22request_id%22:%22171272662716800213024140%22,%22scm%22:%2220140713.130102334..%22%7D&request_id=171272662716800213024140&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~blog~sobaiduend~default-1-107303149-null-null.nonecase&utm_term=tkinter%E4%B8%AD%E7%9A%84text&spm=1018.2226.3001.4450">tkinter-Text详解_tkinter text-CSDN博客</a>)</p>
+<p>Text(多行文本框)主要用于显示多行文本，还可以显示网页链接，图片，HTML网页，甚至CSS样式表，添加组件等，因此，也常被当做简单的文本处理器，文本编辑器或者网页浏览器来使用。</p>
+<ol>
+<li><p>pack(side&#x3D;”left”) 可以将组件放到左边位置</p>
+</li>
+<li><p>self.text1.insert(<strong>行.列</strong>, “插入文本内容”)；在几行几列开始插入文本内容</p>
+<p>注意：<strong>text行从1开始，列从0开始</strong></p>
+</li>
+<li><p>self.text1.insert(INSERT，”插入文本内容”) <strong>INSERT</strong>索引表示在<strong>光标</strong>处插入文本内容</p>
+</li>
+<li><p>self.text1.insert(END，”插入文本内容”) <strong>END</strong>索引表示在<strong>最后</strong>插入文本内容</p>
+<p>self.text1.insert(1.end，”插入文本内容”) 表示在<strong>第一行的最后</strong>插入文本内容</p>
+</li>
+<li><p>self.text1.get(行1.列1,行2.列2); 返回行1.列1到行2.列2区间之间的文本内容</p>
+</li>
+<li><p>self.text1.get(1.0,END); 返回所有文本内容 </p>
+</li>
+<li><p>self.text1.image_create(END,image&#x3D;photo) 添加图片</p>
+</li>
+<li><p>button &#x3D; Button(self.text1,text&#x3D;”按钮名字”)</p>
+</li>
+</ol>
+<p>​       self.text1.window_create(INSERT,window&#x3D;button) 添加按钮组件</p>
+<ol start="9">
+<li>self.text1.delete(1.0,END) 删除所有内容</li>
+</ol>
+<h3 id="11-单选按钮和复选按钮"><a href="#11-单选按钮和复选按钮" class="headerlink" title="11.单选按钮和复选按钮"></a>11.单选按钮和复选按钮</h3><p><strong>1.Radiobutton单选按钮</strong></p>
+<p>Radiobutton单选按钮：用于选择同一组单选按钮中的一个。可以显示文本，也可以显示图像。</p>
+<p><img src="/images/image-20240410165314625.png" alt="python图"></p>
+<p><strong>2.checkbutton复选按钮</strong></p>
+<h3 id="12-canvas-画布"><a href="#12-canvas-画布" class="headerlink" title="12.canvas 画布"></a>12.canvas 画布</h3><p>canvas画布是一个矩形区域，可以放置图形，图像，组件等。</p>
+<h3 id="13-布局管理器"><a href="#13-布局管理器" class="headerlink" title="13.布局管理器"></a>13.布局管理器</h3><p>tkinter提供了三中管理器：pack（水平和垂直）,*grid(表格布局),place（根据像素点）.</p>
+<p>*<em>13.1 <em>grid 表格布局</em></em>，采用表格结构组织组件，子组件的位置由行和列的单元格来确定，并且可以跨行和跨列。</p>
+<p><strong>行列起始位置都从0开始</strong></p>
+<p><img src="/images/image-20240410143552579.png" alt="python图"></p>
+<p><img src="/images/image-20240410144137083.png" alt="python图"></p>
+<h3 id="14-计算器软件界面设计案例（grid"><a href="#14-计算器软件界面设计案例（grid" class="headerlink" title="14 计算器软件界面设计案例（grid)"></a>14 计算器软件界面设计案例（grid)</h3><h2 id="pyecharts-数据可视化效果图"><a href="#pyecharts-数据可视化效果图" class="headerlink" title="pyecharts 数据可视化效果图"></a>pyecharts 数据可视化效果图</h2><h3 id="1-快速入门-基础折线图-Line"><a href="#1-快速入门-基础折线图-Line" class="headerlink" title="1.快速入门-基础折线图(Line)"></a>1.快速入门-基础折线图(Line)</h3><h4 id="1-1-pyecharts的常用配置选项"><a href="#1-1-pyecharts的常用配置选项" class="headerlink" title="1.1 pyecharts的常用配置选项"></a>1.1 pyecharts的常用配置选项</h4><h5 id="1-全局配置选项"><a href="#1-全局配置选项" class="headerlink" title="1 全局配置选项"></a>1 全局配置选项</h5><p>全局配置选项可以通过set_global_opts方法来进行配置</p>
+<h5 id="2-系列配置选项"><a href="#2-系列配置选项" class="headerlink" title="2 系列配置选项"></a>2 系列配置选项</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="comment"># @Time    : 2024/4/18 14:51</span></span><br><span class="line"><span class="comment"># @Author  : 韩俊兰</span></span><br><span class="line"><span class="comment"># @File    : demo1.py</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># pyecharts入门</span></span><br><span class="line"><span class="comment"># 基础折线图</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 导入pyecharts这个包里面得charts模块中的Line对象</span></span><br><span class="line"><span class="keyword">from</span> pyecharts.charts <span class="keyword">import</span> Line</span><br><span class="line"><span class="keyword">from</span> pyecharts.options <span class="keyword">import</span> TitleOpts,LegendOpts,ToolboxOpts,VisualMapOpts</span><br><span class="line"><span class="comment"># 创建一个折线图对象</span></span><br><span class="line">line = Line()</span><br><span class="line"><span class="comment"># 给折线图对象添加X轴的数据</span></span><br><span class="line">line.add_xaxis([<span class="string">&quot;小鑫&quot;</span>, <span class="string">&quot;小韩&quot;</span>, <span class="string">&quot;XXQ&quot;</span>, <span class="string">&quot;zyr&quot;</span>])</span><br><span class="line"><span class="comment"># 给折线图对象添加Y轴的数据</span></span><br><span class="line">line.add_yaxis(<span class="string">&quot;身高&quot;</span>, [<span class="string">&quot;120&quot;</span>, <span class="string">&quot;180&quot;</span>, <span class="string">&quot;168&quot;</span>, <span class="string">&quot;180&quot;</span>])</span><br><span class="line">line.set_global_opts(</span><br><span class="line">    <span class="comment"># 设置图表标题</span></span><br><span class="line">    <span class="comment"># title_opts = TitleOpts(title=&quot;身高数据分析表&quot;)</span></span><br><span class="line">    <span class="comment"># 居中展示</span></span><br><span class="line">    <span class="comment"># title_opts = TitleOpts(title=&quot;身高数据分析表&quot;, pos_left=&quot;center&quot;,)</span></span><br><span class="line">    <span class="comment"># 居中展示且距离图标下方1%的距离位置展示</span></span><br><span class="line">    title_opts = TitleOpts(title=<span class="string">&quot;身高数据分析表&quot;</span>, pos_left=<span class="string">&quot;center&quot;</span>, pos_bottom=<span class="string">&quot;1%&quot;</span>),</span><br><span class="line">    <span class="comment"># 控制图列 默认显示</span></span><br><span class="line">    legend_opts = LegendOpts(is_show=<span class="literal">True</span>),</span><br><span class="line">    <span class="comment"># 控制工具箱</span></span><br><span class="line">    toolbox_opts = ToolboxOpts(is_show=<span class="literal">True</span>),</span><br><span class="line">    <span class="comment"># 控制视觉映射</span></span><br><span class="line">    visualmap_opts = VisualMapOpts(is_show=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#</span></span><br><span class="line">)</span><br><span class="line"><span class="comment"># 通过render方法，将代码生成图像</span></span><br><span class="line">line.render()</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-基础地图图表-Map"><a href="#2-基础地图图表-Map" class="headerlink" title="2.基础地图图表(Map)"></a>2.基础地图图表(Map)</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 基础地图图表</span></span><br><span class="line"><span class="keyword">from</span> pyecharts.charts <span class="keyword">import</span> Map</span><br><span class="line"><span class="keyword">from</span> pyecharts.options <span class="keyword">import</span> *</span><br><span class="line"><span class="comment"># 初始化map对象</span></span><br><span class="line"><span class="built_in">map</span> = Map()</span><br><span class="line"><span class="comment"># 准备数据</span></span><br><span class="line">data = [</span><br><span class="line">    (<span class="string">&quot;北京市&quot;</span>, <span class="number">99</span>),</span><br><span class="line">    (<span class="string">&quot;上海市&quot;</span>, <span class="number">199</span>),</span><br><span class="line">    (<span class="string">&quot;湖南省&quot;</span>, <span class="number">299</span>),</span><br><span class="line">    (<span class="string">&quot;台湾省&quot;</span>, <span class="number">399</span>),</span><br><span class="line">    (<span class="string">&quot;广东省&quot;</span>, <span class="number">499</span>)</span><br><span class="line">]</span><br><span class="line"><span class="comment"># 添加名称 数据 地图区域</span></span><br><span class="line"><span class="built_in">map</span>.add(<span class="string">&quot;小韩地图&quot;</span>, data, <span class="string">&quot;china&quot;</span>)</span><br><span class="line"><span class="built_in">map</span>.render(<span class="string">&quot;基础地图图表.html&quot;</span>)</span><br><span class="line"><span class="comment"># 设置全局选项</span></span><br><span class="line"><span class="built_in">map</span>.set_global_opts(</span><br><span class="line">    visualmap_opts=VisualMapOpts(</span><br><span class="line">        is_show=<span class="literal">True</span>,</span><br><span class="line">        is_piecewise=<span class="literal">True</span>,</span><br><span class="line">        pieces= [</span><br><span class="line">            &#123;<span class="string">&quot;min&quot;</span>: <span class="number">1</span>, <span class="string">&quot;max&quot;</span>: <span class="number">9</span>, <span class="string">&quot;label&quot;</span>: <span class="string">&quot;1-9&quot;</span>, <span class="string">&quot;color&quot;</span>: <span class="string">&quot;yellow&quot;</span>&#125;,</span><br><span class="line">            &#123;<span class="string">&quot;min&quot;</span>: <span class="number">10</span>, <span class="string">&quot;max&quot;</span>: <span class="number">99</span>, <span class="string">&quot;label&quot;</span>: <span class="string">&quot;10-99&quot;</span>, <span class="string">&quot;color&quot;</span>: <span class="string">&quot;orange&quot;</span>&#125;,</span><br><span class="line">            &#123;<span class="string">&quot;min&quot;</span>: <span class="number">100</span>, <span class="string">&quot;max&quot;</span>: <span class="number">999</span>, <span class="string">&quot;label&quot;</span>: <span class="string">&quot;100-999&quot;</span>, <span class="string">&quot;color&quot;</span>: <span class="string">&quot;red&quot;</span>&#125;</span><br><span class="line">        ]</span><br><span class="line">    )</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-基础柱状图（Bar）"><a href="#3-基础柱状图（Bar）" class="headerlink" title="3.基础柱状图（Bar）"></a>3.基础柱状图（Bar）</h3><p><img src="/images/image-20240418174610554.png" alt="python图"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 基础柱状图（Bar）</span></span><br><span class="line"><span class="keyword">from</span> pyecharts.charts <span class="keyword">import</span> Bar</span><br><span class="line"><span class="keyword">from</span> pyecharts.options <span class="keyword">import</span> *</span><br><span class="line"><span class="comment">#初始化柱状图对象</span></span><br><span class="line">bar = Bar()</span><br><span class="line"><span class="comment"># 添加x轴数据</span></span><br><span class="line">bar.add_xaxis([<span class="string">&quot;小鑫&quot;</span>, <span class="string">&quot;小韩&quot;</span>, <span class="string">&quot;XXQ&quot;</span>, <span class="string">&quot;zyr&quot;</span>])</span><br><span class="line"><span class="comment"># 添加y轴数据 label_opts=LabelOpts(position=&quot;right&quot;)设置数据放在右边位置</span></span><br><span class="line">bar.add_yaxis(<span class="string">&quot;身高折线图&quot;</span>, [<span class="number">120</span>, <span class="number">180</span>, <span class="number">150</span>, <span class="number">180</span>], label_opts=LabelOpts(position=<span class="string">&quot;right&quot;</span>))</span><br><span class="line"><span class="comment"># x,y轴反转</span></span><br><span class="line">bar.reversal_axis()</span><br><span class="line"></span><br><span class="line">bar.render(<span class="string">&quot;基础柱状图.html&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-基础时间线柱状图"><a href="#4-基础时间线柱状图" class="headerlink" title="4.基础时间线柱状图"></a>4.基础时间线柱状图</h3><p><img src="/images/image-20240418195529312.png" alt="python图"></p>
+<p><img src="/images/image-20240418195554982.png" alt="python图"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 基础时间线柱状图</span></span><br><span class="line"><span class="keyword">from</span> pyecharts.charts <span class="keyword">import</span> Bar, Timeline</span><br><span class="line"><span class="keyword">from</span> pyecharts.options <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">from</span> pyecharts.<span class="built_in">globals</span> <span class="keyword">import</span> ThemeType</span><br><span class="line"><span class="comment">#初始化柱状图对象</span></span><br><span class="line"><span class="comment"># 柱状图1</span></span><br><span class="line">bar1 = Bar()</span><br><span class="line"><span class="comment"># 添加x轴数据</span></span><br><span class="line">bar1.add_xaxis([<span class="string">&quot;小鑫&quot;</span>, <span class="string">&quot;小韩&quot;</span>, <span class="string">&quot;XXQ&quot;</span>, <span class="string">&quot;zyr&quot;</span>])</span><br><span class="line"><span class="comment"># 添加y轴数据 label_opts=LabelOpts(position=&quot;right&quot;)设置数据放在右边位置</span></span><br><span class="line">bar1.add_yaxis(<span class="string">&quot;身高折线图&quot;</span>, [<span class="number">120</span>, <span class="number">180</span>, <span class="number">150</span>, <span class="number">180</span>], label_opts=LabelOpts(position=<span class="string">&quot;right&quot;</span>))</span><br><span class="line"><span class="comment"># x,y轴反转</span></span><br><span class="line">bar1.reversal_axis()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 柱状图2</span></span><br><span class="line">bar2 = Bar()</span><br><span class="line"><span class="comment"># 添加x轴数据</span></span><br><span class="line">bar2.add_xaxis([<span class="string">&quot;小鑫&quot;</span>, <span class="string">&quot;小韩&quot;</span>, <span class="string">&quot;XXQ&quot;</span>, <span class="string">&quot;zyr&quot;</span>])</span><br><span class="line"><span class="comment"># 添加y轴数据 label_opts=LabelOpts(position=&quot;right&quot;)设置数据放在右边位置</span></span><br><span class="line">bar2.add_yaxis(<span class="string">&quot;身高折线图&quot;</span>, [<span class="number">100</span>, <span class="number">200</span>, <span class="number">170</span>, <span class="number">210</span>], label_opts=LabelOpts(position=<span class="string">&quot;right&quot;</span>))</span><br><span class="line"><span class="comment"># x,y轴反转</span></span><br><span class="line">bar2.reversal_axis()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 柱状图3</span></span><br><span class="line">bar3 = Bar()</span><br><span class="line"><span class="comment"># 添加x轴数据</span></span><br><span class="line">bar3.add_xaxis([<span class="string">&quot;小鑫&quot;</span>, <span class="string">&quot;小韩&quot;</span>, <span class="string">&quot;XXQ&quot;</span>, <span class="string">&quot;zyr&quot;</span>])</span><br><span class="line"><span class="comment"># 添加y轴数据 label_opts=LabelOpts(position=&quot;right&quot;)设置数据放在右边位置</span></span><br><span class="line">bar3.add_yaxis(<span class="string">&quot;身高折线图&quot;</span>, [<span class="number">90</span>, <span class="number">200</span>, <span class="number">160</span>, <span class="number">210</span>], label_opts=LabelOpts(position=<span class="string">&quot;right&quot;</span>))</span><br><span class="line"><span class="comment"># x,y轴反转</span></span><br><span class="line">bar3.reversal_axis()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 初始化时间线</span></span><br><span class="line">timeline = Timeline(&#123;<span class="string">&quot;theme&quot;</span>: ThemeType.CHALK&#125;)</span><br><span class="line"><span class="comment"># 添加每个时间点儿的柱状图以及名称</span></span><br><span class="line">timeline.add(bar1, <span class="string">&quot;2023年身高分析柱状图&quot;</span>)</span><br><span class="line">timeline.add(bar2, <span class="string">&quot;2024年身高分析柱状图&quot;</span>)</span><br><span class="line">timeline.add(bar3, <span class="string">&quot;2025年身高分析柱状图&quot;</span>)</span><br><span class="line"><span class="comment"># 设置播放控件</span></span><br><span class="line">timeline.add_schema(</span><br><span class="line">    <span class="comment"># 自动播放时间为1000ms</span></span><br><span class="line">    play_interval=<span class="number">1000</span>,</span><br><span class="line">    <span class="comment"># 是否显示时间线</span></span><br><span class="line">    is_timeline_show=<span class="literal">True</span>,</span><br><span class="line">    <span class="comment"># 是否自动播放</span></span><br><span class="line">    is_auto_play=<span class="literal">True</span>,</span><br><span class="line">    <span class="comment"># 是否循环播放</span></span><br><span class="line">    is_loop_play=<span class="literal">True</span></span><br><span class="line">)</span><br><span class="line">timeline.render(<span class="string">&quot;基础柱状图-时间线.html&quot;</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/image-20240418200019541.png" alt="python图"></p>
+<p><img src="/images/image-20240418200031716.png" alt="python图"></p>
+
+    </article>
+    
+    <div class="read-nums">
+      <!-- id 将作为查询条件 -->
+      <span id="2024/04/03/Python/" class="leancloud_visitors" data-flag-title="Your Article Title">
+        <em class="post-meta-item-text">浏览量</em>
+        <i class="leancloud-visitors-count"></i>
+      </span>
+    </div>
+    <div class="comments-intro">
+      <h2>评论区</h2>
+      <p>欢迎你留下宝贵的意见，昵称输入QQ号会显示QQ头像哦~</p>
+    </div>
+    <div id="vcomments" class="vcomments"></div>
+    
+  </div>
+  <div class="article-catelogue">
+    <div class="article-catelogue--wrapper">
+      <div class="catelogue catelogue-1">
+        <h3>目录</h3>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Python-%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%8F%AF%E8%A7%86%E5%8C%96%E5%AE%9E%E6%88%98"><span class="toc-number">1.</span> <span class="toc-text">Python 网络爬虫与数据可视化实战</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%88%AC%E8%99%AB%E7%9A%84%E6%A6%82%E5%BF%B5%EF%BC%9A"><span class="toc-number">1.1.</span> <span class="toc-text">爬虫的概念：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#urllib%E5%BA%93"><span class="toc-number">1.2.</span> <span class="toc-text">urllib库</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-urllib%E5%BA%93%E4%BD%BF%E7%94%A8%EF%BC%9A"><span class="toc-number">1.2.1.</span> <span class="toc-text">1.urllib库使用：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E4%B8%8B%E8%BD%BD"><span class="toc-number">1.2.2.</span> <span class="toc-text">2.下载</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-1-%E4%B8%8B%E8%BD%BD%E7%BD%91%E9%A1%B5"><span class="toc-number">1.2.2.1.</span> <span class="toc-text">2.1 下载网页</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2-%E4%B8%8B%E8%BD%BD%E5%9B%BE%E7%89%87"><span class="toc-number">1.2.2.2.</span> <span class="toc-text">2.2 下载图片</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-3-%E4%B8%8B%E8%BD%BD%E8%A7%86%E9%A2%91"><span class="toc-number">1.2.2.3.</span> <span class="toc-text">2.3 下载视频</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E8%AF%B7%E6%B1%82%E5%AF%B9%E8%B1%A1%E5%AE%9A%E5%88%B6"><span class="toc-number">1.2.3.</span> <span class="toc-text">3.请求对象定制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E7%BC%96%E8%A7%A3%E7%A0%81%E9%97%AE%E9%A2%98"><span class="toc-number">1.2.4.</span> <span class="toc-text">4.编解码问题</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Requests%E7%88%AC%E8%99%AB%EF%BC%88%E8%8E%B7%E5%8F%96%E6%95%B0%E6%8D%AE%EF%BC%89"><span class="toc-number">1.3.</span> <span class="toc-text">Requests爬虫（获取数据）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-web%E8%AF%B7%E6%B1%82%E5%85%A8%E8%BF%87%E7%A8%8B%E5%89%96%E6%9E%90"><span class="toc-number">1.3.1.</span> <span class="toc-text">1.web请求全过程剖析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-requests%E6%A8%A1%E5%9D%97%E5%85%A5%E9%97%A8"><span class="toc-number">1.3.2.</span> <span class="toc-text">2.requests模块入门</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-1-requests%E7%9A%84%E5%AE%9A%E4%B9%89"><span class="toc-number">1.3.2.1.</span> <span class="toc-text">2.1 requests的定义</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2-requests%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="toc-number">1.3.2.2.</span> <span class="toc-text">2.2 requests的使用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-3-get%E8%AF%B7%E6%B1%82%E5%92%8Cpost%E8%AF%B7%E6%B1%82"><span class="toc-number">1.3.2.3.</span> <span class="toc-text">2.3 get请求和post请求</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%95%B0%E6%8D%AE%E8%A7%A3%E6%9E%90"><span class="toc-number">1.3.3.</span> <span class="toc-text">3.数据解析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-1-re%E8%A7%A3%E6%9E%90"><span class="toc-number">1.3.3.1.</span> <span class="toc-text">*3.1 re解析</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-2-bs4%E8%A7%A3%E6%9E%90"><span class="toc-number">1.3.3.2.</span> <span class="toc-text">3.2 bs4解析</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-xpath%E8%A7%A3%E6%9E%90"><span class="toc-number">1.3.3.3.</span> <span class="toc-text">*3.3 xpath解析</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-4-pyquery%E8%A7%A3%E6%9E%90"><span class="toc-number">1.3.3.4.</span> <span class="toc-text">3.4 pyquery解析</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#beautifulsoup4%EF%BC%88%E8%A7%A3%E6%9E%90%E6%95%B0%E6%8D%AE%EF%BC%89"><span class="toc-number">1.4.</span> <span class="toc-text">beautifulsoup4（解析数据）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-beautifulsoup4%E7%9A%84%E6%A6%82%E5%BF%B5"><span class="toc-number">1.4.1.</span> <span class="toc-text">1.beautifulsoup4的概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-beautifulsoup4%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8"><span class="toc-number">1.4.2.</span> <span class="toc-text">2.beautifulsoup4的基本使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-BeautifulSoup%E9%80%89%E6%8B%A9%E5%99%A8"><span class="toc-number">1.4.3.</span> <span class="toc-text">*3.BeautifulSoup选择器</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-1%E8%8A%82%E7%82%B9%E9%80%89%E6%8B%A9%E5%99%A8"><span class="toc-number">1.4.3.1.</span> <span class="toc-text">3.1节点选择器</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#3-1-1-%E9%80%89%E5%8F%96%E5%85%83%E7%B4%A0%E6%96%B9%E6%B3%95%EF%BC%9A"><span class="toc-number">1.4.3.1.1.</span> <span class="toc-text">3.1.1 选取元素方法：</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3-1-2-tag%E5%AF%B9%E8%B1%A1%E5%B8%B8%E7%94%A8%E5%B1%9E%E6%80%A7%EF%BC%9A"><span class="toc-number">1.4.3.1.2.</span> <span class="toc-text">3.1.2 tag对象常用属性：</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3-1-3-%E4%BB%A3%E7%A0%81%E6%BC%94%E7%A4%BA"><span class="toc-number">1.4.3.1.3.</span> <span class="toc-text">3.1.3 代码演示</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3-1-4-%E5%85%B3%E8%81%94%E9%80%89%E6%8B%A9%E5%99%A8"><span class="toc-number">1.4.3.1.4.</span> <span class="toc-text">3.1.4 关联选择器</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Tkinter%E5%9B%BE%E5%BD%A2%E7%94%A8%E6%88%B7%E7%95%8C%E9%9D%A2"><span class="toc-number">1.5.</span> <span class="toc-text">Tkinter图形用户界面</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-Tkinter%E6%A6%82%E5%BF%B5"><span class="toc-number">1.5.1.</span> <span class="toc-text">1. Tkinter概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%9F%BA%E4%BA%8ETkinter%E6%A8%A1%E5%9D%97%E5%88%9B%E5%BB%BAGUI%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%AD%A5%E9%AA%A4"><span class="toc-number">1.5.2.</span> <span class="toc-text">2. 基于Tkinter模块创建GUI程序的步骤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E4%B8%BB%E7%AA%97%E5%8F%A3%E4%BD%8D%E7%BD%AE%E5%92%8C%E5%A4%A7%E5%B0%8F"><span class="toc-number">1.5.3.</span> <span class="toc-text">3. 主窗口位置和大小</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E5%B8%B8%E7%94%A8root%E6%96%B9%E6%B3%95"><span class="toc-number">1.5.4.</span> <span class="toc-text">4.常用root方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-GUI%E7%AA%97%E5%8F%A3%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E5%86%99%E6%B3%95"><span class="toc-number">1.5.5.</span> <span class="toc-text">5.GUI窗口面向对象写法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-Lable%E6%A0%87%E7%AD%BE"><span class="toc-number">1.5.6.</span> <span class="toc-text">6.Lable标签</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-options%E9%80%89%E9%A1%B9"><span class="toc-number">1.5.7.</span> <span class="toc-text">7.options选项</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-Button"><span class="toc-number">1.5.8.</span> <span class="toc-text">8.Button</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-Entry%E5%8D%95%E8%A1%8C%E6%96%87%E6%9C%AC%E6%A1%86"><span class="toc-number">1.5.9.</span> <span class="toc-text">9.Entry单行文本框</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#10-Text-%E5%A4%9A%E8%A1%8C%E6%96%87%E6%9C%AC%E6%A1%86"><span class="toc-number">1.5.10.</span> <span class="toc-text">*10.Text 多行文本框</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#11-%E5%8D%95%E9%80%89%E6%8C%89%E9%92%AE%E5%92%8C%E5%A4%8D%E9%80%89%E6%8C%89%E9%92%AE"><span class="toc-number">1.5.11.</span> <span class="toc-text">11.单选按钮和复选按钮</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#12-canvas-%E7%94%BB%E5%B8%83"><span class="toc-number">1.5.12.</span> <span class="toc-text">12.canvas 画布</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#13-%E5%B8%83%E5%B1%80%E7%AE%A1%E7%90%86%E5%99%A8"><span class="toc-number">1.5.13.</span> <span class="toc-text">13.布局管理器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#14-%E8%AE%A1%E7%AE%97%E5%99%A8%E8%BD%AF%E4%BB%B6%E7%95%8C%E9%9D%A2%E8%AE%BE%E8%AE%A1%E6%A1%88%E4%BE%8B%EF%BC%88grid"><span class="toc-number">1.5.14.</span> <span class="toc-text">14 计算器软件界面设计案例（grid)</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#pyecharts-%E6%95%B0%E6%8D%AE%E5%8F%AF%E8%A7%86%E5%8C%96%E6%95%88%E6%9E%9C%E5%9B%BE"><span class="toc-number">1.6.</span> <span class="toc-text">pyecharts 数据可视化效果图</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8-%E5%9F%BA%E7%A1%80%E6%8A%98%E7%BA%BF%E5%9B%BE-Line"><span class="toc-number">1.6.1.</span> <span class="toc-text">1.快速入门-基础折线图(Line)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-1-pyecharts%E7%9A%84%E5%B8%B8%E7%94%A8%E9%85%8D%E7%BD%AE%E9%80%89%E9%A1%B9"><span class="toc-number">1.6.1.1.</span> <span class="toc-text">1.1 pyecharts的常用配置选项</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1-%E5%85%A8%E5%B1%80%E9%85%8D%E7%BD%AE%E9%80%89%E9%A1%B9"><span class="toc-number">1.6.1.1.1.</span> <span class="toc-text">1 全局配置选项</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2-%E7%B3%BB%E5%88%97%E9%85%8D%E7%BD%AE%E9%80%89%E9%A1%B9"><span class="toc-number">1.6.1.1.2.</span> <span class="toc-text">2 系列配置选项</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%9F%BA%E7%A1%80%E5%9C%B0%E5%9B%BE%E5%9B%BE%E8%A1%A8-Map"><span class="toc-number">1.6.2.</span> <span class="toc-text">2.基础地图图表(Map)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E5%9F%BA%E7%A1%80%E6%9F%B1%E7%8A%B6%E5%9B%BE%EF%BC%88Bar%EF%BC%89"><span class="toc-number">1.6.3.</span> <span class="toc-text">3.基础柱状图（Bar）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E5%9F%BA%E7%A1%80%E6%97%B6%E9%97%B4%E7%BA%BF%E6%9F%B1%E7%8A%B6%E5%9B%BE"><span class="toc-number">1.6.4.</span> <span class="toc-text">4.基础时间线柱状图</span></a></li></ol></li></ol></li></ol>
+      </div>
+      
+        <div class="catelogue catelogue-2">
+          
+            <p>
+              <span>上一篇：</span>
+              <a href="/2024/04/11/git项目管理工具/">学习git指令</a>
+            </p>
+           
+          
+            <p>
+              <span>下一篇</span>
+              <a href="/2024/03/27/JAVA WEB/">学习javaweb基础</a>
+            </p>
+          
+        </div>
+      
+    </div>
+  </div>
+</div>
+
+
+<script>
+  // var定义，避免pjax重新进来造成的重复声明错误
+  var config = JSON.parse('{"enable":true,"appId":"Pf8zCXGEH1qsprnWfikVVujL-gzGzoHsz","appKey":"qOqoiUHhH1TGtLRUYURkLRQX","placeholder":"请留下你宝贵的意见吧~","meta":["nick"],"recordIP":true,"visitor":true,"enableQQ":true}')
+  new Valine({
+    el: '#vcomments',
+    appId: config.appId,
+    appKey: config.appKey,
+    placeholder: config.placeholder,
+    meta: config.meta,
+    recordIP: config.recordIP,
+    visitor: config.visitor,
+    enableQQ: config.enableQQ,
+    path: '2024/04/03/Python/'
+  })
+</script>
+
+
+<script>
+  $(document).on('pjax:complete', function() {
+    const tocs = document.querySelector('.toc')
+    const links = tocs ? tocs.querySelectorAll('a') : []
+    links.forEach(link => {
+      link.addEventListener('click', e => {
+        const href = decodeURIComponent(e.href)
+        href.search(/#(.*)/)
+        const id = RegExp.$1
+        const target = document.querySelector('#' + id)
+        const top = target.offsetTop
+        document.documentElement.scrollTo({
+          top: top - 100,
+          behavior: 'smooth'
+        })
+        e.preventDefault()
+      })
+    })
+  })
+</script> 
+
+</div>
+      <div class="main-right-wrapper"><div class="main-right">
+  <div class="main-right--board">
+    <div class="main-right--title">
+      <h5>公告栏</h5>
+      <i class="iconfont icon-gonggao"></i>
+    </div>
+    <div class="main-right--content">
+      Hello~大噶好。我是gcbsh，欢迎你们来到我的博客小站，希望能在这里收获到有用的东西哦！ 
+    </div>
+  </div>
+
+  <div id="aplayer" class="main-right--music"></div>
+
+  <div class="operate-items">
+    <div class="operate-item backtop">
+      <i class="iconfont icon-huidaodingbu"></i>
+      <span>回到顶部</span>
+    </div>
+    
+    <div class="operate-item turn-comment hidden">
+      <i class="iconfont icon-pinglun"></i>
+      <span>查看评论</span>
+    </div>
+    
+  </div>
+
+  <div class="main-right--site">
+    <div class="main-right--power">
+      <p>Power By <a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/">Hexo</a>.</p>
+      <p>Theme：<a target="_blank" rel="noopener" href="https://github.com/Aizener/hexo-theme-cola">Cola.</a></p>
+    </div>
+    <p class="main-right--refer"><a target="_blank" rel="noopener" href="https://beian.miit.gov.cn/#/Integrated/index">蜀ICP备2022005384号-1</a> </p>
+  </div>
+</div>
+
+<script>
+  function setOperateItem () {
+    const reg = /\d{4}\/\d{2}\/\d{2}\/.+/
+    const path = location.pathname
+    const operateDom = document.querySelector('.main-right .operate-items')
+    const commentDom = document.querySelector('.turn-comment')
+    const cateloguDom = document.querySelector('.article-catelogue > .article-catelogue--wrapper');
+
+    if (commentDom) {
+      if (reg.test(path) || path.match(/\/log\/.+/)) {
+        commentDom.classList.remove('hidden')
+        const newDom = operateDom.cloneNode(true);
+        const _backtopDom = newDom.querySelector('.backtop');
+        const _commentDom = newDom.querySelector('.turn-comment');
+        _backtopDom.addEventListener('click', () => backTopEvent());
+        _commentDom.addEventListener('click', () => commentDomEvent());
+        cateloguDom.appendChild(newDom);
+      } else {
+        commentDom.classList.add('hidden')
+      }
+    }
+  }
+
+  setOperateItem()
+  const musics = JSON.parse(`[{"name":"安河桥","artist":"宋冬野","url":"http://ting6.yymp3.net:82/new25/songdongye/11.mp3","cover":"https://img2.baidu.com/it/u=1260056724,1076343118&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500"},{"name":"卡布达","artist":"暂无","url":"music/kabuda.mp3","cover":"https://img2.baidu.com/it/u=705831265,2862720033&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500"}]`)
+  const ap = new APlayer({
+    container: document.querySelector('#aplayer'),
+    audio: musics,
+  })
+
+  $(document).on('pjax:complete', function() {
+    setOperateItem()
+  })
+
+  document.querySelector('.backtop').addEventListener('click', () => {
+    backTopEvent();
+  })
+  const dom = document.querySelector('.turn-comment')
+  dom && dom.addEventListener('click', () => {
+    commentDomEvent();
+  })
+
+  function backTopEvent() {
+    document.documentElement.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    })
+  }
+
+  function commentDomEvent() {
+    const commentDom = document.querySelector('.comments-intro')
+    if (!commentDom) return
+    const top = commentDom.offsetTop, height = commentDom.offsetHeight
+    document.documentElement.scrollTo({
+      top: top - 2 * height,
+      behavior: 'smooth'
+    })
+  }
+</script></div>
+    </section>
+  </div>
+  <div id="progress" class="progress"></div>
+  <div id="gray" class="gray"></div>
+
+  <script>
+    function initScroll () {
+      document.addEventListener('scroll', () => {
+        const doc = document.documentElement
+        const scrollTop = doc.scrollTop
+        const pageHeight = doc.offsetHeight
+        const clientHeight = doc.clientHeight
+        const ratio = scrollTop / (pageHeight - clientHeight)
+        const progress = document.querySelector('#progress')
+        const avatarImg = document.querySelector('.main-left--avatar')
+        progress.style.width = (100 * ratio) + '%'
+        avatarImg.style.transform = `rotate(${360 * ratio}deg)`
+      })
+    }
+
+    const rootPath = "/"
+
+    const checkAndSetArticlePageLayout = () => {
+      const path = location.pathname.replace(rootPath, '');
+      if (
+        /^\/?\d{4}\/\d{2}\/\d{2}\/.*/.test(path) ||
+        /^log\/.+/.test(path)
+      ) {
+        $('.main-container, .main-right, .main-right-wrapper').addClass('is-article')
+      } else {
+        $('.main-container, .main-right, .main-right-wrapper').removeClass('is-article')
+      }
+    }
+
+    const gray = "none"
+    const setGrayStyle = () => {
+      if (gray === 'none') {
+        return
+      } else if (gray === 'index') {
+        location.pathname === '/' ? $('#gray').show() : $('#gray').hide()
+      } else if (gray === 'all') {
+        $('#gray').show()
+      }
+    }
+    setGrayStyle()
+
+
+    window.onload = function () {
+      checkAndSetArticlePageLayout()
+      setTimeout(() => {
+        $('#load').slideUp()
+        $('#container').slideToggle()
+        setTimeout(() => {
+          initScroll();
+        }, 500)
+      }, 500)
+    }
+    
+    let status = 0
+    // 对所有链接跳转事件绑定pjax容器container
+    $(document).pjax('a[target!=_blank]', '#main-container', {
+      container: '#main-container',
+      fragment: '#main-container',
+      timeout: 8000
+    })
+
+    $(document).on('pjax:start', function() {
+    })
+    $(document).on('pjax:complete', function() {
+      status = 0
+      $('.main-container').addClass('to-up').on('animationend', function() {
+        $(this).removeClass('to-up')
+      })
+      setGrayStyle()
+      checkAndSetArticlePageLayout()
+    })
+    $(document).on('pjax:popstate', function() {
+      status = -1
+      checkAndSetArticlePageLayout()
+    });
+  </script>
+</body>
+</html>

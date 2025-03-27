@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>我的技术与生活——微信小程序 | 欢迎来到小韩的学习博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="shortcut icon" href="/imgs/shortcut-icon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="/css/public.css" />
+  <link rel="stylesheet" href="/css/layout.css" />
+  <link rel="stylesheet" href="/css/iconfont.css" />
+  <link rel="stylesheet" href="/css/APlayer.min.css" />
+  <script src="/js/APlayer.min.js"></script>
+  <script src="/js/jquery.min.js"></script>
+  <script src="/js/jquery.pjax.min.js"></script>
+
+  <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+  <script>
+    document.title = `我的技术与生活——微信小程序`
+  </script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<style>
+  .load {
+    width: 100%;
+    height: 100vh;
+    background-color: rgb(37, 35, 40);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 9999;
+  }
+  .load-circle {
+    width: 80px;
+    height: 80px;
+    border: 8px solid orange;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: rotate 1s linear infinite;
+    filter: drop-shadow(0 0 3px orange);
+  }
+  .load-circle-inner {
+    width: 40px;
+    height: 40px;
+    border: 8px solid orange;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: rotate-reverse .5s linear infinite;
+  }
+  .load-text {
+    margin-top: 20px;
+    font-size: 24px;
+    color: orange;
+    display: flex;
+  }
+  .load-text span {
+    margin: 0 5px;
+    text-shadow: 5px 5px 5px orange;
+    animation: move 1s linear infinite;
+  }
+  .load-text span:nth-child(1) {
+    animation-delay: -0.6s;
+  }
+  .load-text span:nth-child(2) {
+    animation-delay: -0.5s;
+  }
+  .load-text span:nth-child(3) {
+    animation-delay: -0.4s;
+  }
+  .load-text span:nth-child(4) {
+    animation-delay: -0.3s;
+  }
+  .load-text span:nth-child(5) {
+    animation-delay: -0.2s;
+  }
+  .load-text span:nth-child(6) {
+    animation-delay: -0.1s;
+  }
+  @keyframes rotate {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(360deg); }
+  }
+  @keyframes rotate-reverse {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(-360deg); }
+  }
+  @keyframes move {
+    0% { transform: translateY(0%) rotate(0) scale(1); }
+    20% { transform: translateY(20%) rotate(10deg) scale(1.2); }
+    80% { transform: translateY(-10%) rotate(-20deg) scale(.8);}
+    100% { transform: translateY(0) rotate(0) scale(1); }
+  }
+
+  .progress {
+    position: fixed;
+    left: 0; top: 0;
+    width: 0;
+    height: 3px;
+    background-color: green;
+    transition: all cubic-bezier(0.215, 0.610, 0.355, 1) .1s;
+    z-index: 9999;
+  }
+
+  .to-up {
+    animation: toUp .5s 1;
+  }
+  .gray {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 9999;
+    display: none;
+    pointer-events: none;
+    background-color: #000;
+    mix-blend-mode: color;
+  }
+  @keyframes toUp {
+    from { transform: translateY(15px); opacity: 0; }
+    to { transform: translateY(0) ; opacity: 1; }
+  }
+</style>
+<body>
+  <div id="load" class="load">
+    <div class="load-circle">
+      <div class="load-circle-inner"></div>
+    </div>
+    <p class="load-text">
+      <span>L</span>
+      <span>O</span>
+      <span>A</span>
+      <span>D</span>
+      <span>I</span>
+      <span>N</span>
+      <span>G</span>
+    </p>
+  </div>
+  <div id="container" class="container w-100 vh-100" style="display: none;">
+    <header class="header">
+  <div class="header-wrapper">
+    <div class="header-left">
+      <div class="header-search">
+        <input id="search-input" type="text" class="header-search--input" placeholder="请输入要检索的文章标题" />
+        <span id="search-btn" class="header-search--icon"><i class="iconfont icon-sousuo"></i></span>
+      </div>
+      <div id="search-layer" class="header-search--layer hidden">
+        <p class="title">
+          <span>以下是搜索内容：</span>
+          <span id="close-layer-btn">关闭</span>
+        </p>
+        <ul>
+        </ul>
+      </div>
+    </div>
+    <div class="header-right">
+      <ul class="header-menu">
+        <li>
+          <a href="http://example.com/">
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+            <span class="header-menu--span">首页</span>
+          </a>
+        </li>
+        <li>
+          <a href="http://example.com/log">
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+            <span class="header-menu--span">日志</span>
+          </a>
+        </li>
+        <li>
+          <a href="http://example.com/link">
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+            <span class="header-menu--span">友情链接</span>
+          </a>
+        </li>
+        <li>
+          <a href="http://example.com/about">
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+            <span class="header-menu--span">关于我</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<script>
+  const ipt = document.querySelector('#search-input')
+  const btn = document.querySelector('#search-btn')
+  const layer = document.querySelector('#search-layer')
+  const posts = JSON.parse(`[{"title":"学习javaweb框架","cover":"/images/javaweb-cover.jpg","path":"2024/11/27/JAVAWEB框架/"},{"title":"学习javaweb基础","cover":"/images/javaweb-cover.jpg","path":"2024/03/27/JAVA WEB/"},{"title":"python应用","cover":"/images/python.jpg","path":"2024/04/03/Python/"},{"title":"c++竞赛","cover":"/images/c++.jpg","path":"2023/03/27/ACM暑假集训笔记/"},{"title":"学习git指令","cover":"/images/git.jpg","path":"2024/04/11/git项目管理工具/"},{"title":"python基础","cover":"/images/python.jpg","path":"2024/05/12/python详细版本/"},{"title":"学习Redis","cover":"/images/redis-cover.jpg","path":"2025/03/27/学习Redis/"},{"title":"微信小程序","cover":"/images/wx.jpg","path":"2024/09/09/微信小程序/"},{"title":"mysql","cover":"/images/mysql.jpg","path":"2023/10/25/数据库知识/"}]`)
+  ipt.addEventListener('keyup', e => {
+    if (e.key === 'Enter') {
+      handleSearch()
+    }
+  })
+  btn.addEventListener('click', () => {
+    handleSearch()
+  })
+
+  document.querySelector('#close-layer-btn').addEventListener('click', () => {
+    layer.classList.toggle('hidden')
+  })
+
+  function handleSearch() {
+    if (ipt.value.trim() === '') {
+      return
+    }
+    let html = ''
+    const targetPosts = posts.filter(post => post.title.includes(ipt.value))
+    targetPosts.forEach(post => {
+      html += `
+        <li>
+          <div>
+            <a href="/${post.path}">${post.title.replace(new RegExp(ipt.value), `<span>${ipt.value}</span>`)}</a>
+          </div>
+          <img src="${post.cover || '/imgs/default-cover.webp' }" />
+        </li>
+      `
+    })
+    if (html.trim () === '') {
+      html += '<p class="empty">没有搜索到内容</p>'
+    }
+    layer.querySelector('ul').innerHTML = html
+    layer.classList.remove('hidden')
+  }
+</script> 
+    <section id="main" class="main">
+      <div class="main-left-wrapper">
+<div class="main-left">
+  <div class="main-left--block">
+    <div class="main-left--info">
+      <img src="/imgs/avatar.jpg"" class="main-left--avatar" />
+      <div class="main-left--intro">
+        <p class="main-left--name">gcbsh</p>
+        <div class="main-left--tags">
+          <span class="main-left--tag">减肥</span>
+          <span class="main-left--tag">学习</span>
+        </div>
+      </div>
+    </div>
+  
+    <div>
+      <div class="main-left--motto">
+        <p>“关关难过关关过，前路漫漫亦灿灿”</p>
+        <p>“愿望是宅家睡大觉”</p>
+      </div>
+      <div class="main-left--github">
+        <span class="line"></span>
+        <a target="_blank" rel="noopener" href="https://github.com/Aizener"><i class="logo iconfont icon-github-fill"></i></a>
+        <span class="line"></span>
+      </div>
+      <div class="main-left--statics">
+        <a href="/categories">
+          <div>
+            <span>7</span>
+            <span>分类</span>
+          </div>
+        </a>
+        <a href="/tags">
+          <div>
+            <span>0</span>
+            <span>标签</span>
+          </div>
+        </a>
+        <a href="/archives">
+          <div>
+            <span>8 </span>
+            <span>归档</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-left--block">
+    <ul class="main-left--menu">
+      
+        <li>
+          <a href="/">
+            <span class="header-menu--span">小站首页</span>
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/log">
+            <span class="header-menu--span">个人日志</span>
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/link">
+            <span class="header-menu--span">友情链接</span>
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/about">
+            <span class="header-menu--span">关于自己</span>
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/tools">
+            <span class="header-menu--span">我的工具</span>
+            <i class="header-menu--icon iconfont icon-gongju"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+  <div class="main-left--block">
+    <div class="main-left--site">
+      <h5 class="main-left--title">
+        <span>站点信息</span>
+        <i class="iconfont icon-zhandian"></i>
+      </h5>
+      <p class="main-left--subtitle">
+        <span>文章数目：</span>
+        <span>9 篇</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>最近动态：</span>
+        <span>今天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>上线时间：</span>
+        <span>1天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>当前版本：</span>
+        <span>v1.0.2</span>
+      </p>
+    </div>
+  </div>
+</div></div>
+      <div id="main-container" class="main-container">
+
+
+  <link rel="stylesheet" href="/css/partial/article.css" />
+
+<div class="article-container">
+  <div class="article">
+    <h1 class="article-title">微信小程序</h1>
+    <div class="article-info">
+      <div class="article-info--item">
+        <div class="article-info--info">
+          
+          <div class="article-info--categories">
+            <span>分类：</span>
+            <a class="category-link" href="/categories/%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F/">微信小程序</a>
+          </div>
+          
+          
+          <div class="article-info--tags">
+            <span>标签：</span>
+            
+          </div>
+          
+          <p class="article-info--date">日期：2024-09-09 00:00:00</p>
+        </div>
+        <img src="/images/wx.jpg" alt="" class="article-cover">
+      </div>
+    </div>
+    <article class="article-content markdown-body">
+      <h1 id="微信小程序"><a href="#微信小程序" class="headerlink" title="微信小程序"></a>微信小程序</h1><h2 id="1-页面路径配置（创建新页面的方式）"><a href="#1-页面路径配置（创建新页面的方式）" class="headerlink" title="1.页面路径配置（创建新页面的方式）"></a>1.页面路径配置（创建新页面的方式）</h2><p>1）如果需要在微信小程序中创建一个新的页面，可以在app.json文件的pages数组中增加一项新页面的信息，微信开发者工具会创建对应的页面。</p>
+<p><img src="/images/image-20240909105251407.png" alt="微信小程序图"></p>
+<p>2）在一个新的文件夹中，点击右键，新建page</p>
+<p><strong>注意</strong>：</p>
+<p>1.如果对页面文件直接进行删除操作，则不会触发代码的自动更新效果，需要手动修改app.json文件中的pages数组。</p>
+<p>2.WXML和WXSS文件等的文件名<strong>必须与页面名称（或文件夹名称）相同</strong>。这是因为小程序框架在加载页面时，会根据页面路径和文件名来查找对应的WXML、WXSS、JS和JSON文件。</p>
+<p>3.微信开发者工具在启动小程序时，默认会加载并运行<code>app.json</code>中<code>pages</code>数组中的第一个页面路径。这个页面通常被设置为小程序的首页，用户打开小程序时首先看到的就是这个页面。</p>
+<p><img src="/images/image-20240909122554251.png" alt="微信小程序图"></p>
+<h2 id="2-组件（container）"><a href="#2-组件（container）" class="headerlink" title="2.组件（container）"></a>2.组件（container）</h2><h3 id="1）常用视图容器组件"><a href="#1）常用视图容器组件" class="headerlink" title="1）常用视图容器组件"></a>1）常用视图容器组件</h3><h4 id="1】view-（普通视图区域）"><a href="#1】view-（普通视图区域）" class="headerlink" title="1】view （普通视图区域）"></a>1】view （普通视图区域）</h4><p>普通视图区域，类似于HTML中的div,是一个块级元素，常用来实现页面的布局效果</p>
+<p><img src="/images/image-20240909150655103.png" alt="微信小程序图"></p>
+<h4 id="2】scroll-view-（可滚动视图区域）"><a href="#2】scroll-view-（可滚动视图区域）" class="headerlink" title="2】scroll-view （可滚动视图区域）"></a>2】scroll-view （可滚动视图区域）</h4><p>常用来实现滚动列表效果</p>
+<p>​      属性：</p>
+<p>​                scroll-y  允许纵向滚动</p>
+<p>​                scroll-x  允许横向滚动</p>
+<p>​                注意：使用竖向滚动时，<strong>必须给scroll-view一个固定高度</strong>。</p>
+<h4 id="3】swiper和swiper-item-（轮播图）"><a href="#3】swiper和swiper-item-（轮播图）" class="headerlink" title="3】swiper和swiper-item （轮播图）"></a>3】swiper和swiper-item （轮播图）</h4><p>轮播图容器组件和轮播图item组件</p>
+<p><img src="/images/image-20240909151614188.png" alt="微信小程序图"></p>
+<h3 id="2-常用的基础内容组件"><a href="#2-常用的基础内容组件" class="headerlink" title="2)常用的基础内容组件"></a>2)常用的基础内容组件</h3><h4 id="1】text和rich-text-文本和富文本"><a href="#1】text和rich-text-文本和富文本" class="headerlink" title="1】text和rich-text(文本和富文本)"></a>1】text和rich-text(文本和富文本)</h4><p><strong>text:</strong></p>
+<p>​       文本组件，类似于HTML中的sapn标签，是一个行内元素</p>
+<p>​        属性：selectable：实现长按选中文本内容效果（长按选中复制） user-select：文本是否可选，该属性会使文本节点显示为inline-block</p>
+<p><img src="/images/image-20240909151528114.png" alt="微信小程序图"></p>
+<p>​        注意：text组件内部只能嵌套text组件</p>
+<p><strong>rich-text:</strong></p>
+<p>​              <strong>富文本组件，支持把HTML字符渲染为WXML结构</strong></p>
+<p>​              属性：<strong>nodes 把HTML字符串渲染为对应的UI结构</strong>   <img src="/images/image-20240909133407078.png" alt="微信小程序图"></p>
+<h3 id="3-按钮组件"><a href="#3-按钮组件" class="headerlink" title="3)按钮组件"></a>3)按钮组件</h3><h4 id="1】button（按钮）"><a href="#1】button（按钮）" class="headerlink" title="1】button（按钮）"></a>1】button（按钮）</h4><p>按钮组件，功能比HTML中的button按钮丰富</p>
+<p>属性：open-type可以调用微信提供的各种功能（客服，转发，获取用户授权，获取用户信息等）</p>
+<p><img src="/images/image-20240909134837984.png" alt="微信小程序图"></p>
+<p>全局配置文件app.json中”style“:”v2”表示的是新版本，如果删除这个，就采用的旧版本的样式，就由上图样式，变成了下图样式。</p>
+<p><img src="/images/image-20240909135118488.png" alt="微信小程序图"></p>
+<h3 id="4）媒体组件"><a href="#4）媒体组件" class="headerlink" title="4）媒体组件"></a>4）媒体组件</h3><h4 id="1】image（图片）"><a href="#1】image（图片）" class="headerlink" title="1】image（图片）"></a>1】image（图片）</h4><p>图片组件，<strong>image组件默认宽度约300px,高度约240px</strong>.并且image组件的功能比HTML中的<img>标签更强大，支持对图片进行剪裁和缩放。支持单标签和双标签俩种写法。</p>
+<image src="图片资源地址"/>
+
+<p><image src="图片资源地址"></image></p>
+<p><img src="/images/image-20240909151136747.png" alt="微信小程序图"></p>
+<p><img src="/images/image-20240909151106281.png" alt="微信小程序图"></p>
+<h4 id="2】audio（音频）"><a href="#2】audio（音频）" class="headerlink" title="2】audio（音频）"></a>2】audio（音频）</h4><p>音频组件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;audio src=&quot;音频文件路径&quot; contorls&gt;&lt;/audio&gt;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/image-20240909145347826.png" alt="微信小程序图"></p>
+<h4 id="3】video（视频）"><a href="#3】video（视频）" class="headerlink" title="3】video（视频）"></a>3】video（视频）</h4><p>视频组件，用于播放视频，vedio组件默认宽度为300px,高度为225px.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;video&gt;视频&lt;/video&gt;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/image-20240909151838243.png" alt="微信小程序图"></p>
+<h3 id="5-页面导航组件"><a href="#5-页面导航组件" class="headerlink" title="5)页面导航组件"></a>5)页面导航组件</h3><h4 id="1】navigator"><a href="#1】navigator" class="headerlink" title="1】navigator"></a>1】navigator</h4><p>页面导航组件类似于HTML中的a链接,页面跳转。</p>
+<p>语法：<navigator url="其他页面跳转地址"></navigator></p>
+<p>属性：</p>
+<p> open-type:默认值为navigator(默认打开新页面)，redirect（在当前页面打开）</p>
+<h3 id="6）画布组件"><a href="#6）画布组件" class="headerlink" title="6）画布组件"></a>6）画布组件</h3><h4 id="1】canvas"><a href="#1】canvas" class="headerlink" title="1】canvas"></a>1】canvas</h4><p>在HTML中，<canvas>标签可用于图形的绘制，也可用于创建图片特效和动画。在微信小程序中，canvas组件也起着类似作用，可用于自定义绘制图形，该组件支持2D和WebGL的绘图。</p>
+<p><img src="/images/image-20241114140159811.png" alt="微信小程序图"></p>
+<h2 id="3-小程序API"><a href="#3-小程序API" class="headerlink" title="3.小程序API"></a>3.小程序API</h2><p>小程序API是由宿主环境提供的，通过这些丰富的小程序API，开发者可以方便的调用微信提供的能力，例如：获取用户信息，本地存储，支付功能等。</p>
+<p>1）<strong>事件监听API</strong></p>
+<p>​      特点：<strong>以on开头，用来监听某些事件的触发</strong>。</p>
+<p>​      wx.<strong>onWindowResize</strong>监听窗口尺寸变化的事件。</p>
+<p>2）<strong>同步API</strong></p>
+<p>​       特点：以<strong>Sync结尾</strong>的API都是同步API，同步API的执行结果，可以通过函数返回值直接获取，如果执行出错，会抛出异常。</p>
+<p>​       <strong>wx.setStorageSync(‘key’,’value’)向本地存储中写入内容。</strong></p>
+<p>3）<strong>异步API</strong></p>
+<p>​       特点：类似于ajax,需要通过success,fail,complete接受调用的结果。</p>
+<p>​       wx.request()发起网络数据请求，通过success回调函数接受数据。</p>
+<h2 id="4-WXML模板语法-数据绑定（插值表达式）"><a href="#4-WXML模板语法-数据绑定（插值表达式）" class="headerlink" title="4.WXML模板语法-数据绑定（插值表达式）"></a>4.WXML模板语法-数据绑定（插值表达式）</h2><h3 id="1）在data中定义数据"><a href="#1）在data中定义数据" class="headerlink" title="1）在data中定义数据"></a>1）在data中定义数据</h3><p>​      在页面对应的.js文件中，把数据定义到data对象中即可。</p>
+<h3 id="2）在WXML中使用数据"><a href="#2）在WXML中使用数据" class="headerlink" title="2）在WXML中使用数据"></a>2）在WXML中使用数据</h3><p>​        把data中的数据绑定到页面中渲染，使用Mustache语法（又叫插值表达式）（vue中的插值表达式）（双大括号）将变量包起来。</p>
+
+
+<p>Mustache应用场景：绑定内容，绑定属性，运算（三元运算，算术运算等）</p>
+<p><img src="/images/image-20241014083211835.png" alt="微信小程序图"></p>
+<h2 id="5-WXML模板语法-事件绑定"><a href="#5-WXML模板语法-事件绑定" class="headerlink" title="5.WXML模板语法-事件绑定"></a>5.WXML模板语法-事件绑定</h2><p>时间绑定有俩种方式：bind:+事件类型(冒泡)  &#x2F;catch:+事件类型(非冒泡)</p>
+<p><img src="/images/image-20241014083608811.png" alt="微信小程序图"></p>
+<h4 id="1）小程序中常用事件"><a href="#1）小程序中常用事件" class="headerlink" title="1）小程序中常用事件"></a>1）小程序中常用事件</h4><p><img src="/images/image-20240912200003162.png" alt="微信小程序图"></p>
+<p><img src="/images/image-20241014083255633.png" alt="微信小程序图"></p>
+<p>change状态改变时触发：就好比当checksbox的复选框改变时，会触发事件。</p>
+<h4 id="2）event事件对象的属性列表"><a href="#2）event事件对象的属性列表" class="headerlink" title="2）event事件对象的属性列表"></a>2）event事件对象的属性列表</h4><p><img src="/images/image-20240912200325565.png" alt="微信小程序图"></p>
+<p>注意：<strong>target</strong>是<strong>触发该事件的源头组件</strong>，而<strong>currentTarget</strong>则是<strong>当前事件所绑定的组件</strong>。</p>
+<p><img src="/images/image-20240912200741135.png" alt="微信小程序图"></p>
+<h4 id="3）点击事件bindtap的使用"><a href="#3）点击事件bindtap的使用" class="headerlink" title="3）点击事件bindtap的使用"></a>3）点击事件bindtap的使用</h4><p>1】为组件绑定tap点击事件<button type="primary" bindtap="function"></button></p>
+<p>2】在页面的.js文件中定义对应的事件处理函数，事件参数通过形参event,一般简写成e来接受。</p>
+<p><img src="/images/image-20240912201333918.png" alt="微信小程序图"></p>
+<p>3】在事件处理函数中为data中的数据赋值</p>
+<p>通过this.setData(dataObject)方法，可以给页面data中的数据重新赋值；</p>
+<p><img src="/images/image-20240912201846655.png" alt="微信小程序图"></p>
+<h4 id="4）事件传参"><a href="#4）事件传参" class="headerlink" title="4）事件传参"></a>4）事件传参</h4><p>在小程序中，不能在绑定事件的同时为事件处理函数传递参数。</p>
+<p><img src="/images/image-20240912202134984.png" alt="微信小程序图"></p>
+<p><img src="/images/image-20240912202209105.png" alt="微信小程序图"></p>
+<p>可以为组件提供data-*自定义属性传参，其中星号代表的是参数的名字。</p>
+<p><img src="/images/image-20240912202403282.png" alt="微信小程序图"></p>
+<p>然后在事件处理函数中，通过<strong>event.target.dataset.参数名</strong>即可获取到具体参数的值。</p>
+<h2 id="6-WXML模板语法-条件渲染"><a href="#6-WXML模板语法-条件渲染" class="headerlink" title="6.WXML模板语法-条件渲染"></a>6.WXML模板语法-条件渲染</h2><p>wx:if&#x3D;”“ 用来判断是否需要渲染该代码块。与vue的v-if很像，可以搭配wx:elif wx:else来进行多条件判断渲染。</p>
+<h2 id="7-WXML模板语法-列表渲染"><a href="#7-WXML模板语法-列表渲染" class="headerlink" title="7.WXML模板语法-列表渲染"></a>7.WXML模板语法-列表渲染</h2><p>wx:for&#x3D;”“ 用来遍历循环</p>
+<h2 id="8-导航栏配置"><a href="#8-导航栏配置" class="headerlink" title="8.导航栏配置"></a>8.导航栏配置</h2><p><img src="/images/image-20241014084023393.png" alt="微信小程序图"></p>
+<h2 id="9-标签栏配置"><a href="#9-标签栏配置" class="headerlink" title="9.标签栏配置"></a>9.标签栏配置</h2><p><img src="/images/image-20241014084121079.png" alt="微信小程序图"></p>
+<h2 id="10-页面导航"><a href="#10-页面导航" class="headerlink" title="10.页面导航"></a>10.页面导航</h2><h3 id="1）声名式导航—导航组件navigator"><a href="#1）声名式导航—导航组件navigator" class="headerlink" title="1）声名式导航—导航组件navigator"></a>1）声名式导航—<navigator>导航组件navigator</h3><p><img src="/images/image-20240914100257499.png" alt="微信小程序图"></p>
+<p>页面跳转的路径必须是以“&#x2F;”开始</p>
+<h4 id="1】open-type属性值："><a href="#1】open-type属性值：" class="headerlink" title="1】open-type属性值："></a>1】open-type属性值：</h4><p>​                 <strong>switchTab</strong>  跳转到Tab标签栏页面</p>
+<p><navigator url="Tab标签栏页面地址" open-type="switchTab "></navigator>或者</p>
+<p>​                 <strong>navigate</strong>    跳转到非Tab标签栏页面，因为open-type的默认值是navigate，所以可以省略不写。 <navigator url="页面地址" open-type="navigate"></navigator>或者<navigator url="非Tab标签栏页面地址"></navigator></p>
+<p>​                <strong>navigateBack</strong>  回退到上一级页面或多级页面 delta表示要后退的层级<navigator open-type="navigateBack" delta='1'>返回上一页<navigator> 当返回层级为1时delta属性可以省略不写<navigator opentype="navigateBack">返回上一页<navigator></p>
+<h4 id="2】跳转页面传参数"><a href="#2】跳转页面传参数" class="headerlink" title="2】跳转页面传参数"></a>2】跳转页面传参数</h4><p><img src="/images/image-20240914104008960.png" alt="微信小程序图"></p>
+<h3 id="2）编程式导航—调用小程序的导航API"><a href="#2）编程式导航—调用小程序的导航API" class="headerlink" title="2）编程式导航—调用小程序的导航API"></a>2）编程式导航—调用小程序的导航API</h3><h4 id="1】导航到tabBar页面"><a href="#1】导航到tabBar页面" class="headerlink" title="1】导航到tabBar页面"></a>1】导航到tabBar页面</h4><p>wx.switchTab(Object object)方法，可以跳转到tabBar页面，其中Object为参数对象属性有：</p>
+<p><img src="/images/image-20240914102812023.png" alt="微信小程序图"></p>
+<h4 id="2】导航到非tabBar页面"><a href="#2】导航到非tabBar页面" class="headerlink" title="2】导航到非tabBar页面"></a>2】导航到非tabBar页面</h4><p>wx.navigateTo(Object object)方法，可以跳转到非tabBar的页面，其中Object为参数对象属性有：</p>
+<p><img src="/images/image-20240914102812023.png" alt="微信小程序图"></p>
+<h4 id="3】后退导航"><a href="#3】后退导航" class="headerlink" title="3】后退导航"></a>3】后退导航</h4><p>wx.navigateBack(Object object)方法，可以返回上一页面或多级页面。其中Object为参数对象属性有：</p>
+<p><img src="/images/image-20240914103536846.png" alt="微信小程序图"></p>
+<h4 id="4】跳转页面传参"><a href="#4】跳转页面传参" class="headerlink" title="4】跳转页面传参"></a>4】跳转页面传参</h4><p><img src="/images/image-20240914104316242.png" alt="微信小程序图"></p>
+<h3 id="3）在onLoad中接受导航参数"><a href="#3）在onLoad中接受导航参数" class="headerlink" title="3）在onLoad中接受导航参数"></a>3）在onLoad中接受导航参数</h3><p>通过声名式导航传参或编程式导航传参所携带的参数，可以直接在onLoad事件中直接获取到。</p>
+<p>将options中的参数转存到data中的一个空对象query中</p>
+<p><img src="/images/image-20240914105000297.png" alt="微信小程序图"></p>
+<h2 id="11-下拉刷新"><a href="#11-下拉刷新" class="headerlink" title="11.下拉刷新"></a>11.下拉刷新</h2><h3 id="1）开启下拉刷新"><a href="#1）开启下拉刷新" class="headerlink" title="1）开启下拉刷新"></a>1）开启下拉刷新</h3><p><img src="/images/image-20240914105123854.png" alt="微信小程序图"></p>
+<p><img src="/images/image-20240914105154012.png" alt="微信小程序图"></p>
+<h3 id="2）监听页面下拉刷新事件"><a href="#2）监听页面下拉刷新事件" class="headerlink" title="2）监听页面下拉刷新事件"></a>2）监听页面下拉刷新事件</h3><p>在页面.js文件中，通过onPullDownRefresh()函数即可监听当前页面的下拉刷新事件。</p>
+<h3 id="3-停止下拉刷新效果"><a href="#3-停止下拉刷新效果" class="headerlink" title="3) 停止下拉刷新效果"></a>3) 停止下拉刷新效果</h3><p>调用wx.stopPullDownRefresh()可以停止当前页面的下拉刷新。</p>
+<h2 id="12-上拉触底事件"><a href="#12-上拉触底事件" class="headerlink" title="12.上拉触底事件"></a>12.上拉触底事件</h2><h3 id="1）上拉触底事件的作用"><a href="#1）上拉触底事件的作用" class="headerlink" title="1）上拉触底事件的作用"></a>1）上拉触底事件的作用</h3><p>在页面的.js文件中，通过onReachBottom()函数即可监听当前页面的上拉触底事件。</p>
+<p><img src="/images/image-20240914112455853.png" alt="微信小程序图"></p>
+<p><img src="/images/image-20240914112620129.png" alt="微信小程序图"></p>
+<p>应用：在页面中，上拉触底事件，在用户上拉触底时，可以发送请求，用于请求数据。如果用户上拉触底多次，但是上一次请求还没有完成，那么我们应该进行节流处理。</p>
+<h3 id="2）上拉触底事件的距离"><a href="#2）上拉触底事件的距离" class="headerlink" title="2）上拉触底事件的距离"></a>2）上拉触底事件的距离</h3><p>上拉触底距离指的是<strong>触发上拉触底事件时，滚动条距离页面底部的距离</strong>。默认是50px.</p>
+<p>可以在全局或页面的.json配置文件中，通过onReachBottomDistance属性来配置上拉触底事件的距离。</p>
+<p><img src="/images/image-20240914113419366.png" alt="微信小程序图"></p>
+<h2 id="13-提示框"><a href="#13-提示框" class="headerlink" title="13.提示框"></a>13.提示框</h2><p><strong>显示提示框</strong>：wx.showLoading(Object object)方法</p>
+<p>​                     属性： title        string 提示的内容</p>
+<p>​                                mask    boolean 是否显示透明蒙层，防止触摸穿透，默认值为false</p>
+<p>​                                success  function 接口调用成功的回调函数</p>
+<p>​                                 fail          function 接口调用失败的回调函数</p>
+<p>​                                complete  function 接口调用结束的回调函数（调用成功，失败都会执行）</p>
+<h2 id="14-生命周期"><a href="#14-生命周期" class="headerlink" title="14.生命周期"></a>14.生命周期</h2><p>生命周期：是指一个对象从<strong>创建-&gt;运行-&gt;销毁</strong>的整个阶段，<strong>强调的是一个时间段</strong>。</p>
+<p><strong>小程序启动（生命周期的开始），小程序关闭（生命周期的结束）</strong></p>
+<h3 id="1）应用生命周期"><a href="#1）应用生命周期" class="headerlink" title="1）应用生命周期"></a>1）应用生命周期</h3><p>特指小程序从启动-&gt;运行-&gt;销毁的过程</p>
+<h3 id="2）页面生命周期"><a href="#2）页面生命周期" class="headerlink" title="2）页面生命周期"></a>2）页面生命周期</h3><p>特指小程序中，每个页面的加载-&gt;渲染-&gt;销毁的过程。</p>
+<p><img src="/images/image-20240914150122396.png" alt="微信小程序图"></p>
+<h3 id="3）生命周期函数"><a href="#3）生命周期函数" class="headerlink" title="3）生命周期函数"></a>3）生命周期函数</h3><p><img src="/images/image-20240914150312889.png" alt="微信小程序图"></p>
+<h4 id="1】应用的生命周期函数"><a href="#1】应用的生命周期函数" class="headerlink" title="1】应用的生命周期函数"></a>1】应用的生命周期函数</h4><p>小程序的<strong>应用生命周期函数需要在app.js中进行声名。</strong></p>
+<p><img src="/images/image-20240914150707545.png" alt="微信小程序图"></p>
+<h4 id="2】页面的生命周期函数"><a href="#2】页面的生命周期函数" class="headerlink" title="2】页面的生命周期函数"></a>2】页面的生命周期函数</h4><p><img src="/images/image-20241014084453159.png" alt="微信小程序图"></p>
+<h2 id="14-自定义组件-component"><a href="#14-自定义组件-component" class="headerlink" title="14.自定义组件(component)"></a>14.自定义组件(component)</h2><h3 id="1）创建自定义组件"><a href="#1）创建自定义组件" class="headerlink" title="1）创建自定义组件"></a>1）创建自定义组件</h3><p>第一步：在根目录下创建components文件夹</p>
+<p>第二步：在components上按右键，新建component输入名字，就会出现.js.json.wxml.wxss</p>
+<p><img src="/images/image-20240923110303394.png" alt="微信小程序图"></p>
+<h3 id="2-组件的使用"><a href="#2-组件的使用" class="headerlink" title="2)组件的使用"></a>2)组件的使用</h3><h4 id="1】局部引用-页面-json"><a href="#1】局部引用-页面-json" class="headerlink" title="1】局部引用(页面.json)"></a>1】局部引用(页面.json)</h4><p>在<strong>页面的.json配置文件</strong>中引用组件</p>
+<p>“usingComponents”:{</p>
+<p>​      “组件引用名字”：”组件存放位置”，</p>
+<p>​        ………</p>
+<p>}</p>
+<p>注意：组件存放位置，不带任何的后缀。eg. .js</p>
+<p>组件的使用方式：&lt;组件名&gt;&lt;&#x2F;组件名&gt;</p>
+<h4 id="2】全局引用（app-json）"><a href="#2】全局引用（app-json）" class="headerlink" title="2】全局引用（app.json）"></a>2】全局引用（app.json）</h4><p>在<strong>app.json全局配置文件</strong>中引用组件的方式</p>
+<p>“usingComponents”:{</p>
+<p>​      “组件引用名字”：”组件存放位置”，</p>
+<p>​        ………</p>
+<p>}</p>
+<p>注意：组件存放位置，不带任何的后缀。eg. .js</p>
+<p>组件的使用方式：&lt;组件名&gt;&lt;&#x2F;组件名&gt;</p>
+<h4 id="3】组件和页面的区别"><a href="#3】组件和页面的区别" class="headerlink" title="3】组件和页面的区别"></a>3】组件和页面的区别</h4><p><img src="/images/image-20240923111238204.png" alt="微信小程序图"></p>
+<h3 id="3）自定义组件-样式"><a href="#3）自定义组件-样式" class="headerlink" title="3）自定义组件-样式"></a>3）自定义组件-样式</h3><h4 id="1】组件样式隔离的注意点"><a href="#1】组件样式隔离的注意点" class="headerlink" title="1】组件样式隔离的注意点"></a>1】组件样式隔离的注意点</h4><p><img src="/images/image-20240917152041350.png" alt="微信小程序图"></p>
+<p>app.wxss中的全局样式对组件无效</p>
+<p>只有class选择器会有样式隔离效果，id选择器，属性选择器，标签选择器不受样式隔离的影响。（容易造成样式冲突）</p>
+<p>建议：在组件和引用组件的页面中<strong>建议使用class选择器</strong>，不要使用id,属性，标签选择器。</p>
+<h4 id="2】组件的样式隔离选项"><a href="#2】组件的样式隔离选项" class="headerlink" title="2】组件的样式隔离选项"></a>2】组件的样式隔离选项</h4><p><img src="/images/image-20240917152254476.png" alt="微信小程序图"></p>
+<p><img src="/images/image-20240917152445028.png" alt="微信小程序图"></p>
+<h4 id="3】组件data数据"><a href="#3】组件data数据" class="headerlink" title="3】组件data数据"></a>3】组件data数据</h4><p>在小程序组件中，用于组件模板渲染的私有数据，需要定义到data节点中。</p>
+<h4 id="4】组件methods节点"><a href="#4】组件methods节点" class="headerlink" title="4】组件methods节点"></a>4】组件methods节点</h4><p>在小程序中，<strong>事件处理函数</strong>和<strong>自定义方法</strong>需要定义到<strong>methods节点</strong>中。</p>
+<h4 id="5】组件properties属性"><a href="#5】组件properties属性" class="headerlink" title="5】组件properties属性"></a>5】组件properties属性</h4><p>在小程序组件中，properties是组件的对外属性，<strong>用来接受外界传递到组件中的数据</strong>，也可以用setData给properties属性重新赋值。</p>
+<p><img src="/images/image-20241014090759882.png" alt="微信小程序图"></p>
+<h4 id="6】data和properties的区别"><a href="#6】data和properties的区别" class="headerlink" title="6】data和properties的区别"></a>6】data和properties的区别</h4><p>data:存储组件的私有数据。</p>
+<p>properties:存储外界传递到组件中的数据。</p>
+<h4 id="7】组件的数据监听器（observers）"><a href="#7】组件的数据监听器（observers）" class="headerlink" title="7】组件的数据监听器（observers）"></a>7】组件的数据监听器（observers）</h4><p>数据监听器用于监听和响应任何属性和数据字段的变化，从而执行特定的属性操作。（类似于vue的watch侦听器）</p>
+<p>组件通过observers对数据监听</p>
+<p><img src="/images/image-20241014091911209.png" alt="微信小程序图"></p>
+<p><img src="/images/image-20241014092130460.png" alt="微信小程序图"></p>
+<h4 id="8】自定义组件-纯数据字段–pureDataPattern正则表达式"><a href="#8】自定义组件-纯数据字段–pureDataPattern正则表达式" class="headerlink" title="8】自定义组件-纯数据字段–pureDataPattern正则表达式"></a>8】自定义组件-纯数据字段–pureDataPattern正则表达式</h4><p>纯数据字段：指的是那些不用于界面渲染的data字段。</p>
+<p><img src="/images/image-20241104090415872.png" alt="微信小程序图"></p>
+<p>使用规则：在Component构造器的options节点中，指定pureDataPattern为一个正则表达式，字段名符合这个正则表达式的字段将成为纯数据字段。</p>
+<p><img src="/images/image-20241104090659145.png" alt="微信小程序图"></p>
+<h3 id="4）组件的生命周期–组件lifttimes节点"><a href="#4）组件的生命周期–组件lifttimes节点" class="headerlink" title="4）组件的生命周期–组件lifttimes节点"></a>4）组件的生命周期–组件lifttimes节点</h3><p><img src="/images/image-20241104092304489.png" alt="微信小程序图"></p>
+<p>1】<strong>created组件</strong>实例刚被创建好：此时还不能调用setData.只应该用于<strong>给组件的this添加一些自定义的属性字段</strong>。</p>
+<p>2】<strong>attached</strong>在组件完全初始化完毕，进入页面节点树后，此时this.data已被初始化完毕，绝大多数初始化的工作可以在这个时机进行（<strong>发请求获取初始化是数据）</strong></p>
+<p>3】detached组件离开页面节点数，推出一个页面时，会触发页面内每个自定义组件的detached，适合做一些清理性质的工作。</p>
+<p><img src="/images/image-20241104110319599.png" alt="微信小程序图"></p>
+<h3 id="5-组件所在页面的生命周期–组件pagelifetimes节点"><a href="#5-组件所在页面的生命周期–组件pagelifetimes节点" class="headerlink" title="5)组件所在页面的生命周期–组件pagelifetimes节点"></a>5)组件所在页面的生命周期–组件pagelifetimes节点</h3><p>自定义组件的行为依赖于页面状态的变化，此时需要用到组件所在页面的生命周期。</p>
+<p><img src="/images/image-20241104110629136.png" alt="微信小程序图"></p>
+<p><img src="/images/image-20241104110838625.png" alt="微信小程序图"></p>
+<h3 id="6）自定义组件-插槽–slot占位"><a href="#6）自定义组件-插槽–slot占位" class="headerlink" title="6）自定义组件-插槽–slot占位"></a>6）自定义组件-插槽–slot占位</h3><h4 id="1】插槽概念"><a href="#1】插槽概念" class="headerlink" title="1】插槽概念"></a>1】插槽概念</h4><p>在自定义组件的wxml结构中，可以提供一个<slot>节点（插槽），<strong>用于承载组件使用者提供的wxml结构。</strong></p>
+<p><img src="/images/image-20241104111727620.png" alt="微信小程序图"></p>
+<p>注意：在小程序中，默认每个自定义组件中只允许使用一个<slot>进行占位，这种个数上的限制叫做单个插槽。</p>
+<h4 id="2】单个插槽的使用"><a href="#2】单个插槽的使用" class="headerlink" title="2】单个插槽的使用"></a>2】单个插槽的使用</h4><p>第一步：定义个组件，并且内部留一个插槽的占位符。</p>
+<p><img src="/images/image-20241104112156114.png" alt="微信小程序图"></p>
+<p>第二步：在页面引用组件的时候，像组件的插槽中填充内容。（一个view标签）</p>
+<p><img src="/images/image-20241104112057715.png" alt="微信小程序图"></p>
+<h4 id="3】多个插槽的使用"><a href="#3】多个插槽的使用" class="headerlink" title="3】多个插槽的使用"></a>3】多个插槽的使用</h4><p>因为在小程序中默认每个自定义组件中只允许使用一个<slot>进行占位，想要使用多个插槽，就得在js文件中的options节点下，通过multipleSlots:true开启组件可以定义多个插槽<slot></p>
+<p>第一步：启用多个插槽</p>
+<p><img src="/images/image-20241104112627798.png" alt="微信小程序图"></p>
+<p>第二步：在组件中定义多个插槽，以name来区分</p>
+<p><img src="/images/image-20241104112750791.png" alt="微信小程序图"></p>
+<p>第三步：在引入组件时，使用插槽用slot属性标明添加的内容指定插入到name的插槽位置。</p>
+<p><img src="/images/image-20241104113004175.png" alt="微信小程序图"></p>
+<h3 id="7）父子组件之间的通信–3种"><a href="#7）父子组件之间的通信–3种" class="headerlink" title="7）父子组件之间的通信–3种"></a>7）父子组件之间的通信–3种</h3><h4 id="1】属性绑定–父亲向儿子传值"><a href="#1】属性绑定–父亲向儿子传值" class="headerlink" title="1】属性绑定–父亲向儿子传值"></a>1】属性绑定–父亲向儿子传值</h4><p>用于父组件向子组件的指定属性设置数据，仅能设置JSON兼容的数据</p>
+<p><img src="/images/image-20241104113539047.png" alt="微信小程序图"></p>
+<p><img src="/images/image-20241104113838969.png" alt="微信小程序图"></p>
+<p><img src="/images/image-20241104113713627.png" alt="微信小程序图"></p>
+<h4 id="2】事件绑定–儿子向父亲传值"><a href="#2】事件绑定–儿子向父亲传值" class="headerlink" title="2】事件绑定–儿子向父亲传值"></a>2】事件绑定–儿子向父亲传值</h4><p>用于子组件向父组件传递数据，可以传递任意数据</p>
+<p><img src="/images/image-20241111085657394.png" alt="微信小程序图"></p>
+<p>1】2】小结</p>
+<p><img src="/images/image-20241111092621077.png" alt="微信小程序图"></p>
+<h4 id="3】获取组件实例–获取子组件实例对象"><a href="#3】获取组件实例–获取子组件实例对象" class="headerlink" title="3】获取组件实例–获取子组件实例对象"></a>3】获取组件实例–获取子组件实例对象</h4><p><img src="/images/image-20241111092741958.png" alt="微信小程序图"></p>
+<p><img src="/images/image-20241111093015312.png" alt="微信小程序图"></p>
+<h3 id="8）自定义组件-behaviors-组件代码共享"><a href="#8）自定义组件-behaviors-组件代码共享" class="headerlink" title="8）自定义组件 - behaviors(组件代码共享)"></a>8）自定义组件 - behaviors(组件代码共享)</h3><h4 id="1】概念"><a href="#1】概念" class="headerlink" title="1】概念"></a>1】概念</h4><p>behaviors是小程序中，用于实现组件间代码共享的特性。类似于Vue.js中的”mixins“</p>
+<p><img src="/images/image-20241111093516927.png" alt="微信小程序图"></p>
+<p><img src="/images/image-20241111093711448.png" alt="微信小程序图"></p>
+<h4 id="2】使用behavior"><a href="#2】使用behavior" class="headerlink" title="2】使用behavior"></a>2】使用behavior</h4><p>创建behavior</p>
+<p><img src="/images/image-20241111093830695.png" alt="微信小程序图"></p>
+<p><img src="/images/image-20241111093915018.png" alt="微信小程序图"></p>
+<p>使用behavior</p>
+<p><img src="/images/image-20241111094154531.png" alt="微信小程序图"></p>
+<h4 id="3】behavior中可以使用的节点"><a href="#3】behavior中可以使用的节点" class="headerlink" title="3】behavior中可以使用的节点"></a>3】behavior中可以使用的节点</h4><p><img src="/images/image-20241111094330195.png" alt="微信小程序图"></p>
+<h2 id="15-网络请求"><a href="#15-网络请求" class="headerlink" title="15.网络请求"></a>15.网络请求</h2><p><img src="/images/image-20241014090314525.png" alt="微信小程序图"></p>
+<p><img src="/images/image-20241014090252858.png" alt="微信小程序图"></p>
+<h2 id="16-API"><a href="#16-API" class="headerlink" title="16.API"></a>16.API</h2><h3 id="1）背景音频API"><a href="#1）背景音频API" class="headerlink" title="1）背景音频API"></a>1）背景音频API</h3><p>在微信小程序中，使用背景音频API可以实现音频的后台播放。</p>
+<p>第一步：</p>
+<p>在使用背景音频前，需要在app.json文件中配置requiredBackgroundModes属性，开启微信小程序后台音频播放功能。requiredBackgroundMedes属性值为数组类型，在数组中添加audio项表示开启后台音频播放功能。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">&quot;requiredBackgroundModes&quot;</span><span class="punctuation">:</span><span class="punctuation">[</span><span class="string">&quot;audio&quot;</span><span class="punctuation">]</span></span><br></pre></td></tr></table></figure>
+
+<p>第二步：</p>
+<p>通过wx.getBackgroundAudioManager()方法获取一个BackgroundAudioManager实例。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> 对象名 = wx.getBackgroundAudioManager()</span><br></pre></td></tr></table></figure>
+
+<p>第三步：</p>
+<p>调用属性或方法，实现功能</p>
+<p>eg.对象名.title &#x3D; ‘音乐标题’</p>
+<p>​      对象名.onPlay(function(){</p>
+<p>​         console.log(“开始播放”)</p>
+<p>})</p>
+<p><img src="/images/image-20241111155526372.png" alt="微信小程序图"></p>
+<h3 id="2）录音API"><a href="#2）录音API" class="headerlink" title="2）录音API"></a>2）录音API</h3><p>第一步：</p>
+<p>通过wx.getRecorderManager()获取RecorderManager实例化对象</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> 对象变量 = wx.getRecorderManager()</span><br></pre></td></tr></table></figure>
+
+<p>第二步：</p>
+<p>使用对象.方法名使用RecorderManager常用属性</p>
+<p>案例：在页面初始化时，开始录音，并且在5秒结束后，停止录音。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">onReady() &#123;</span><br><span class="line">   <span class="type">var</span> <span class="variable">recorder</span> <span class="operator">=</span> wx.getRecorderManager()</span><br><span class="line">   <span class="comment">// 监听录音开始事件</span></span><br><span class="line">   recorder.onStart(()=&gt;&#123;</span><br><span class="line">     console.log(<span class="string">&quot;开始录音&quot;</span>)</span><br><span class="line">   &#125;)</span><br><span class="line">   <span class="comment">// 监听录音停止事件</span></span><br><span class="line">   recorder.onStop(res=&gt;&#123;</span><br><span class="line">     console.log(<span class="string">&#x27;停止录音&#x27;</span>)</span><br><span class="line">     console.log(res.tempFilePath)</span><br><span class="line">   &#125;)</span><br><span class="line">   <span class="comment">// 开始录音</span></span><br><span class="line">   recorder.start()</span><br><span class="line">   <span class="comment">// 5秒后自动停止录音</span></span><br><span class="line">   setTimeout(()=&gt;&#123;</span><br><span class="line">     recorder.stop()</span><br><span class="line">   &#125;,<span class="number">5000</span>)</span><br><span class="line"></span><br><span class="line"> &#125;,</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/image-20241113161601273.png" alt="微信小程序图"></p>
+<h3 id="3）音频API"><a href="#3）音频API" class="headerlink" title="3）音频API"></a>3）音频API</h3><p>在小程序中，除了背景音频API可以实现播放音频的功能外，还可以通过音频API来播放音乐。</p>
+<p>背景API和音频API的区别在于背景音频API支持后台播放，而音频API不支持后台播放。</p>
+<p>第一步：</p>
+<p>通过wx.createInnerAudioContext()获取InnerAudioContext实例化对象</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">var</span> <span class="variable">audioCtx</span> <span class="operator">=</span> wx.createInnerAudioContext()</span><br></pre></td></tr></table></figure>
+
+<p>第二步：</p>
+<p>通过InnerAudioContext实例的属性和方法实现音频播放功能。</p>
+<p>InnerAudioContext实例常用的属性和方法与BackgroundAudioManager实例常用的属性和方法相同，但是InnerAudioContext实例没有title属性。InnerAudioContext实例特有的属性和方法如下表所示。</p>
+<p><img src="/images/image-20241113163002847.png" alt="微信小程序图"></p>
+<h3 id="4）选择媒体API"><a href="#4）选择媒体API" class="headerlink" title="4）选择媒体API"></a>4）选择媒体API</h3><p>微信小程序提供了选择媒体API，其用于选择图片或视频，一般用于上传头像、上传照片和上传视频等功能中。</p>
+<p>通过调用**wx.chooseMedia()**方法即可使用选择媒体API，该方法执行后，会提示用户拍摄图片或视频，或从手机相册中选择图片或视频。</p>
+<p>使用方式：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//wxml中的按钮</span></span><br><span class="line">&lt;button bindtap=<span class="string">&quot;test&quot;</span>&gt;选择图片&lt;/button&gt;</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//js文件中的test函数</span></span><br><span class="line">test:function()&#123;</span><br><span class="line">    wx.chooseMedia(&#123;</span><br><span class="line">      <span class="comment">// 最多可以选择9个文件</span></span><br><span class="line">      count:<span class="number">9</span>,</span><br><span class="line">      <span class="comment">// 文件类型为只能拍摄图片或从相机中选图片</span></span><br><span class="line">      mediaType:[<span class="string">&#x27;image&#x27;</span>],</span><br><span class="line">      <span class="comment">// 图片来源为从相册选择和使用相机拍摄</span></span><br><span class="line">      sourceType:[<span class="string">&#x27;album&#x27;</span>,<span class="string">&#x27;camera&#x27;</span>],</span><br><span class="line">      success(res)&#123;</span><br><span class="line">        <span class="comment">// 获取用户选择的文件</span></span><br><span class="line">        <span class="type">const</span> <span class="variable">tempFilePath</span> <span class="operator">=</span> res.tempFiles[<span class="number">0</span>].tempFilePath</span><br><span class="line">        console.log(tempFilePath)</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;,</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/image-20241113163818231.png" alt="微信小程序图"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mediaType选项的合法值有<span class="number">3</span>个：</span><br><span class="line">    image（只能拍摄图片或从相册选择图片）；</span><br><span class="line">    video（只能拍摄视频或从相册选择视频）；</span><br><span class="line">    mix（可同时选择图片和视频）。</span><br><span class="line">sourceType选项的合法值有<span class="number">2</span>个：</span><br><span class="line">    album（从相册选择）；</span><br><span class="line">    camera（使用相机拍摄）。</span><br></pre></td></tr></table></figure>
+
+<h3 id="5）图片预览API"><a href="#5）图片预览API" class="headerlink" title="5）图片预览API"></a>5）图片预览API</h3><p>微信小程序提供了图片预览API，通过图片预览API可以预览图片，且在预览过程中用户可以进行保存图片、发送给朋友等操作。</p>
+<p>通过调用**wx.previewImage()**方法即可使用预览图片API。</p>
+<p><img src="/images/image-20241113164548151.png" alt="微信小程序图"></p>
+<p><strong>注意</strong>：urls选项支持http或者https协议的网络图片地址，如果使用本地图片进行预览，会出现黑屏加载不出图片的情况。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//js中的数据，微信小程序服务器资源4_3 用cmd打开 输入这个启动node index.js</span></span><br><span class="line">data: &#123;</span><br><span class="line">  url: <span class="string">&#x27;http://127.0.0.1:3000/tree.jpg&#x27;</span></span><br><span class="line">&#125;,</span><br><span class="line"></span><br><span class="line"><span class="comment">//wxml的结构</span></span><br><span class="line">&lt;image src=<span class="string">&quot;&#123;&#123; url &#125;&#125;&quot;</span> bindtap=<span class="string">&quot;previewImage&quot;</span> /&gt;</span><br><span class="line"></span><br><span class="line"> <span class="comment">//js中定义的函数</span></span><br><span class="line">previewImage() &#123;</span><br><span class="line">  wx.previewImage(&#123;</span><br><span class="line">    urls: [</span><br><span class="line">      <span class="built_in">this</span>.data.url        <span class="comment">// 需要预览的图片链接列表</span></span><br><span class="line">    ]</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="6）文件上传API"><a href="#6）文件上传API" class="headerlink" title="6）文件上传API"></a>6）文件上传API</h3><p>在生活中，经常需要进行文件上传操作，例如更改头像需要将新的头像上传到服务器中。微信小程序提供了文件上传API，使用文件上传API可以在微信小程序中发起一个<strong>POST</strong>请求，将本地资源上传到服务器。通过调用wx.uploadFile()方法即可使用文件上传API。</p>
+<p><strong>wx.uploadFile()方法</strong></p>
+<p><img src="/images/image-20241113164751238.png" alt="微信小程序图"></p>
+<h3 id="7）文件下载API"><a href="#7）文件下载API" class="headerlink" title="7）文件下载API"></a>7）文件下载API</h3><p>在生活中，经常需要下载一些文件，例如将网络中某个参考资料下载到本地进行查看。微信小程序提供了文件下载API，使用文件下载API可以实现文件下载功能。通过调用**wx.downloadFile()**方法即可使用文件下载API。</p>
+<p><img src="/images/image-20241113164901726.png" alt="微信小程序图"></p>
+<h3 id="8）画布API"><a href="#8）画布API" class="headerlink" title="8）画布API"></a>8）画布API</h3><p>通过canvas组件创建画布后，要想在画布中绘制图案，需要通过画布API来完成。</p>
+<p>画布API的使用方法如下：</p>
+<p>第一步：获取Canvas实例；</p>
+<p>第二步：通过Canvas实例获取RenderingContext（渲染上下文）实例；</p>
+<p>第三步：通过RenderingContext实例的属性和方法完成绘图操作。</p>
+<p><img src="/images/image-20241114140410575.png" alt="微信小程序图"></p>
+<h3 id="9）动画API"><a href="#9）动画API" class="headerlink" title="9）动画API"></a>9）动画API</h3><p>动画API用于在微信小程序中完成动画效果的制作。在微信小程序中添加动画效果，可以让页面中的内容动起来。动画效果对浏览者的视觉冲击力远远高于静态画面，更能吸引浏览者。</p>
+<p>第一步：通过wx.createAnimation()方法获取Animation实例；</p>
+<p>var animation &#x3D; wx.createAnimation(Object object)</p>
+<p>第二步：调用Animation实例的方法实现动画效果。</p>
+<p><img src="/images/image-20241114140557979.png" alt="微信小程序图"></p>
+<p><img src="/images/image-20241114140614818.png" alt="微信小程序图"></p>
+<p><img src="/images/image-20241114140639194.png" alt="微信小程序图"></p>
+<h3 id="10-登录API"><a href="#10-登录API" class="headerlink" title="10)  登录API"></a>10)  登录API</h3><p> 登录API可以完成登录功能的开发。微信小程序提供了登录API，其使用方法是，调用wx.login()方法获取用户登录凭证code，获取后，将它发送给开发者服务器。</p>
+<p><img src="/images/image-20241118182955699.png" alt="微信小程序图"></p>
+<p><img src="/images/image-20241118183017651.png" alt="微信小程序图"></p>
+<h3 id="11-数据缓存API"><a href="#11-数据缓存API" class="headerlink" title="11) 数据缓存API"></a>11) 数据缓存API</h3><p>数据缓存API可以实现数据的缓存，从而加快读取数据的速度。在微信小程序中，需要保存一些临时数据时，例如，保存用户登录后获取到的token，或保存一些经常需要从服务器中下载的数据，提高微信小程序下次打开时的加载速度。</p>
+<p><img src="/images/image-20241118183247873.png" alt="微信小程序图"></p>
+<p><img src="/images/image-20241118183326935.png" alt="微信小程序图"></p>
+<p><img src="/images/image-20241118183355116.png" alt="微信小程序图"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">注意：</span><br><span class="line">    存储的最大数据长度，单个key允许存储的最大数据长度为1MB，所有数据存储上限为10MB</span><br></pre></td></tr></table></figure>
+
+<h2 id="17-vant组件库"><a href="#17-vant组件库" class="headerlink" title="17.vant组件库"></a>17.vant组件库</h2><h3 id="1）初步安装和使用vant组件库"><a href="#1）初步安装和使用vant组件库" class="headerlink" title="1）初步安装和使用vant组件库"></a>1）初步安装和使用vant组件库</h3><p>1.新建一个小程序项目，找到该项目所在的文件夹，并且使用cmd方式打开</p>
+<p>2.用npm init -y 初始化项目，初始化包管理配置文件package.json</p>
+<p><img src="/images/image-20241111164603159.png" alt="微信小程序图"></p>
+<p>   用这个指令安装vant库</p>
+<p>4.删除app.json文件中的”style”:”v2”</p>
+<p><img src="/images/image-20241111164703314.png" alt="微信小程序图"></p>
+<p>5.在工具下找到构建npm选项，并设置</p>
+<p><img src="/images/image-20241111164841765.png" alt="微信小程序图"></p>
+<h3 id="2）使用vant组件"><a href="#2）使用vant组件" class="headerlink" title="2）使用vant组件"></a>2）使用vant组件</h3><p>安装完Vant组件库之后，可以在app.json或者页面.json的usingComponents节点中引入需要的组件，并在wxml中直接使用组件。</p>
+<p><img src="/images/image-20241111165258191.png" alt="微信小程序图"></p>
+<h3 id="3-定制vant全局主题样式"><a href="#3-定制vant全局主题样式" class="headerlink" title="3)定制vant全局主题样式"></a>3)定制vant全局主题样式</h3><h4 id="1】CSS变量的用法"><a href="#1】CSS变量的用法" class="headerlink" title="1】CSS变量的用法"></a>1】CSS变量的用法</h4><p>Vant Weapp使用CSS变量来实现定制主题。</p>
+<p>1.通过–变量名：CSS属性，来定义变量</p>
+<p>​    eg.html{</p>
+<p>​         –main-color:#C00000;</p>
+<p>​     }</p>
+<p>2.通过var(变量名)来使用变量样式</p>
+<p>​      eg.color:var( –main-color)</p>
+<h4 id="2】定制全局样式"><a href="#2】定制全局样式" class="headerlink" title="2】定制全局样式"></a>2】定制全局样式</h4><p><img src="/images/image-20241111170822193.png" alt="微信小程序图"></p>
+<p><img src="/images/image-20241111170854834.png" alt="微信小程序图"></p>
+<p><img src="/images/image-20241111170936785.png" alt="微信小程序图"></p>
+<p>使用的时候把@改为– 即将less语法格式，改为CSS变量语法格式。</p>
+<h2 id="18-API-Promise化"><a href="#18-API-Promise化" class="headerlink" title="18.API Promise化"></a>18.API Promise化</h2><h3 id="1）为什么要使用API-Promise化"><a href="#1）为什么要使用API-Promise化" class="headerlink" title="1）为什么要使用API Promise化"></a>1）为什么要使用API Promise化</h3><p><img src="/images/image-20241111171213565.png" alt="微信小程序图"></p>
+<p><img src="/images/image-20241111171241430.png" alt="微信小程序图"></p>
+<h3 id="2）实现API-Promise化"><a href="#2）实现API-Promise化" class="headerlink" title="2）实现API Promise化"></a>2）实现API Promise化</h3><p>在小程序中，实现API Promise化主要依赖于miniprogram-api-promise这个第三方npm包。</p>
+<p>安装miniprogram-api-promise包的步骤：</p>
+<p>npm install –save <a href="mailto:&#109;&#x69;&#110;&#105;&#x70;&#x72;&#x6f;&#x67;&#114;&#x61;&#109;&#x2d;&#x61;&#x70;&#x69;&#45;&#x70;&#x72;&#x6f;&#x6d;&#x69;&#115;&#101;&#x40;&#49;&#46;&#x30;&#x2e;&#52;">miniprogram-api-promise@1.0.4</a></p>
+<p>注意：小程序每次安装完包过后，都要将miniprogram_npm删除，并重新在工具找到构建npm选项，重新构建。如果不删除那个目录，可能会引起一系列得错误，或者构建失败。</p>
+<p><img src="/images/image-20241111173415666.png" alt="微信小程序图"></p>
+<p>使用：</p>
+<p><img src="/images/image-20241111173710360.png" alt="微信小程序图"></p>
+<p><img src="/images/image-20241111174235484.png" alt="微信小程序图"></p>
+<h2 id="19-全局数据共享"><a href="#19-全局数据共享" class="headerlink" title="19.全局数据共享"></a>19.全局数据共享</h2><h3 id="1）全局共享数据概念"><a href="#1）全局共享数据概念" class="headerlink" title="1）全局共享数据概念"></a>1）全局共享数据概念</h3><p>全局数据共享是为了解决组件之间数据共享的问题，开发中常用的全局数据共享方案有Vuex,Redux,Mobx等。</p>
+<p><img src="/images/image-20241113090812311.png" alt="微信小程序图"></p>
+<p>在小程序中，可使用<strong>mobx-miniprogram配合mobx-miniprogram-bindings</strong>实现全局数据共享。</p>
+<p>mobx-miniprogram：用于<strong>创建Store实例对象</strong></p>
+<p>mobx-miniprogram-bindings <strong>用来把Store中的共享数据或方法，绑定到组件或页面中使用</strong>。</p>
+<h3 id="2）安装Mobx相关的包"><a href="#2）安装Mobx相关的包" class="headerlink" title="2）安装Mobx相关的包"></a>2）安装Mobx相关的包</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install --save mobx-miniprogram@<span class="number">4.13</span><span class="number">.2</span> mobx-miniprogram-bindings@<span class="number">1.2</span><span class="number">.1</span></span><br></pre></td></tr></table></figure>
+
+<p>安装完成过后，要删除miniprogram_npm包，再重新构建npm。</p>
+<h3 id="3）创建Mobx的Store实例"><a href="#3）创建Mobx的Store实例" class="headerlink" title="3）创建Mobx的Store实例"></a>3）创建Mobx的Store实例</h3><p><img src="/images/image-20241113092451753.png" alt="微信小程序图"></p>
+<h3 id="4）小程序定义计算属性"><a href="#4）小程序定义计算属性" class="headerlink" title="4）小程序定义计算属性"></a>4）小程序定义计算属性</h3><p><img src="/images/image-20241113092806080.png" alt="微信小程序图"></p>
+<h3 id="5）如何修改Store实例的数据"><a href="#5）如何修改Store实例的数据" class="headerlink" title="5）如何修改Store实例的数据"></a>5）如何修改Store实例的数据</h3><p>外部组件页面不可以直接修改Store里面的数据，必须调用Store里面的action方法才可以修改。</p>
+<p>格式：函数名：action(方法)</p>
+<p><img src="/images/image-20241113093438364.png" alt="微信小程序图"></p>
+<h3 id="6）将Store中的成员绑定到页面中"><a href="#6）将Store中的成员绑定到页面中" class="headerlink" title="6）将Store中的成员绑定到页面中"></a>6）将Store中的成员绑定到页面中</h3><p><img src="/images/image-20241113094755932.png" alt="微信小程序图"></p>
+<h3 id="7）在页面使用Store"><a href="#7）在页面使用Store" class="headerlink" title="7）在页面使用Store"></a>7）在页面使用Store</h3><p><img src="/images/image-20241113100551083.png" alt="微信小程序图"></p>
+<h3 id="8-将Store中的成员绑定到组件中"><a href="#8-将Store中的成员绑定到组件中" class="headerlink" title="8) 将Store中的成员绑定到组件中"></a>8) 将Store中的成员绑定到组件中</h3><p><img src="/images/image-20241113100754033.png" alt="微信小程序图"></p>
+<h2 id="20-分包"><a href="#20-分包" class="headerlink" title="20.分包"></a>20.分包</h2><h3 id="1）分包概念"><a href="#1）分包概念" class="headerlink" title="1）分包概念"></a>1）分包概念</h3><p>分包指的是把一个完整的小程序项目，按照需求划分为不同的子包，在构建时打包成不同的分包，用户在使用时按需进行加载。</p>
+<p><img src="/images/image-20241113101140980.png" alt="微信小程序图"></p>
+<p>分包前：</p>
+<p><img src="/images/image-20241113101322690.png" alt="微信小程序图"></p>
+<p>分包后：</p>
+<p><img src="/images/image-20241113101415550.png" alt="微信小程序图"></p>
+<p><img src="/images/image-20241113101527930.png" alt="微信小程序图"></p>
+<p><img src="/images/image-20241113101554187.png" alt="微信小程序图"></p>
+<h3 id="2）分包的使用"><a href="#2）分包的使用" class="headerlink" title="2）分包的使用"></a>2）分包的使用</h3><p>目录树：</p>
+<p><img src="/images/image-20241113101855054.png" alt="微信小程序图"></p>
+<p>也可以通过name给分包取别名 pkgA的别名P1</p>
+<p><img src="/images/image-20241113102113787.png" alt="微信小程序图"></p>
+<p>可以在详情基本信息查看分包体积</p>
+<p><img src="/images/image-20241113102010475.png" alt="微信小程序图"></p>
+<h3 id="3）打包原则"><a href="#3）打包原则" class="headerlink" title="3）打包原则"></a>3）打包原则</h3><p><img src="/images/image-20241113102315084.png" alt="微信小程序图"></p>
+<h3 id="4）引用原则"><a href="#4）引用原则" class="headerlink" title="4）引用原则"></a>4）引用原则</h3><p><img src="/images/image-20241113102346448.png" alt="微信小程序图"></p>
+<h3 id="5）独立分包"><a href="#5）独立分包" class="headerlink" title="5）独立分包"></a>5）独立分包</h3><p><img src="/images/image-20241113102528970.png" alt="微信小程序图"></p>
+<p><img src="/images/image-20241113102541688.png" alt="微信小程序图"></p>
+<p><img src="/images/image-20241113102625726.png" alt="微信小程序图"></p>
+<h3 id="6）独立分包的配置方法"><a href="#6）独立分包的配置方法" class="headerlink" title="6）独立分包的配置方法"></a>6）独立分包的配置方法</h3><p>“independent”:true</p>
+<p><img src="/images/image-20241113102723474.png" alt="微信小程序图"></p>
+<p><img src="/images/image-20241113102818989.png" alt="微信小程序图"></p>
+<h3 id="7）分包预下载"><a href="#7）分包预下载" class="headerlink" title="7）分包预下载"></a>7）分包预下载</h3><p><img src="/images/image-20241113102937405.png" alt="微信小程序图"></p>
+<p><img src="/images/image-20241113103049102.png" alt="微信小程序图"></p>
+<p><img src="/images/image-20241113103143134.png" alt="微信小程序图"></p>
+<h2 id="21-uni-app-可以跨平台开发"><a href="#21-uni-app-可以跨平台开发" class="headerlink" title="21.uni-app(可以跨平台开发)"></a>21.uni-app(可以跨平台开发)</h2><h3 id="1）uni-app概念"><a href="#1）uni-app概念" class="headerlink" title="1）uni-app概念"></a>1）uni-app概念</h3><p>uni-app <strong>是一个使用 <a target="_blank" rel="noopener" href="https://vuejs.org/">Vue.js</a> 开发所有前端应用的框架</strong>.开发者编写一套代码，可发布到iOS、Android、Web（响应式）、以及各种小程序（微信&#x2F;支付宝&#x2F;百度&#x2F;头条&#x2F;飞书&#x2F;QQ&#x2F;快手&#x2F;钉钉&#x2F;淘宝）、快应用等多个平台。</p>
+<p><img src="/images/image-20241113130124379.png" alt="微信小程序图"></p>
+<h3 id="2）HBuiderX安装scss-sass插件"><a href="#2）HBuiderX安装scss-sass插件" class="headerlink" title="2）HBuiderX安装scss&#x2F;sass插件"></a>2）HBuiderX安装scss&#x2F;sass插件</h3><p>为了方便编写样式<style lang="scss"></style> 建议安装scss&#x2F;sass插件。</p>
+<p>网址</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://ext.dcloud.net.cn/plugin?id=2046</span><br></pre></td></tr></table></figure>
+
+<p>账户：<a href="mailto:&#x36;&#x36;&#x34;&#x36;&#x35;&#54;&#49;&#54;&#x34;&#x40;&#x71;&#113;&#x2e;&#x63;&#x6f;&#109;">664656164@qq.com</a></p>
+<p>密码：664656165</p>
+<p><img src="/images/image-20241113130836590.png" alt="微信小程序图"></p>
+<h3 id="3）新建uni-app项目"><a href="#3）新建uni-app项目" class="headerlink" title="3）新建uni-app项目"></a>3）新建uni-app项目</h3><p>第一步：点击文件-&gt;新建项目</p>
+<p><img src="/images/mage-20241113131314251.png" alt="微信小程序图"></p>
+<p>第二部：选择uni-ui模板创建项目，再创建</p>
+<p><img src="/images/image-20241113131744054.png" alt="微信小程序图"></p>
+<h3 id="4）认识uni-app项目结构"><a href="#4）认识uni-app项目结构" class="headerlink" title="4）认识uni-app项目结构"></a>4）认识uni-app项目结构</h3><p><img src="/images/image-20241113132159846.png" alt="微信小程序图"></p>
+<h3 id="5）将项目运行到微信开发者工具"><a href="#5）将项目运行到微信开发者工具" class="headerlink" title="5）将项目运行到微信开发者工具"></a>5）将项目运行到微信开发者工具</h3><p>1.填写自己的微信小程序的AppID</p>
+<p><img src="/images/image-20241113132607438.png" alt="微信小程序图"></p>
+<p>2.在HBuilder中配置微信开发者工具的安装路径</p>
+<p><img src="/images/image-20241113133056222.png" alt="微信小程序图"></p>
+<p>3.在微信开发者工具中，通过设置-&gt;安全设置面板，开启”微信开发者工具“的服务端口。</p>
+<p><img src="/images/image-20241113133226521.png" alt="微信小程序图"></p>
+<p>4.在HBuilderX中，点击菜单栏中的运行-&gt;运行到小程序模拟器-&gt;微信开发者工具，将当前uni-app项目编译之后，自动运行到微信开发者工具中，从而方便查看项目效果与调试。</p>
+<p><img src="/images/image-20241113133515152.png" alt="微信小程序图"></p>
+<p>5.初次运行效果</p>
+<p><img src="/images/image-20241113134112324.png" alt="微信小程序图"></p>
+<h3 id="6）使用git管理项目"><a href="#6）使用git管理项目" class="headerlink" title="6）使用git管理项目"></a>6）使用git管理项目</h3><p>1.在项目根目录中新建 .gitignore忽略文件，并配置：</p>
+<p><img src="/images/image-20241113135147878.png" alt="微信小程序图"></p>
+<p><img src="/images/image-20241113135320870.png" alt="微信小程序图"></p>
+<p>2.打开终端，切换到项目根目录中，运行如下命令，初始化本地Git仓库；</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git init</span><br></pre></td></tr></table></figure>
+
+<p>3.检查状态</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git status</span><br></pre></td></tr></table></figure>
+
+<p>3.将所有文件都加入到暂存区：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git add .</span><br></pre></td></tr></table></figure>
+
+<p>4.本地提交更新：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git commit -m <span class="string">&quot;注释信息&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>5.创建分支</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git checkout -b 分支名</span><br></pre></td></tr></table></figure>
+
+<p>6.查看分支</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git branch</span><br></pre></td></tr></table></figure>
+
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20241113142550014.png" alt="image-20241113142550014">* tabbar说明当前处于tabbar分支</p>
+<p>7.分支的合并与提交</p>
+<p>eg.想要将home分支合并到master分支上</p>
+<p>​     【1】将本地的分支（home）进行本地的commit提交</p>
+<pre><code>   <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git add .</span><br><span class="line">git commit -m <span class="string">&quot;注释&quot;</span></span><br></pre></td></tr></table></figure>
+</code></pre>
+<p>​       【2】将本地的分支(home)推送到远程仓库进行保存</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git push -u origin 分支名(home)</span><br></pre></td></tr></table></figure>
+
+<p>​        【3】将本地的分支(home)合并到本地的master分支</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git checkout master</span><br><span class="line">git merge 分支名(home)</span><br></pre></td></tr></table></figure>
+
+<p>​          【4】删除本地的home分支</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git branch -d 分支名(home)</span><br></pre></td></tr></table></figure>
+
+<h3 id="7）把项目托管到码云"><a href="#7）把项目托管到码云" class="headerlink" title="7）把项目托管到码云"></a>7）把项目托管到码云</h3><p><img src="/images/image-20241113140141198.png" alt="微信小程序图"></p>
+<p>1.找到公钥：</p>
+<p><img src="/images/image-20241113140351049.png" alt="微信小程序图"></p>
+<p>2.在码云上配置公钥</p>
+<p><img src="/images/image-20241113140646497.png" alt="微信小程序图"></p>
+<p><img src="/images/image-20241113140744416.png" alt="微信小程序图"></p>
+<p>3.创建仓库</p>
+<p><img src="/images/image-20241113141307634.png" alt="微信小程序图"></p>
+<p><img src="/images/image-20241113141415167.png" alt="微信小程序图"></p>
+<p>4.将本地仓库的项目上传到码云</p>
+<p>将本地仓库与马云仓库关联</p>
+<p><img src="/images/image-20241113141607028.png" alt="微信小程序图"></p>
+<p><img src="/images/image-20241113141652180.png" alt="微信小程序图"></p>
+<p>5.将本地仓库的代码推送到码云仓库</p>
+<p><img src="/images/image-20241113141742677.png" alt="微信小程序图"></p>
+<h2 id="22-发布"><a href="#22-发布" class="headerlink" title="22.发布"></a>22.发布</h2><h3 id="1）为什么要发布"><a href="#1）为什么要发布" class="headerlink" title="1）为什么要发布"></a>1）为什么要发布</h3><p><img src="/images/image-20241113143515047.png" alt="微信小程序图"></p>
+<h3 id="2）将uni-app项目发布为小程序"><a href="#2）将uni-app项目发布为小程序" class="headerlink" title="2）将uni-app项目发布为小程序"></a>2）将uni-app项目发布为小程序</h3><p><img src="/images/image-20241113143644740.png" alt="微信小程序图"></p>
+<p><img src="/images/image-20241113143718849.png" alt="微信小程序图"></p>
+<p><img src="/images/image-20241113143753925.png" alt="微信小程序图"></p>
+<p><img src="/images/image-20241113143813294.png" alt="微信小程序图"></p>
+<p><img src="/images/image-20241113143838628.png" alt="微信小程序图"></p>
+<p><img src="/images/image-20241113143858457.png" alt="微信小程序图"></p>
+<p><img src="/images/image-20241113143927321.png" alt="微信小程序图"></p>
+<p><img src="/images/image-20241113144003250.png" alt="微信小程序图"></p>
+<h3 id="3）将uni-app项目发布为安卓APP"><a href="#3）将uni-app项目发布为安卓APP" class="headerlink" title="3）将uni-app项目发布为安卓APP"></a>3）将uni-app项目发布为安卓APP</h3><p><img src="/images/image-20241113144125477.png" alt="微信小程序图"></p>
+<p><img src="/images/image-20241113144203497.png" alt="微信小程序图"></p>
+<p><img src="/images/image-20241113144229972.png" alt="微信小程序图"></p>
+<p><img src="/images/image-20241113144249380.png" alt="微信小程序图"></p>
+<p><img src="/images/image-20241113144306393.png" alt="微信小程序图"></p>
+<p><img src="/images/image-20241113144335483.png" alt="微信小程序图"></p>
+<p><img src="/images/image-20241113144353530.png" alt="微信小程序图"></p>
+<p><img src="/images/image-20241113144415695.png" alt="微信小程序图"></p>
+
+    </article>
+    
+    <div class="read-nums">
+      <!-- id 将作为查询条件 -->
+      <span id="2024/09/09/微信小程序/" class="leancloud_visitors" data-flag-title="Your Article Title">
+        <em class="post-meta-item-text">浏览量</em>
+        <i class="leancloud-visitors-count"></i>
+      </span>
+    </div>
+    <div class="comments-intro">
+      <h2>评论区</h2>
+      <p>欢迎你留下宝贵的意见，昵称输入QQ号会显示QQ头像哦~</p>
+    </div>
+    <div id="vcomments" class="vcomments"></div>
+    
+  </div>
+  <div class="article-catelogue">
+    <div class="article-catelogue--wrapper">
+      <div class="catelogue catelogue-1">
+        <h3>目录</h3>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F"><span class="toc-number">1.</span> <span class="toc-text">微信小程序</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E9%A1%B5%E9%9D%A2%E8%B7%AF%E5%BE%84%E9%85%8D%E7%BD%AE%EF%BC%88%E5%88%9B%E5%BB%BA%E6%96%B0%E9%A1%B5%E9%9D%A2%E7%9A%84%E6%96%B9%E5%BC%8F%EF%BC%89"><span class="toc-number">1.1.</span> <span class="toc-text">1.页面路径配置（创建新页面的方式）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E7%BB%84%E4%BB%B6%EF%BC%88container%EF%BC%89"><span class="toc-number">1.2.</span> <span class="toc-text">2.组件（container）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%EF%BC%89%E5%B8%B8%E7%94%A8%E8%A7%86%E5%9B%BE%E5%AE%B9%E5%99%A8%E7%BB%84%E4%BB%B6"><span class="toc-number">1.2.1.</span> <span class="toc-text">1）常用视图容器组件</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%E3%80%91view-%EF%BC%88%E6%99%AE%E9%80%9A%E8%A7%86%E5%9B%BE%E5%8C%BA%E5%9F%9F%EF%BC%89"><span class="toc-number">1.2.1.1.</span> <span class="toc-text">1】view （普通视图区域）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2%E3%80%91scroll-view-%EF%BC%88%E5%8F%AF%E6%BB%9A%E5%8A%A8%E8%A7%86%E5%9B%BE%E5%8C%BA%E5%9F%9F%EF%BC%89"><span class="toc-number">1.2.1.2.</span> <span class="toc-text">2】scroll-view （可滚动视图区域）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3%E3%80%91swiper%E5%92%8Cswiper-item-%EF%BC%88%E8%BD%AE%E6%92%AD%E5%9B%BE%EF%BC%89"><span class="toc-number">1.2.1.3.</span> <span class="toc-text">3】swiper和swiper-item （轮播图）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%B8%B8%E7%94%A8%E7%9A%84%E5%9F%BA%E7%A1%80%E5%86%85%E5%AE%B9%E7%BB%84%E4%BB%B6"><span class="toc-number">1.2.2.</span> <span class="toc-text">2)常用的基础内容组件</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%E3%80%91text%E5%92%8Crich-text-%E6%96%87%E6%9C%AC%E5%92%8C%E5%AF%8C%E6%96%87%E6%9C%AC"><span class="toc-number">1.2.2.1.</span> <span class="toc-text">1】text和rich-text(文本和富文本)</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%8C%89%E9%92%AE%E7%BB%84%E4%BB%B6"><span class="toc-number">1.2.3.</span> <span class="toc-text">3)按钮组件</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%E3%80%91button%EF%BC%88%E6%8C%89%E9%92%AE%EF%BC%89"><span class="toc-number">1.2.3.1.</span> <span class="toc-text">1】button（按钮）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4%EF%BC%89%E5%AA%92%E4%BD%93%E7%BB%84%E4%BB%B6"><span class="toc-number">1.2.4.</span> <span class="toc-text">4）媒体组件</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%E3%80%91image%EF%BC%88%E5%9B%BE%E7%89%87%EF%BC%89"><span class="toc-number">1.2.4.1.</span> <span class="toc-text">1】image（图片）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2%E3%80%91audio%EF%BC%88%E9%9F%B3%E9%A2%91%EF%BC%89"><span class="toc-number">1.2.4.2.</span> <span class="toc-text">2】audio（音频）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3%E3%80%91video%EF%BC%88%E8%A7%86%E9%A2%91%EF%BC%89"><span class="toc-number">1.2.4.3.</span> <span class="toc-text">3】video（视频）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E9%A1%B5%E9%9D%A2%E5%AF%BC%E8%88%AA%E7%BB%84%E4%BB%B6"><span class="toc-number">1.2.5.</span> <span class="toc-text">5)页面导航组件</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%E3%80%91navigator"><span class="toc-number">1.2.5.1.</span> <span class="toc-text">1】navigator</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6%EF%BC%89%E7%94%BB%E5%B8%83%E7%BB%84%E4%BB%B6"><span class="toc-number">1.2.6.</span> <span class="toc-text">6）画布组件</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%E3%80%91canvas"><span class="toc-number">1.2.6.1.</span> <span class="toc-text">1】canvas</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E5%B0%8F%E7%A8%8B%E5%BA%8FAPI"><span class="toc-number">1.3.</span> <span class="toc-text">3.小程序API</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-WXML%E6%A8%A1%E6%9D%BF%E8%AF%AD%E6%B3%95-%E6%95%B0%E6%8D%AE%E7%BB%91%E5%AE%9A%EF%BC%88%E6%8F%92%E5%80%BC%E8%A1%A8%E8%BE%BE%E5%BC%8F%EF%BC%89"><span class="toc-number">1.4.</span> <span class="toc-text">4.WXML模板语法-数据绑定（插值表达式）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%EF%BC%89%E5%9C%A8data%E4%B8%AD%E5%AE%9A%E4%B9%89%E6%95%B0%E6%8D%AE"><span class="toc-number">1.4.1.</span> <span class="toc-text">1）在data中定义数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%EF%BC%89%E5%9C%A8WXML%E4%B8%AD%E4%BD%BF%E7%94%A8%E6%95%B0%E6%8D%AE"><span class="toc-number">1.4.2.</span> <span class="toc-text">2）在WXML中使用数据</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-WXML%E6%A8%A1%E6%9D%BF%E8%AF%AD%E6%B3%95-%E4%BA%8B%E4%BB%B6%E7%BB%91%E5%AE%9A"><span class="toc-number">1.5.</span> <span class="toc-text">5.WXML模板语法-事件绑定</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%EF%BC%89%E5%B0%8F%E7%A8%8B%E5%BA%8F%E4%B8%AD%E5%B8%B8%E7%94%A8%E4%BA%8B%E4%BB%B6"><span class="toc-number">1.5.0.1.</span> <span class="toc-text">1）小程序中常用事件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2%EF%BC%89event%E4%BA%8B%E4%BB%B6%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%B1%9E%E6%80%A7%E5%88%97%E8%A1%A8"><span class="toc-number">1.5.0.2.</span> <span class="toc-text">2）event事件对象的属性列表</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3%EF%BC%89%E7%82%B9%E5%87%BB%E4%BA%8B%E4%BB%B6bindtap%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="toc-number">1.5.0.3.</span> <span class="toc-text">3）点击事件bindtap的使用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4%EF%BC%89%E4%BA%8B%E4%BB%B6%E4%BC%A0%E5%8F%82"><span class="toc-number">1.5.0.4.</span> <span class="toc-text">4）事件传参</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-WXML%E6%A8%A1%E6%9D%BF%E8%AF%AD%E6%B3%95-%E6%9D%A1%E4%BB%B6%E6%B8%B2%E6%9F%93"><span class="toc-number">1.6.</span> <span class="toc-text">6.WXML模板语法-条件渲染</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-WXML%E6%A8%A1%E6%9D%BF%E8%AF%AD%E6%B3%95-%E5%88%97%E8%A1%A8%E6%B8%B2%E6%9F%93"><span class="toc-number">1.7.</span> <span class="toc-text">7.WXML模板语法-列表渲染</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-%E5%AF%BC%E8%88%AA%E6%A0%8F%E9%85%8D%E7%BD%AE"><span class="toc-number">1.8.</span> <span class="toc-text">8.导航栏配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-%E6%A0%87%E7%AD%BE%E6%A0%8F%E9%85%8D%E7%BD%AE"><span class="toc-number">1.9.</span> <span class="toc-text">9.标签栏配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#10-%E9%A1%B5%E9%9D%A2%E5%AF%BC%E8%88%AA"><span class="toc-number">1.10.</span> <span class="toc-text">10.页面导航</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%EF%BC%89%E5%A3%B0%E5%90%8D%E5%BC%8F%E5%AF%BC%E8%88%AA%E2%80%94%E5%AF%BC%E8%88%AA%E7%BB%84%E4%BB%B6navigator"><span class="toc-number">1.10.1.</span> <span class="toc-text">1）声名式导航—导航组件navigator</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%E3%80%91open-type%E5%B1%9E%E6%80%A7%E5%80%BC%EF%BC%9A"><span class="toc-number">1.10.1.1.</span> <span class="toc-text">1】open-type属性值：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2%E3%80%91%E8%B7%B3%E8%BD%AC%E9%A1%B5%E9%9D%A2%E4%BC%A0%E5%8F%82%E6%95%B0"><span class="toc-number">1.10.1.2.</span> <span class="toc-text">2】跳转页面传参数</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%EF%BC%89%E7%BC%96%E7%A8%8B%E5%BC%8F%E5%AF%BC%E8%88%AA%E2%80%94%E8%B0%83%E7%94%A8%E5%B0%8F%E7%A8%8B%E5%BA%8F%E7%9A%84%E5%AF%BC%E8%88%AAAPI"><span class="toc-number">1.10.2.</span> <span class="toc-text">2）编程式导航—调用小程序的导航API</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%E3%80%91%E5%AF%BC%E8%88%AA%E5%88%B0tabBar%E9%A1%B5%E9%9D%A2"><span class="toc-number">1.10.2.1.</span> <span class="toc-text">1】导航到tabBar页面</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2%E3%80%91%E5%AF%BC%E8%88%AA%E5%88%B0%E9%9D%9EtabBar%E9%A1%B5%E9%9D%A2"><span class="toc-number">1.10.2.2.</span> <span class="toc-text">2】导航到非tabBar页面</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3%E3%80%91%E5%90%8E%E9%80%80%E5%AF%BC%E8%88%AA"><span class="toc-number">1.10.2.3.</span> <span class="toc-text">3】后退导航</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4%E3%80%91%E8%B7%B3%E8%BD%AC%E9%A1%B5%E9%9D%A2%E4%BC%A0%E5%8F%82"><span class="toc-number">1.10.2.4.</span> <span class="toc-text">4】跳转页面传参</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%EF%BC%89%E5%9C%A8onLoad%E4%B8%AD%E6%8E%A5%E5%8F%97%E5%AF%BC%E8%88%AA%E5%8F%82%E6%95%B0"><span class="toc-number">1.10.3.</span> <span class="toc-text">3）在onLoad中接受导航参数</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#11-%E4%B8%8B%E6%8B%89%E5%88%B7%E6%96%B0"><span class="toc-number">1.11.</span> <span class="toc-text">11.下拉刷新</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%EF%BC%89%E5%BC%80%E5%90%AF%E4%B8%8B%E6%8B%89%E5%88%B7%E6%96%B0"><span class="toc-number">1.11.1.</span> <span class="toc-text">1）开启下拉刷新</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%EF%BC%89%E7%9B%91%E5%90%AC%E9%A1%B5%E9%9D%A2%E4%B8%8B%E6%8B%89%E5%88%B7%E6%96%B0%E4%BA%8B%E4%BB%B6"><span class="toc-number">1.11.2.</span> <span class="toc-text">2）监听页面下拉刷新事件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E5%81%9C%E6%AD%A2%E4%B8%8B%E6%8B%89%E5%88%B7%E6%96%B0%E6%95%88%E6%9E%9C"><span class="toc-number">1.11.3.</span> <span class="toc-text">3) 停止下拉刷新效果</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#12-%E4%B8%8A%E6%8B%89%E8%A7%A6%E5%BA%95%E4%BA%8B%E4%BB%B6"><span class="toc-number">1.12.</span> <span class="toc-text">12.上拉触底事件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%EF%BC%89%E4%B8%8A%E6%8B%89%E8%A7%A6%E5%BA%95%E4%BA%8B%E4%BB%B6%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="toc-number">1.12.1.</span> <span class="toc-text">1）上拉触底事件的作用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%EF%BC%89%E4%B8%8A%E6%8B%89%E8%A7%A6%E5%BA%95%E4%BA%8B%E4%BB%B6%E7%9A%84%E8%B7%9D%E7%A6%BB"><span class="toc-number">1.12.2.</span> <span class="toc-text">2）上拉触底事件的距离</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#13-%E6%8F%90%E7%A4%BA%E6%A1%86"><span class="toc-number">1.13.</span> <span class="toc-text">13.提示框</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#14-%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F"><span class="toc-number">1.14.</span> <span class="toc-text">14.生命周期</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%EF%BC%89%E5%BA%94%E7%94%A8%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F"><span class="toc-number">1.14.1.</span> <span class="toc-text">1）应用生命周期</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%EF%BC%89%E9%A1%B5%E9%9D%A2%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F"><span class="toc-number">1.14.2.</span> <span class="toc-text">2）页面生命周期</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%EF%BC%89%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E5%87%BD%E6%95%B0"><span class="toc-number">1.14.3.</span> <span class="toc-text">3）生命周期函数</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%E3%80%91%E5%BA%94%E7%94%A8%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E5%87%BD%E6%95%B0"><span class="toc-number">1.14.3.1.</span> <span class="toc-text">1】应用的生命周期函数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2%E3%80%91%E9%A1%B5%E9%9D%A2%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E5%87%BD%E6%95%B0"><span class="toc-number">1.14.3.2.</span> <span class="toc-text">2】页面的生命周期函数</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#14-%E8%87%AA%E5%AE%9A%E4%B9%89%E7%BB%84%E4%BB%B6-component"><span class="toc-number">1.15.</span> <span class="toc-text">14.自定义组件(component)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%EF%BC%89%E5%88%9B%E5%BB%BA%E8%87%AA%E5%AE%9A%E4%B9%89%E7%BB%84%E4%BB%B6"><span class="toc-number">1.15.1.</span> <span class="toc-text">1）创建自定义组件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E7%BB%84%E4%BB%B6%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="toc-number">1.15.2.</span> <span class="toc-text">2)组件的使用</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%E3%80%91%E5%B1%80%E9%83%A8%E5%BC%95%E7%94%A8-%E9%A1%B5%E9%9D%A2-json"><span class="toc-number">1.15.2.1.</span> <span class="toc-text">1】局部引用(页面.json)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2%E3%80%91%E5%85%A8%E5%B1%80%E5%BC%95%E7%94%A8%EF%BC%88app-json%EF%BC%89"><span class="toc-number">1.15.2.2.</span> <span class="toc-text">2】全局引用（app.json）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3%E3%80%91%E7%BB%84%E4%BB%B6%E5%92%8C%E9%A1%B5%E9%9D%A2%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">1.15.2.3.</span> <span class="toc-text">3】组件和页面的区别</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%EF%BC%89%E8%87%AA%E5%AE%9A%E4%B9%89%E7%BB%84%E4%BB%B6-%E6%A0%B7%E5%BC%8F"><span class="toc-number">1.15.3.</span> <span class="toc-text">3）自定义组件-样式</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%E3%80%91%E7%BB%84%E4%BB%B6%E6%A0%B7%E5%BC%8F%E9%9A%94%E7%A6%BB%E7%9A%84%E6%B3%A8%E6%84%8F%E7%82%B9"><span class="toc-number">1.15.3.1.</span> <span class="toc-text">1】组件样式隔离的注意点</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2%E3%80%91%E7%BB%84%E4%BB%B6%E7%9A%84%E6%A0%B7%E5%BC%8F%E9%9A%94%E7%A6%BB%E9%80%89%E9%A1%B9"><span class="toc-number">1.15.3.2.</span> <span class="toc-text">2】组件的样式隔离选项</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3%E3%80%91%E7%BB%84%E4%BB%B6data%E6%95%B0%E6%8D%AE"><span class="toc-number">1.15.3.3.</span> <span class="toc-text">3】组件data数据</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4%E3%80%91%E7%BB%84%E4%BB%B6methods%E8%8A%82%E7%82%B9"><span class="toc-number">1.15.3.4.</span> <span class="toc-text">4】组件methods节点</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5%E3%80%91%E7%BB%84%E4%BB%B6properties%E5%B1%9E%E6%80%A7"><span class="toc-number">1.15.3.5.</span> <span class="toc-text">5】组件properties属性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6%E3%80%91data%E5%92%8Cproperties%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">1.15.3.6.</span> <span class="toc-text">6】data和properties的区别</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7%E3%80%91%E7%BB%84%E4%BB%B6%E7%9A%84%E6%95%B0%E6%8D%AE%E7%9B%91%E5%90%AC%E5%99%A8%EF%BC%88observers%EF%BC%89"><span class="toc-number">1.15.3.7.</span> <span class="toc-text">7】组件的数据监听器（observers）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#8%E3%80%91%E8%87%AA%E5%AE%9A%E4%B9%89%E7%BB%84%E4%BB%B6-%E7%BA%AF%E6%95%B0%E6%8D%AE%E5%AD%97%E6%AE%B5%E2%80%93pureDataPattern%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="toc-number">1.15.3.8.</span> <span class="toc-text">8】自定义组件-纯数据字段–pureDataPattern正则表达式</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4%EF%BC%89%E7%BB%84%E4%BB%B6%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E2%80%93%E7%BB%84%E4%BB%B6lifttimes%E8%8A%82%E7%82%B9"><span class="toc-number">1.15.4.</span> <span class="toc-text">4）组件的生命周期–组件lifttimes节点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E7%BB%84%E4%BB%B6%E6%89%80%E5%9C%A8%E9%A1%B5%E9%9D%A2%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E2%80%93%E7%BB%84%E4%BB%B6pagelifetimes%E8%8A%82%E7%82%B9"><span class="toc-number">1.15.5.</span> <span class="toc-text">5)组件所在页面的生命周期–组件pagelifetimes节点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6%EF%BC%89%E8%87%AA%E5%AE%9A%E4%B9%89%E7%BB%84%E4%BB%B6-%E6%8F%92%E6%A7%BD%E2%80%93slot%E5%8D%A0%E4%BD%8D"><span class="toc-number">1.15.6.</span> <span class="toc-text">6）自定义组件-插槽–slot占位</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%E3%80%91%E6%8F%92%E6%A7%BD%E6%A6%82%E5%BF%B5"><span class="toc-number">1.15.6.1.</span> <span class="toc-text">1】插槽概念</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2%E3%80%91%E5%8D%95%E4%B8%AA%E6%8F%92%E6%A7%BD%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="toc-number">1.15.6.2.</span> <span class="toc-text">2】单个插槽的使用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3%E3%80%91%E5%A4%9A%E4%B8%AA%E6%8F%92%E6%A7%BD%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="toc-number">1.15.6.3.</span> <span class="toc-text">3】多个插槽的使用</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7%EF%BC%89%E7%88%B6%E5%AD%90%E7%BB%84%E4%BB%B6%E4%B9%8B%E9%97%B4%E7%9A%84%E9%80%9A%E4%BF%A1%E2%80%933%E7%A7%8D"><span class="toc-number">1.15.7.</span> <span class="toc-text">7）父子组件之间的通信–3种</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%E3%80%91%E5%B1%9E%E6%80%A7%E7%BB%91%E5%AE%9A%E2%80%93%E7%88%B6%E4%BA%B2%E5%90%91%E5%84%BF%E5%AD%90%E4%BC%A0%E5%80%BC"><span class="toc-number">1.15.7.1.</span> <span class="toc-text">1】属性绑定–父亲向儿子传值</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2%E3%80%91%E4%BA%8B%E4%BB%B6%E7%BB%91%E5%AE%9A%E2%80%93%E5%84%BF%E5%AD%90%E5%90%91%E7%88%B6%E4%BA%B2%E4%BC%A0%E5%80%BC"><span class="toc-number">1.15.7.2.</span> <span class="toc-text">2】事件绑定–儿子向父亲传值</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3%E3%80%91%E8%8E%B7%E5%8F%96%E7%BB%84%E4%BB%B6%E5%AE%9E%E4%BE%8B%E2%80%93%E8%8E%B7%E5%8F%96%E5%AD%90%E7%BB%84%E4%BB%B6%E5%AE%9E%E4%BE%8B%E5%AF%B9%E8%B1%A1"><span class="toc-number">1.15.7.3.</span> <span class="toc-text">3】获取组件实例–获取子组件实例对象</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8%EF%BC%89%E8%87%AA%E5%AE%9A%E4%B9%89%E7%BB%84%E4%BB%B6-behaviors-%E7%BB%84%E4%BB%B6%E4%BB%A3%E7%A0%81%E5%85%B1%E4%BA%AB"><span class="toc-number">1.15.8.</span> <span class="toc-text">8）自定义组件 - behaviors(组件代码共享)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%E3%80%91%E6%A6%82%E5%BF%B5"><span class="toc-number">1.15.8.1.</span> <span class="toc-text">1】概念</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2%E3%80%91%E4%BD%BF%E7%94%A8behavior"><span class="toc-number">1.15.8.2.</span> <span class="toc-text">2】使用behavior</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3%E3%80%91behavior%E4%B8%AD%E5%8F%AF%E4%BB%A5%E4%BD%BF%E7%94%A8%E7%9A%84%E8%8A%82%E7%82%B9"><span class="toc-number">1.15.8.3.</span> <span class="toc-text">3】behavior中可以使用的节点</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#15-%E7%BD%91%E7%BB%9C%E8%AF%B7%E6%B1%82"><span class="toc-number">1.16.</span> <span class="toc-text">15.网络请求</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#16-API"><span class="toc-number">1.17.</span> <span class="toc-text">16.API</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%EF%BC%89%E8%83%8C%E6%99%AF%E9%9F%B3%E9%A2%91API"><span class="toc-number">1.17.1.</span> <span class="toc-text">1）背景音频API</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%EF%BC%89%E5%BD%95%E9%9F%B3API"><span class="toc-number">1.17.2.</span> <span class="toc-text">2）录音API</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%EF%BC%89%E9%9F%B3%E9%A2%91API"><span class="toc-number">1.17.3.</span> <span class="toc-text">3）音频API</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4%EF%BC%89%E9%80%89%E6%8B%A9%E5%AA%92%E4%BD%93API"><span class="toc-number">1.17.4.</span> <span class="toc-text">4）选择媒体API</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5%EF%BC%89%E5%9B%BE%E7%89%87%E9%A2%84%E8%A7%88API"><span class="toc-number">1.17.5.</span> <span class="toc-text">5）图片预览API</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6%EF%BC%89%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0API"><span class="toc-number">1.17.6.</span> <span class="toc-text">6）文件上传API</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7%EF%BC%89%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BDAPI"><span class="toc-number">1.17.7.</span> <span class="toc-text">7）文件下载API</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8%EF%BC%89%E7%94%BB%E5%B8%83API"><span class="toc-number">1.17.8.</span> <span class="toc-text">8）画布API</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9%EF%BC%89%E5%8A%A8%E7%94%BBAPI"><span class="toc-number">1.17.9.</span> <span class="toc-text">9）动画API</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#10-%E7%99%BB%E5%BD%95API"><span class="toc-number">1.17.10.</span> <span class="toc-text">10)  登录API</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#11-%E6%95%B0%E6%8D%AE%E7%BC%93%E5%AD%98API"><span class="toc-number">1.17.11.</span> <span class="toc-text">11) 数据缓存API</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#17-vant%E7%BB%84%E4%BB%B6%E5%BA%93"><span class="toc-number">1.18.</span> <span class="toc-text">17.vant组件库</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%EF%BC%89%E5%88%9D%E6%AD%A5%E5%AE%89%E8%A3%85%E5%92%8C%E4%BD%BF%E7%94%A8vant%E7%BB%84%E4%BB%B6%E5%BA%93"><span class="toc-number">1.18.1.</span> <span class="toc-text">1）初步安装和使用vant组件库</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%EF%BC%89%E4%BD%BF%E7%94%A8vant%E7%BB%84%E4%BB%B6"><span class="toc-number">1.18.2.</span> <span class="toc-text">2）使用vant组件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E5%AE%9A%E5%88%B6vant%E5%85%A8%E5%B1%80%E4%B8%BB%E9%A2%98%E6%A0%B7%E5%BC%8F"><span class="toc-number">1.18.3.</span> <span class="toc-text">3)定制vant全局主题样式</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%E3%80%91CSS%E5%8F%98%E9%87%8F%E7%9A%84%E7%94%A8%E6%B3%95"><span class="toc-number">1.18.3.1.</span> <span class="toc-text">1】CSS变量的用法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2%E3%80%91%E5%AE%9A%E5%88%B6%E5%85%A8%E5%B1%80%E6%A0%B7%E5%BC%8F"><span class="toc-number">1.18.3.2.</span> <span class="toc-text">2】定制全局样式</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#18-API-Promise%E5%8C%96"><span class="toc-number">1.19.</span> <span class="toc-text">18.API Promise化</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%EF%BC%89%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E4%BD%BF%E7%94%A8API-Promise%E5%8C%96"><span class="toc-number">1.19.1.</span> <span class="toc-text">1）为什么要使用API Promise化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%EF%BC%89%E5%AE%9E%E7%8E%B0API-Promise%E5%8C%96"><span class="toc-number">1.19.2.</span> <span class="toc-text">2）实现API Promise化</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#19-%E5%85%A8%E5%B1%80%E6%95%B0%E6%8D%AE%E5%85%B1%E4%BA%AB"><span class="toc-number">1.20.</span> <span class="toc-text">19.全局数据共享</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%EF%BC%89%E5%85%A8%E5%B1%80%E5%85%B1%E4%BA%AB%E6%95%B0%E6%8D%AE%E6%A6%82%E5%BF%B5"><span class="toc-number">1.20.1.</span> <span class="toc-text">1）全局共享数据概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%EF%BC%89%E5%AE%89%E8%A3%85Mobx%E7%9B%B8%E5%85%B3%E7%9A%84%E5%8C%85"><span class="toc-number">1.20.2.</span> <span class="toc-text">2）安装Mobx相关的包</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%EF%BC%89%E5%88%9B%E5%BB%BAMobx%E7%9A%84Store%E5%AE%9E%E4%BE%8B"><span class="toc-number">1.20.3.</span> <span class="toc-text">3）创建Mobx的Store实例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4%EF%BC%89%E5%B0%8F%E7%A8%8B%E5%BA%8F%E5%AE%9A%E4%B9%89%E8%AE%A1%E7%AE%97%E5%B1%9E%E6%80%A7"><span class="toc-number">1.20.4.</span> <span class="toc-text">4）小程序定义计算属性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5%EF%BC%89%E5%A6%82%E4%BD%95%E4%BF%AE%E6%94%B9Store%E5%AE%9E%E4%BE%8B%E7%9A%84%E6%95%B0%E6%8D%AE"><span class="toc-number">1.20.5.</span> <span class="toc-text">5）如何修改Store实例的数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6%EF%BC%89%E5%B0%86Store%E4%B8%AD%E7%9A%84%E6%88%90%E5%91%98%E7%BB%91%E5%AE%9A%E5%88%B0%E9%A1%B5%E9%9D%A2%E4%B8%AD"><span class="toc-number">1.20.6.</span> <span class="toc-text">6）将Store中的成员绑定到页面中</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7%EF%BC%89%E5%9C%A8%E9%A1%B5%E9%9D%A2%E4%BD%BF%E7%94%A8Store"><span class="toc-number">1.20.7.</span> <span class="toc-text">7）在页面使用Store</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-%E5%B0%86Store%E4%B8%AD%E7%9A%84%E6%88%90%E5%91%98%E7%BB%91%E5%AE%9A%E5%88%B0%E7%BB%84%E4%BB%B6%E4%B8%AD"><span class="toc-number">1.20.8.</span> <span class="toc-text">8) 将Store中的成员绑定到组件中</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#20-%E5%88%86%E5%8C%85"><span class="toc-number">1.21.</span> <span class="toc-text">20.分包</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%EF%BC%89%E5%88%86%E5%8C%85%E6%A6%82%E5%BF%B5"><span class="toc-number">1.21.1.</span> <span class="toc-text">1）分包概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%EF%BC%89%E5%88%86%E5%8C%85%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="toc-number">1.21.2.</span> <span class="toc-text">2）分包的使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%EF%BC%89%E6%89%93%E5%8C%85%E5%8E%9F%E5%88%99"><span class="toc-number">1.21.3.</span> <span class="toc-text">3）打包原则</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4%EF%BC%89%E5%BC%95%E7%94%A8%E5%8E%9F%E5%88%99"><span class="toc-number">1.21.4.</span> <span class="toc-text">4）引用原则</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5%EF%BC%89%E7%8B%AC%E7%AB%8B%E5%88%86%E5%8C%85"><span class="toc-number">1.21.5.</span> <span class="toc-text">5）独立分包</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6%EF%BC%89%E7%8B%AC%E7%AB%8B%E5%88%86%E5%8C%85%E7%9A%84%E9%85%8D%E7%BD%AE%E6%96%B9%E6%B3%95"><span class="toc-number">1.21.6.</span> <span class="toc-text">6）独立分包的配置方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7%EF%BC%89%E5%88%86%E5%8C%85%E9%A2%84%E4%B8%8B%E8%BD%BD"><span class="toc-number">1.21.7.</span> <span class="toc-text">7）分包预下载</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#21-uni-app-%E5%8F%AF%E4%BB%A5%E8%B7%A8%E5%B9%B3%E5%8F%B0%E5%BC%80%E5%8F%91"><span class="toc-number">1.22.</span> <span class="toc-text">21.uni-app(可以跨平台开发)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%EF%BC%89uni-app%E6%A6%82%E5%BF%B5"><span class="toc-number">1.22.1.</span> <span class="toc-text">1）uni-app概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%EF%BC%89HBuiderX%E5%AE%89%E8%A3%85scss-sass%E6%8F%92%E4%BB%B6"><span class="toc-number">1.22.2.</span> <span class="toc-text">2）HBuiderX安装scss&#x2F;sass插件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%EF%BC%89%E6%96%B0%E5%BB%BAuni-app%E9%A1%B9%E7%9B%AE"><span class="toc-number">1.22.3.</span> <span class="toc-text">3）新建uni-app项目</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4%EF%BC%89%E8%AE%A4%E8%AF%86uni-app%E9%A1%B9%E7%9B%AE%E7%BB%93%E6%9E%84"><span class="toc-number">1.22.4.</span> <span class="toc-text">4）认识uni-app项目结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5%EF%BC%89%E5%B0%86%E9%A1%B9%E7%9B%AE%E8%BF%90%E8%A1%8C%E5%88%B0%E5%BE%AE%E4%BF%A1%E5%BC%80%E5%8F%91%E8%80%85%E5%B7%A5%E5%85%B7"><span class="toc-number">1.22.5.</span> <span class="toc-text">5）将项目运行到微信开发者工具</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6%EF%BC%89%E4%BD%BF%E7%94%A8git%E7%AE%A1%E7%90%86%E9%A1%B9%E7%9B%AE"><span class="toc-number">1.22.6.</span> <span class="toc-text">6）使用git管理项目</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7%EF%BC%89%E6%8A%8A%E9%A1%B9%E7%9B%AE%E6%89%98%E7%AE%A1%E5%88%B0%E7%A0%81%E4%BA%91"><span class="toc-number">1.22.7.</span> <span class="toc-text">7）把项目托管到码云</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#22-%E5%8F%91%E5%B8%83"><span class="toc-number">1.23.</span> <span class="toc-text">22.发布</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%EF%BC%89%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E5%8F%91%E5%B8%83"><span class="toc-number">1.23.1.</span> <span class="toc-text">1）为什么要发布</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%EF%BC%89%E5%B0%86uni-app%E9%A1%B9%E7%9B%AE%E5%8F%91%E5%B8%83%E4%B8%BA%E5%B0%8F%E7%A8%8B%E5%BA%8F"><span class="toc-number">1.23.2.</span> <span class="toc-text">2）将uni-app项目发布为小程序</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%EF%BC%89%E5%B0%86uni-app%E9%A1%B9%E7%9B%AE%E5%8F%91%E5%B8%83%E4%B8%BA%E5%AE%89%E5%8D%93APP"><span class="toc-number">1.23.3.</span> <span class="toc-text">3）将uni-app项目发布为安卓APP</span></a></li></ol></li></ol></li></ol>
+      </div>
+      
+        <div class="catelogue catelogue-2">
+          
+            <p>
+              <span>上一篇：</span>
+              <a href="/2024/11/27/JAVAWEB框架/">学习javaweb框架</a>
+            </p>
+           
+          
+            <p>
+              <span>下一篇</span>
+              <a href="/2024/05/12/python详细版本/">python基础</a>
+            </p>
+          
+        </div>
+      
+    </div>
+  </div>
+</div>
+
+
+<script>
+  // var定义，避免pjax重新进来造成的重复声明错误
+  var config = JSON.parse('{"enable":true,"appId":"Pf8zCXGEH1qsprnWfikVVujL-gzGzoHsz","appKey":"qOqoiUHhH1TGtLRUYURkLRQX","placeholder":"请留下你宝贵的意见吧~","meta":["nick"],"recordIP":true,"visitor":true,"enableQQ":true}')
+  new Valine({
+    el: '#vcomments',
+    appId: config.appId,
+    appKey: config.appKey,
+    placeholder: config.placeholder,
+    meta: config.meta,
+    recordIP: config.recordIP,
+    visitor: config.visitor,
+    enableQQ: config.enableQQ,
+    path: '2024/09/09/微信小程序/'
+  })
+</script>
+
+
+<script>
+  $(document).on('pjax:complete', function() {
+    const tocs = document.querySelector('.toc')
+    const links = tocs ? tocs.querySelectorAll('a') : []
+    links.forEach(link => {
+      link.addEventListener('click', e => {
+        const href = decodeURIComponent(e.href)
+        href.search(/#(.*)/)
+        const id = RegExp.$1
+        const target = document.querySelector('#' + id)
+        const top = target.offsetTop
+        document.documentElement.scrollTo({
+          top: top - 100,
+          behavior: 'smooth'
+        })
+        e.preventDefault()
+      })
+    })
+  })
+</script> 
+
+</div>
+      <div class="main-right-wrapper"><div class="main-right">
+  <div class="main-right--board">
+    <div class="main-right--title">
+      <h5>公告栏</h5>
+      <i class="iconfont icon-gonggao"></i>
+    </div>
+    <div class="main-right--content">
+      Hello~大噶好。我是gcbsh，欢迎你们来到我的博客小站，希望能在这里收获到有用的东西哦！ 
+    </div>
+  </div>
+
+  <div id="aplayer" class="main-right--music"></div>
+
+  <div class="operate-items">
+    <div class="operate-item backtop">
+      <i class="iconfont icon-huidaodingbu"></i>
+      <span>回到顶部</span>
+    </div>
+    
+    <div class="operate-item turn-comment hidden">
+      <i class="iconfont icon-pinglun"></i>
+      <span>查看评论</span>
+    </div>
+    
+  </div>
+
+  <div class="main-right--site">
+    <div class="main-right--power">
+      <p>Power By <a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/">Hexo</a>.</p>
+      <p>Theme：<a target="_blank" rel="noopener" href="https://github.com/Aizener/hexo-theme-cola">Cola.</a></p>
+    </div>
+    <p class="main-right--refer"><a target="_blank" rel="noopener" href="https://beian.miit.gov.cn/#/Integrated/index">蜀ICP备2022005384号-1</a> </p>
+  </div>
+</div>
+
+<script>
+  function setOperateItem () {
+    const reg = /\d{4}\/\d{2}\/\d{2}\/.+/
+    const path = location.pathname
+    const operateDom = document.querySelector('.main-right .operate-items')
+    const commentDom = document.querySelector('.turn-comment')
+    const cateloguDom = document.querySelector('.article-catelogue > .article-catelogue--wrapper');
+
+    if (commentDom) {
+      if (reg.test(path) || path.match(/\/log\/.+/)) {
+        commentDom.classList.remove('hidden')
+        const newDom = operateDom.cloneNode(true);
+        const _backtopDom = newDom.querySelector('.backtop');
+        const _commentDom = newDom.querySelector('.turn-comment');
+        _backtopDom.addEventListener('click', () => backTopEvent());
+        _commentDom.addEventListener('click', () => commentDomEvent());
+        cateloguDom.appendChild(newDom);
+      } else {
+        commentDom.classList.add('hidden')
+      }
+    }
+  }
+
+  setOperateItem()
+  const musics = JSON.parse(`[{"name":"安河桥","artist":"宋冬野","url":"http://ting6.yymp3.net:82/new25/songdongye/11.mp3","cover":"https://img2.baidu.com/it/u=1260056724,1076343118&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500"},{"name":"卡布达","artist":"暂无","url":"music/kabuda.mp3","cover":"https://img2.baidu.com/it/u=705831265,2862720033&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500"}]`)
+  const ap = new APlayer({
+    container: document.querySelector('#aplayer'),
+    audio: musics,
+  })
+
+  $(document).on('pjax:complete', function() {
+    setOperateItem()
+  })
+
+  document.querySelector('.backtop').addEventListener('click', () => {
+    backTopEvent();
+  })
+  const dom = document.querySelector('.turn-comment')
+  dom && dom.addEventListener('click', () => {
+    commentDomEvent();
+  })
+
+  function backTopEvent() {
+    document.documentElement.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    })
+  }
+
+  function commentDomEvent() {
+    const commentDom = document.querySelector('.comments-intro')
+    if (!commentDom) return
+    const top = commentDom.offsetTop, height = commentDom.offsetHeight
+    document.documentElement.scrollTo({
+      top: top - 2 * height,
+      behavior: 'smooth'
+    })
+  }
+</script></div>
+    </section>
+  </div>
+  <div id="progress" class="progress"></div>
+  <div id="gray" class="gray"></div>
+
+  <script>
+    function initScroll () {
+      document.addEventListener('scroll', () => {
+        const doc = document.documentElement
+        const scrollTop = doc.scrollTop
+        const pageHeight = doc.offsetHeight
+        const clientHeight = doc.clientHeight
+        const ratio = scrollTop / (pageHeight - clientHeight)
+        const progress = document.querySelector('#progress')
+        const avatarImg = document.querySelector('.main-left--avatar')
+        progress.style.width = (100 * ratio) + '%'
+        avatarImg.style.transform = `rotate(${360 * ratio}deg)`
+      })
+    }
+
+    const rootPath = "/"
+
+    const checkAndSetArticlePageLayout = () => {
+      const path = location.pathname.replace(rootPath, '');
+      if (
+        /^\/?\d{4}\/\d{2}\/\d{2}\/.*/.test(path) ||
+        /^log\/.+/.test(path)
+      ) {
+        $('.main-container, .main-right, .main-right-wrapper').addClass('is-article')
+      } else {
+        $('.main-container, .main-right, .main-right-wrapper').removeClass('is-article')
+      }
+    }
+
+    const gray = "none"
+    const setGrayStyle = () => {
+      if (gray === 'none') {
+        return
+      } else if (gray === 'index') {
+        location.pathname === '/' ? $('#gray').show() : $('#gray').hide()
+      } else if (gray === 'all') {
+        $('#gray').show()
+      }
+    }
+    setGrayStyle()
+
+
+    window.onload = function () {
+      checkAndSetArticlePageLayout()
+      setTimeout(() => {
+        $('#load').slideUp()
+        $('#container').slideToggle()
+        setTimeout(() => {
+          initScroll();
+        }, 500)
+      }, 500)
+    }
+    
+    let status = 0
+    // 对所有链接跳转事件绑定pjax容器container
+    $(document).pjax('a[target!=_blank]', '#main-container', {
+      container: '#main-container',
+      fragment: '#main-container',
+      timeout: 8000
+    })
+
+    $(document).on('pjax:start', function() {
+    })
+    $(document).on('pjax:complete', function() {
+      status = 0
+      $('.main-container').addClass('to-up').on('animationend', function() {
+        $(this).removeClass('to-up')
+      })
+      setGrayStyle()
+      checkAndSetArticlePageLayout()
+    })
+    $(document).on('pjax:popstate', function() {
+      status = -1
+      checkAndSetArticlePageLayout()
+    });
+  </script>
+</body>
+</html>
