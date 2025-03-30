@@ -193,7 +193,7 @@
   const ipt = document.querySelector('#search-input')
   const btn = document.querySelector('#search-btn')
   const layer = document.querySelector('#search-layer')
-  const posts = JSON.parse(`[{"title":"学习javaweb基础","cover":"/images/javaweb-cover.jpg","path":"2024/03/27/JAVA WEB/"},{"title":"c++竞赛","cover":"/images/c++.jpg","path":"2023/03/27/ACM暑假集训笔记/"},{"title":"python应用","cover":"/images/python.jpg","path":"2024/04/03/Python/"},{"title":"学习javaweb框架","cover":"/images/javaweb-cover.jpg","path":"2024/11/27/JAVAWEB框架/"},{"title":"学习git指令","cover":"/images/git.jpg","path":"2024/04/11/git项目管理工具/"},{"title":"python基础","cover":"/images/python.jpg","path":"2024/05/12/python详细版本/"},{"title":"学习Redis","cover":"/images/redis-cover.jpg","path":"2025/03/27/学习Redis/"},{"title":"mysql","cover":"/images/mysql.jpg","path":"2023/10/25/数据库知识/"},{"title":"微信小程序","cover":"/images/wx.jpg","path":"2024/09/09/微信小程序/"}]`)
+  const posts = JSON.parse(`[{"title":"c++竞赛","cover":"/images/c++.jpg","path":"2023/03/27/ACM暑假集训笔记/"},{"title":"学习javaweb框架","cover":"/images/javaweb-cover.jpg","path":"2024/11/27/JAVAWEB框架/"},{"title":"Redis基础篇","cover":"/images/redis-cover.jpg","path":"2025/03/10/Redis基础篇/"},{"title":"python应用","cover":"/images/python.jpg","path":"2024/04/03/Python/"},{"title":"学习javaweb基础","cover":"/images/javaweb-cover.jpg","path":"2024/03/27/JAVA WEB/"},{"title":"学习git指令","cover":"/images/git.jpg","path":"2024/04/11/git项目管理工具/"},{"title":"Redis实战篇","cover":"/images/redis-cover.jpg","path":"2025/03/31/Redis实战篇/"},{"title":"微信小程序","cover":"/images/wx.jpg","path":"2024/09/09/微信小程序/"},{"title":"mysql","cover":"/images/mysql.jpg","path":"2023/10/25/数据库知识/"},{"title":"python基础","cover":"/images/python.jpg","path":"2024/05/12/python详细版本/"}]`)
   ipt.addEventListener('keyup', e => {
     if (e.key === 'Enter') {
       handleSearch()
@@ -327,7 +327,7 @@
       </h5>
       <p class="main-left--subtitle">
         <span>文章数目：</span>
-        <span>9 篇</span>
+        <span>10 篇</span>
       </p>
       <p class="main-left--subtitle">
         <span>最近动态：</span>
@@ -335,7 +335,7 @@
       </p>
       <p class="main-left--subtitle">
         <span>上线时间：</span>
-        <span>2天</span>
+        <span>4天</span>
       </p>
       <p class="main-left--subtitle">
         <span>当前版本：</span>
@@ -354,10 +354,10 @@
       <div class="index-article">
         <!-- <img class="index-article--cover" src="/images/redis-cover.jpg" alt=""> -->
         <div class="index-article--box">
-          <img class="index-article--cover" data-cover="/images/redis-cover.jpg" alt="学习Redis" />
+          <img class="index-article--cover" data-cover="/images/redis-cover.jpg" alt="Redis实战篇" />
         </div>
         <div class="index-article--content">
-          <a href="/2025/03/27/%E5%AD%A6%E4%B9%A0Redis/">学习Redis </a>
+          <a href="/2025/03/31/Redis%E5%AE%9E%E6%88%98%E7%AF%87/">Redis实战篇 </a>
           <div>
             
               <p>
@@ -371,50 +371,12 @@
       </div>
     
       <div class="index-article">
-        <!-- <img class="index-article--cover" src="/images/wx.jpg" alt=""> -->
-        <div class="index-article--box">
-          <img class="index-article--cover" data-cover="/images/wx.jpg" alt="微信小程序" />
-        </div>
-        <div class="index-article--content">
-          <a href="/2024/09/09/%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F/">微信小程序 </a>
-          <div>
-            
-              <p>
-                <a class="post-category-link" href="/categories/%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F/">微信小程序</a>
-              </p>
-            
-            
-          </div>
-          <div class="bg"></div>
-        </div>
-      </div>
-    
-      <div class="index-article">
-        <!-- <img class="index-article--cover" src="/images/git.jpg" alt=""> -->
-        <div class="index-article--box">
-          <img class="index-article--cover" data-cover="/images/git.jpg" alt="学习git指令" />
-        </div>
-        <div class="index-article--content">
-          <a href="/2024/04/11/git%E9%A1%B9%E7%9B%AE%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7/">学习git指令 </a>
-          <div>
-            
-              <p>
-                <a class="post-category-link" href="/categories/%E9%A1%B9%E7%9B%AE%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7/">项目管理工具</a>
-              </p>
-            
-            
-          </div>
-          <div class="bg"></div>
-        </div>
-      </div>
-    
-      <div class="index-article">
         <!-- <img class="index-article--cover" src="/images/javaweb-cover.jpg" alt=""> -->
         <div class="index-article--box">
-          <img class="index-article--cover" data-cover="/images/javaweb-cover.jpg" alt="学习javaweb基础" />
+          <img class="index-article--cover" data-cover="/images/javaweb-cover.jpg" alt="学习javaweb框架" />
         </div>
         <div class="index-article--content">
-          <a href="/2024/03/27/JAVA%20WEB/">学习javaweb基础 </a>
+          <a href="/2024/11/27/JAVAWEB%E6%A1%86%E6%9E%B6/">学习javaweb框架 </a>
           <div>
             
               <p>
@@ -428,16 +390,54 @@
       </div>
     
       <div class="index-article">
-        <!-- <img class="index-article--cover" src="/images/c++.jpg" alt=""> -->
+        <!-- <img class="index-article--cover" src="/images/python.jpg" alt=""> -->
         <div class="index-article--box">
-          <img class="index-article--cover" data-cover="/images/c++.jpg" alt="c++竞赛" />
+          <img class="index-article--cover" data-cover="/images/python.jpg" alt="python基础" />
         </div>
         <div class="index-article--content">
-          <a href="/2023/03/27/ACM%E6%9A%91%E5%81%87%E9%9B%86%E8%AE%AD%E7%AC%94%E8%AE%B0/">c++竞赛 </a>
+          <a href="/2024/05/12/python%E8%AF%A6%E7%BB%86%E7%89%88%E6%9C%AC/">python基础 </a>
           <div>
             
               <p>
-                <a class="post-category-link" href="/categories/c/">C++</a>
+                <a class="post-category-link" href="/categories/python/">Python</a>
+              </p>
+            
+            
+          </div>
+          <div class="bg"></div>
+        </div>
+      </div>
+    
+      <div class="index-article">
+        <!-- <img class="index-article--cover" src="/images/python.jpg" alt=""> -->
+        <div class="index-article--box">
+          <img class="index-article--cover" data-cover="/images/python.jpg" alt="python应用" />
+        </div>
+        <div class="index-article--content">
+          <a href="/2024/04/03/Python/">python应用 </a>
+          <div>
+            
+              <p>
+                <a class="post-category-link" href="/categories/python/">Python</a>
+              </p>
+            
+            
+          </div>
+          <div class="bg"></div>
+        </div>
+      </div>
+    
+      <div class="index-article">
+        <!-- <img class="index-article--cover" src="/images/mysql.jpg" alt=""> -->
+        <div class="index-article--box">
+          <img class="index-article--cover" data-cover="/images/mysql.jpg" alt="mysql" />
+        </div>
+        <div class="index-article--content">
+          <a href="/2023/10/25/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9F%A5%E8%AF%86/">mysql </a>
+          <div>
+            
+              <p>
+                <a class="post-category-link" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a>
               </p>
             
             
@@ -450,12 +450,69 @@
   <div class="index-center">
     
       <div class="index-article">
-        <!-- <img class="index-article--cover" data-cover="/images/javaweb-cover.jpg" src="/images/javaweb-cover.jpg" alt=""> -->
+        <!-- <img class="index-article--cover" data-cover="/images/redis-cover.jpg" src="/images/redis-cover.jpg" alt=""> -->
         <div class="index-article--box">
-          <img class="index-article--cover" data-cover="/images/javaweb-cover.jpg" alt="学习javaweb框架" />
+          <img class="index-article--cover" data-cover="/images/redis-cover.jpg" alt="Redis基础篇" />
         </div>
         <div class="index-article--content">
-          <a href="/2024/11/27/JAVAWEB%E6%A1%86%E6%9E%B6/">学习javaweb框架 </a>
+          <a href="/2025/03/10/Redis%E5%9F%BA%E7%A1%80%E7%AF%87/">Redis基础篇 </a>
+          <div>
+            
+              <p>
+                <a class="category-link" href="/categories/java%E4%B8%AD%E9%97%B4%E4%BB%B6/">Java中间件</a>
+              </p>
+            
+            
+          </div>
+          <div class="bg"></div>
+        </div>
+      </div>
+    
+      <div class="index-article">
+        <!-- <img class="index-article--cover" data-cover="/images/wx.jpg" src="/images/wx.jpg" alt=""> -->
+        <div class="index-article--box">
+          <img class="index-article--cover" data-cover="/images/wx.jpg" alt="微信小程序" />
+        </div>
+        <div class="index-article--content">
+          <a href="/2024/09/09/%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F/">微信小程序 </a>
+          <div>
+            
+              <p>
+                <a class="category-link" href="/categories/%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F/">微信小程序</a>
+              </p>
+            
+            
+          </div>
+          <div class="bg"></div>
+        </div>
+      </div>
+    
+      <div class="index-article">
+        <!-- <img class="index-article--cover" data-cover="/images/git.jpg" src="/images/git.jpg" alt=""> -->
+        <div class="index-article--box">
+          <img class="index-article--cover" data-cover="/images/git.jpg" alt="学习git指令" />
+        </div>
+        <div class="index-article--content">
+          <a href="/2024/04/11/git%E9%A1%B9%E7%9B%AE%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7/">学习git指令 </a>
+          <div>
+            
+              <p>
+                <a class="category-link" href="/categories/%E9%A1%B9%E7%9B%AE%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7/">项目管理工具</a>
+              </p>
+            
+            
+          </div>
+          <div class="bg"></div>
+        </div>
+      </div>
+    
+      <div class="index-article">
+        <!-- <img class="index-article--cover" data-cover="/images/javaweb-cover.jpg" src="/images/javaweb-cover.jpg" alt=""> -->
+        <div class="index-article--box">
+          <img class="index-article--cover" data-cover="/images/javaweb-cover.jpg" alt="学习javaweb基础" />
+        </div>
+        <div class="index-article--content">
+          <a href="/2024/03/27/JAVA%20WEB/">学习javaweb基础 </a>
           <div>
             
               <p>
@@ -469,54 +526,16 @@
       </div>
     
       <div class="index-article">
-        <!-- <img class="index-article--cover" data-cover="/images/python.jpg" src="/images/python.jpg" alt=""> -->
+        <!-- <img class="index-article--cover" data-cover="/images/c++.jpg" src="/images/c++.jpg" alt=""> -->
         <div class="index-article--box">
-          <img class="index-article--cover" data-cover="/images/python.jpg" alt="python基础" />
+          <img class="index-article--cover" data-cover="/images/c++.jpg" alt="c++竞赛" />
         </div>
         <div class="index-article--content">
-          <a href="/2024/05/12/python%E8%AF%A6%E7%BB%86%E7%89%88%E6%9C%AC/">python基础 </a>
+          <a href="/2023/03/27/ACM%E6%9A%91%E5%81%87%E9%9B%86%E8%AE%AD%E7%AC%94%E8%AE%B0/">c++竞赛 </a>
           <div>
             
               <p>
-                <a class="category-link" href="/categories/python/">Python</a>
-              </p>
-            
-            
-          </div>
-          <div class="bg"></div>
-        </div>
-      </div>
-    
-      <div class="index-article">
-        <!-- <img class="index-article--cover" data-cover="/images/python.jpg" src="/images/python.jpg" alt=""> -->
-        <div class="index-article--box">
-          <img class="index-article--cover" data-cover="/images/python.jpg" alt="python应用" />
-        </div>
-        <div class="index-article--content">
-          <a href="/2024/04/03/Python/">python应用 </a>
-          <div>
-            
-              <p>
-                <a class="category-link" href="/categories/python/">Python</a>
-              </p>
-            
-            
-          </div>
-          <div class="bg"></div>
-        </div>
-      </div>
-    
-      <div class="index-article">
-        <!-- <img class="index-article--cover" data-cover="/images/mysql.jpg" src="/images/mysql.jpg" alt=""> -->
-        <div class="index-article--box">
-          <img class="index-article--cover" data-cover="/images/mysql.jpg" alt="mysql" />
-        </div>
-        <div class="index-article--content">
-          <a href="/2023/10/25/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9F%A5%E8%AF%86/">mysql </a>
-          <div>
-            
-              <p>
-                <a class="category-link" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a>
+                <a class="category-link" href="/categories/c/">C++</a>
               </p>
             
             
@@ -530,7 +549,7 @@
     <div class="index-right-wrapper">
       <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/c/">C++</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/javaweb/">Javaweb</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/java%E4%B8%AD%E9%97%B4%E4%BB%B6/">Java中间件</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/python/">Python</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F/">微信小程序</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%A1%B9%E7%9B%AE%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7/">项目管理工具</a></li></ul>
       
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/03/">2025年03月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">2024年11月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/09/">2024年09月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/05/">2024年05月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">2024年04月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/03/">2024年03月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">2023年10月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/03/">2023年03月</a><span class="archive-list-count">1</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/03/">2025年03月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">2024年11月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/09/">2024年09月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/05/">2024年05月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">2024年04月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/03/">2024年03月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">2023年10月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/03/">2023年03月</a><span class="archive-list-count">1</span></li></ul>
     </div>
   </div>
 </div>
