@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>我的技术与生活——学习elasticsearch | 欢迎来到小韩的学习博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="shortcut icon" href="/imgs/shortcut-icon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="/css/public.css" />
+  <link rel="stylesheet" href="/css/layout.css" />
+  <link rel="stylesheet" href="/css/iconfont.css" />
+  <link rel="stylesheet" href="/css/APlayer.min.css" />
+  <script src="/js/APlayer.min.js"></script>
+  <script src="/js/jquery.min.js"></script>
+  <script src="/js/jquery.pjax.min.js"></script>
+
+  <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+  <script>
+    document.title = `我的技术与生活——学习elasticsearch`
+  </script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<style>
+  .load {
+    width: 100%;
+    height: 100vh;
+    background-color: rgb(37, 35, 40);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 9999;
+  }
+  .load-circle {
+    width: 80px;
+    height: 80px;
+    border: 8px solid orange;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: rotate 1s linear infinite;
+    filter: drop-shadow(0 0 3px orange);
+  }
+  .load-circle-inner {
+    width: 40px;
+    height: 40px;
+    border: 8px solid orange;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: rotate-reverse .5s linear infinite;
+  }
+  .load-text {
+    margin-top: 20px;
+    font-size: 24px;
+    color: orange;
+    display: flex;
+  }
+  .load-text span {
+    margin: 0 5px;
+    text-shadow: 5px 5px 5px orange;
+    animation: move 1s linear infinite;
+  }
+  .load-text span:nth-child(1) {
+    animation-delay: -0.6s;
+  }
+  .load-text span:nth-child(2) {
+    animation-delay: -0.5s;
+  }
+  .load-text span:nth-child(3) {
+    animation-delay: -0.4s;
+  }
+  .load-text span:nth-child(4) {
+    animation-delay: -0.3s;
+  }
+  .load-text span:nth-child(5) {
+    animation-delay: -0.2s;
+  }
+  .load-text span:nth-child(6) {
+    animation-delay: -0.1s;
+  }
+  @keyframes rotate {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(360deg); }
+  }
+  @keyframes rotate-reverse {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(-360deg); }
+  }
+  @keyframes move {
+    0% { transform: translateY(0%) rotate(0) scale(1); }
+    20% { transform: translateY(20%) rotate(10deg) scale(1.2); }
+    80% { transform: translateY(-10%) rotate(-20deg) scale(.8);}
+    100% { transform: translateY(0) rotate(0) scale(1); }
+  }
+
+  .progress {
+    position: fixed;
+    left: 0; top: 0;
+    width: 0;
+    height: 3px;
+    background-color: green;
+    transition: all cubic-bezier(0.215, 0.610, 0.355, 1) .1s;
+    z-index: 9999;
+  }
+
+  .to-up {
+    animation: toUp .5s 1;
+  }
+  .gray {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 9999;
+    display: none;
+    pointer-events: none;
+    background-color: #000;
+    mix-blend-mode: color;
+  }
+  @keyframes toUp {
+    from { transform: translateY(15px); opacity: 0; }
+    to { transform: translateY(0) ; opacity: 1; }
+  }
+</style>
+<body>
+  <div id="load" class="load">
+    <div class="load-circle">
+      <div class="load-circle-inner"></div>
+    </div>
+    <p class="load-text">
+      <span>L</span>
+      <span>O</span>
+      <span>A</span>
+      <span>D</span>
+      <span>I</span>
+      <span>N</span>
+      <span>G</span>
+    </p>
+  </div>
+  <div id="container" class="container w-100 vh-100" style="display: none;">
+    <header class="header">
+  <div class="header-wrapper">
+    <div class="header-left">
+      <div class="header-search">
+        <input id="search-input" type="text" class="header-search--input" placeholder="请输入要检索的文章标题" />
+        <span id="search-btn" class="header-search--icon"><i class="iconfont icon-sousuo"></i></span>
+      </div>
+      <div id="search-layer" class="header-search--layer hidden">
+        <p class="title">
+          <span>以下是搜索内容：</span>
+          <span id="close-layer-btn">关闭</span>
+        </p>
+        <ul>
+        </ul>
+      </div>
+    </div>
+    <div class="header-right">
+      <ul class="header-menu">
+        <li>
+          <a href="http://example.com/">
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+            <span class="header-menu--span">首页</span>
+          </a>
+        </li>
+        <li>
+          <a href="http://example.com/log">
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+            <span class="header-menu--span">日志</span>
+          </a>
+        </li>
+        <li>
+          <a href="http://example.com/link">
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+            <span class="header-menu--span">友情链接</span>
+          </a>
+        </li>
+        <li>
+          <a href="http://example.com/about">
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+            <span class="header-menu--span">关于我</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<script>
+  const ipt = document.querySelector('#search-input')
+  const btn = document.querySelector('#search-btn')
+  const layer = document.querySelector('#search-layer')
+  const posts = JSON.parse(`[{"title":"学习javaweb基础","cover":"/images/javaweb-cover.jpg","path":"2024/03/27/JAVA WEB/"},{"title":"c++竞赛","cover":"/images/c++.jpg","path":"2023/03/27/ACM暑假集训笔记/"},{"title":"Redis基础篇","cover":"/images/redis-cover.jpg","path":"2025/03/10/Redis基础篇/"},{"title":"python应用","cover":"/images/python.jpg","path":"2024/04/03/Python/"},{"title":"学习javaweb框架","cover":"/images/javaweb-cover.jpg","path":"2024/11/27/JAVAWEB框架/"},{"title":"学习git指令","cover":"/images/git.jpg","path":"2024/04/11/git项目管理工具/"},{"title":"python基础","cover":"/images/python.jpg","path":"2024/05/12/python详细版本/"},{"title":"Redis实战篇","cover":"/images/redis-cover.jpg","path":"2025/03/31/Redis实战篇/"},{"title":"学习elasticsearch","cover":"/images/wx.jpg","path":"2024/03/28/学习elasticsearch/"},{"title":"mysql","cover":"/images/mysql.jpg","path":"2023/10/25/数据库知识/"},{"title":"微信小程序","cover":"/images/wx.jpg","path":"2024/09/09/微信小程序/"}]`)
+  ipt.addEventListener('keyup', e => {
+    if (e.key === 'Enter') {
+      handleSearch()
+    }
+  })
+  btn.addEventListener('click', () => {
+    handleSearch()
+  })
+
+  document.querySelector('#close-layer-btn').addEventListener('click', () => {
+    layer.classList.toggle('hidden')
+  })
+
+  function handleSearch() {
+    if (ipt.value.trim() === '') {
+      return
+    }
+    let html = ''
+    const targetPosts = posts.filter(post => post.title.includes(ipt.value))
+    targetPosts.forEach(post => {
+      html += `
+        <li>
+          <div>
+            <a href="/${post.path}">${post.title.replace(new RegExp(ipt.value), `<span>${ipt.value}</span>`)}</a>
+          </div>
+          <img src="${post.cover || '/imgs/default-cover.webp' }" />
+        </li>
+      `
+    })
+    if (html.trim () === '') {
+      html += '<p class="empty">没有搜索到内容</p>'
+    }
+    layer.querySelector('ul').innerHTML = html
+    layer.classList.remove('hidden')
+  }
+</script> 
+    <section id="main" class="main">
+      <div class="main-left-wrapper">
+<div class="main-left">
+  <div class="main-left--block">
+    <div class="main-left--info">
+      <img src="/imgs/avatar.jpg"" class="main-left--avatar" />
+      <div class="main-left--intro">
+        <p class="main-left--name">gcbsh</p>
+        <div class="main-left--tags">
+          <span class="main-left--tag">减肥</span>
+          <span class="main-left--tag">学习</span>
+        </div>
+      </div>
+    </div>
+  
+    <div>
+      <div class="main-left--motto">
+        <p>“关关难过关关过，前路漫漫亦灿灿”</p>
+        <p>“愿望是宅家睡大觉”</p>
+      </div>
+      <div class="main-left--github">
+        <span class="line"></span>
+        <a target="_blank" rel="noopener" href="https://github.com/664656164"><i class="logo iconfont icon-github-fill"></i></a>
+        <span class="line"></span>
+      </div>
+      <div class="main-left--statics">
+        <a href="/categories">
+          <div>
+            <span>7</span>
+            <span>分类</span>
+          </div>
+        </a>
+        <a href="/tags">
+          <div>
+            <span>0</span>
+            <span>标签</span>
+          </div>
+        </a>
+        <a href="/archives">
+          <div>
+            <span>8 </span>
+            <span>归档</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-left--block">
+    <ul class="main-left--menu">
+      
+        <li>
+          <a href="/">
+            <span class="header-menu--span">小站首页</span>
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/log">
+            <span class="header-menu--span">个人日志</span>
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/link">
+            <span class="header-menu--span">友情链接</span>
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/about">
+            <span class="header-menu--span">关于自己</span>
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/tools">
+            <span class="header-menu--span">我的工具</span>
+            <i class="header-menu--icon iconfont icon-gongju"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+  <div class="main-left--block">
+    <div class="main-left--site">
+      <h5 class="main-left--title">
+        <span>站点信息</span>
+        <i class="iconfont icon-zhandian"></i>
+      </h5>
+      <p class="main-left--subtitle">
+        <span>文章数目：</span>
+        <span>11 篇</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>最近动态：</span>
+        <span>今天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>上线时间：</span>
+        <span>12天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>当前版本：</span>
+        <span>v1.0.2</span>
+      </p>
+    </div>
+  </div>
+</div></div>
+      <div id="main-container" class="main-container">
+
+
+  <link rel="stylesheet" href="/css/partial/article.css" />
+
+<div class="article-container">
+  <div class="article">
+    <h1 class="article-title">学习elasticsearch</h1>
+    <div class="article-info">
+      <div class="article-info--item">
+        <div class="article-info--info">
+          
+          <div class="article-info--categories">
+            <span>分类：</span>
+            <a class="category-link" href="/categories/java%E4%B8%AD%E9%97%B4%E4%BB%B6/">Java中间件</a>
+          </div>
+          
+          
+          <div class="article-info--tags">
+            <span>标签：</span>
+            
+          </div>
+          
+          <p class="article-info--date">日期：2024-03-28 00:00:00</p>
+        </div>
+        <img src="/images/wx.jpg" alt="" class="article-cover">
+      </div>
+    </div>
+    <article class="article-content markdown-body">
+      <h1 id="elasticsearch基础篇"><a href="#elasticsearch基础篇" class="headerlink" title="elasticsearch基础篇"></a>elasticsearch基础篇</h1><p>elasticsearch分布式搜索引擎</p>
+<h2 id="一-初识ES"><a href="#一-初识ES" class="headerlink" title="一.初识ES"></a>一.初识ES</h2><h3 id="1-1-了解ES"><a href="#1-1-了解ES" class="headerlink" title="1.1 了解ES"></a>1.1 了解ES</h3><p>elasticsearch是一款非常强大的开源搜索引擎，可以帮助我们从海量数据中快速找到需要的内容。<strong>被广泛应用于搜索，日志统计，分析，系统监控等领域。</strong></p>
+<p>elasticsearch是elastic stack的核心，<strong>负责存储，搜索，分析数据。</strong></p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250328155803197.png" alt="image-20250328155803197"></p>
+<p>Lucene是Apache的开源搜索引擎类库，提供了搜索引擎的核心API，elasticsearch就是基于这个类库实现的。</p>
+<h3 id="1-2-倒排索引"><a href="#1-2-倒排索引" class="headerlink" title="1.2 倒排索引"></a>1.2 倒排索引</h3><p>传统数据库（如mysql）采取正向索引。</p>
+<p>正向索引：基于文档id创建索引。查询词条时，必须先找到文档，而后判断是否包含词条。</p>
+<p>正向索引在局部内容检索上性能比较差（逐条数据扫描）</p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250328160646639.png" alt="image-20250328160646639"></p>
+<p>elascticsearch采用倒排索引。（核心）</p>
+<p>倒排索引：对文档内容分词，对词条创建索引，并记录词条所在文档的信息。查询时现根据词条查询到文档id,而后获取到文档。</p>
+<p><strong>文档（document）</strong>:每条数据就是一个文档</p>
+<p><strong>词条（term）</strong>:文档按照语义分成的词语</p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250328161428848.png" alt="image-20250328161428848"></p>
+<h3 id="1-3-es的一些概念"><a href="#1-3-es的一些概念" class="headerlink" title="1.3 es的一些概念"></a>1.3 es的一些概念</h3><p>文档：</p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250328161847857.png" alt="image-20250328161847857"></p>
+<p>索引（index）：相同类型的文档的集合</p>
+<p>映射（mapping）: 索引中文档的字段约束信息，类似表的结构约束。</p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250328161943722.png" alt="image-20250328161943722"></p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250328162203322.png" alt="image-20250328162203322"></p>
+<p>mysql:擅长事务类型操作，可以确保数据的安全和一致性。</p>
+<p>elasticsearch:产长海量数据搜索，分析，计算</p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250328162502536.png" alt="image-20250328162502536"></p>
+<h3 id="1-4-安装es-kibana"><a href="#1-4-安装es-kibana" class="headerlink" title="1.4 安装es,kibana"></a>1.4 安装es,kibana</h3><p>安装教程： <a target="_blank" rel="noopener" href="https://blog.csdn.net/heyl163_/article/details/132645081?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522f1d445959857ff348d1583b948b7ef66%2522%252C%2522scm%2522%253A%252220140713.130102334..%2522%257D&request_id=f1d445959857ff348d1583b948b7ef66&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~blog~top_positive~default-1-132645081-null-null.nonecase&utm_term=elasticsearch%E5%AE%89%E8%A3%85&spm=1018.2226.3001.4450">https://blog.csdn.net/heyl163_/article/details/132645081?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522f1d445959857ff348d1583b948b7ef66%2522%252C%2522scm%2522%253A%252220140713.130102334..%2522%257D&amp;request_id=f1d445959857ff348d1583b948b7ef66&amp;biz_id=0&amp;utm_medium=distribute.pc_search_result.none-task-blog-2~blog~top_positive~default-1-132645081-null-null.nonecase&amp;utm_term=elasticsearch%E5%AE%89%E8%A3%85&amp;spm=1018.2226.3001.4450</a></p>
+<h3 id="1-5-es的启用"><a href="#1-5-es的启用" class="headerlink" title="1.5 es的启用"></a>1.5 es的启用</h3><p>（1）启动es</p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250331123956998.png" alt="image-20250331123956998"></p>
+<p>(2) 启动kibana</p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250331123918857.png" alt="image-20250331123918857"></p>
+<p>(3) 浏览器发送请求</p>
+<p><a target="_blank" rel="noopener" href="http://localhost:5601/app/kibana#/dev_tools/console">Kibana</a></p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250331124058077.png" alt="image-20250331124058077"></p>
+<h3 id="1-6-分词器"><a href="#1-6-分词器" class="headerlink" title="1.6 分词器"></a>1.6 分词器</h3><p>es在创建倒排索引是需要对文档分词；在搜索时，需要对用户输入内容分词。但默认的分词规则对中文处理并不友好，因此处理中文，一般使用ik分词器。[如何安装ik分词器，上文安装es,kibana安装教程中已有，不再赘诉]</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">#测试默认分词器</span><br><span class="line">#post请求 _analyze 进行分词</span><br><span class="line">#text:需要分词的文本</span><br><span class="line">#analyzer:standard 标准分词器 </span><br><span class="line">#analyzer：chinese 中文分词器</span><br><span class="line">#analyzer:english 英文分析器</span><br><span class="line">#elasticsearch 的默认分词器 对中文不太友好，因此处理中文，一般会使用ik分词器。</span><br><span class="line">POST /_analyze</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;analyzer&quot;</span>: <span class="string">&quot;english&quot;</span>,</span><br><span class="line">  <span class="string">&quot;text&quot;</span>:<span class="string">&quot;黑马程序员学习java太棒了！&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250331124728320.png" alt="image-20250331124728320"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">#测试ik分词器 ik_smart最少切分       /ik_max_word最细切分</span><br><span class="line">POST /_analyze</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;analyzer&quot;</span>: <span class="string">&quot;ik_max_word&quot;</span>,</span><br><span class="line">  <span class="string">&quot;text&quot;</span>:<span class="string">&quot;黑马程序员学习java太棒了！&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250331124803628.png" alt="image-20250331124803628"></p>
+<h3 id="1-7-IK分词器的扩展和停用词典"><a href="#1-7-IK分词器的扩展和停用词典" class="headerlink" title="1.7 IK分词器的扩展和停用词典"></a>1.7 IK分词器的扩展和停用词典</h3><p><strong>（1）IK分词器的扩展和停用介绍</strong></p>
+<p>当网络热词，新词在词典里面是没有的，因此需要对ik分词器进行扩展词库处理。</p>
+<p>当搜索一些敏感词时，也需要对ik分词器中的词进行停用。</p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250331125814169.png" alt="image-20250331125814169"></p>
+<p><strong>(2)IK分词器的扩展和停用词典的步骤：</strong></p>
+<p>a.找到ik分词器中config目录中的IKAnalyzer.cfg.xml文件点击打开</p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250331125920012.png" alt="image-20250331125920012"></p>
+<p>b.写上配置的扩展字典和停止字典文件名</p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250331130140567.png" alt="image-20250331130140567"></p>
+<p>c.在IKAnalyzer.cfg.xml同级目录，创建出ext.dic和stopword.dic文件</p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250331130543871.png" alt="image-20250331130543871"></p>
+<p>d.在ext.dic和stopword.dic文件中添加扩展词和停止词</p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250331130858721.png" alt="image-20250331130858721"></p>
+<p>e.重新启动es服务</p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250331130942564.png" alt="image-20250331130942564"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">#三.IK分词器的扩展和停用词典</span><br><span class="line"># 当网络热词，新词在词典里面是没有的，因此可以对ik分词器进行扩展词库处理。</span><br><span class="line"># 当搜索一些敏感词时，也可以对ik分词器中的词进行停用。</span><br><span class="line">POST /_analyze</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;analyzer&quot;</span>: <span class="string">&quot;ik_smart&quot;</span>,</span><br><span class="line">  <span class="string">&quot;text&quot;</span>:<span class="string">&quot;奥力给，白嫖,成都理工大学&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-8-总结"><a href="#1-8-总结" class="headerlink" title="1.8 总结"></a>1.8 总结</h3><p><strong>（1）分词器的作用是什么？</strong></p>
+<p>​          创建倒排索引时对文档分词。</p>
+<p>​          用户搜索时，对输入的内容分词。</p>
+<p> <strong>（2）IK分词器有几种模式？</strong></p>
+<p>​           ik_smart:智能划分，粗粒度。</p>
+<p>​           ik_max_word:最细切分，细粒度。</p>
+<p><strong>（3）IK分词器如何扩展词条？如何停用词条？</strong></p>
+<p>利用config目录中的IKanalyzer.cfg.cml文件添加扩展词条和停用词条。</p>
+<p>在词典中添加扩展词条或者停用词条。</p>
+<h2 id="二-DSL操作索引库"><a href="#二-DSL操作索引库" class="headerlink" title="二.DSL操作索引库"></a>二.DSL操作索引库</h2><h3 id="2-1-mapping映射属性"><a href="#2-1-mapping映射属性" class="headerlink" title="2.1 mapping映射属性"></a>2.1 mapping映射属性</h3><p>mapping是对索引库中文档的约束，常见的mapping属性包括：</p>
+<p>（1）type:字段类型。常见的简单类型有：</p>
+<ul>
+<li>字符串：text(可分词的文本)，keyword(精准词，不可拆。例如：品牌，国家，id地址)；</li>
+<li>数值：long,integer,byte,double,float;</li>
+<li>布尔：boolean</li>
+<li>日期：date</li>
+<li>对象：object</li>
+</ul>
+<p>（2）index:是否创建索引，默认为true（倒排索引）参与搜索的设置索引。</p>
+<p>（3） analyzer:使用哪种分词器。跟text结合使用。</p>
+<p>（4）properties:该字段的子字段。</p>
+<h3 id="2-2-索引库的CRUD"><a href="#2-2-索引库的CRUD" class="headerlink" title="2.2 索引库的CRUD"></a>2.2 索引库的CRUD</h3><p>ES中通过Restful请求操作索引库，文档。请求内容用DSL语句来表示。</p>
+<p>DSL语法：</p>
+<p><strong>（1）创建索引库和mapping：</strong></p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250331135148110.png" alt="image-20250331135148110"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">#四.创建索引库</span><br><span class="line">PUT /heima</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;mappings&quot;</span>: &#123;</span><br><span class="line">    <span class="string">&quot;properties&quot;</span>: &#123;</span><br><span class="line">      <span class="string">&quot;info&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;type&quot;</span>: <span class="string">&quot;text&quot;</span>,</span><br><span class="line">        <span class="string">&quot;analyzer&quot;</span>: <span class="string">&quot;ik_smart&quot;</span></span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="string">&quot;email&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;type&quot;</span>: <span class="string">&quot;keyword&quot;</span>,</span><br><span class="line">        <span class="string">&quot;index&quot;</span>: <span class="literal">false</span></span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="string">&quot;name&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;type&quot;</span>: <span class="string">&quot;object&quot;</span>,</span><br><span class="line">        <span class="string">&quot;properties&quot;</span>: &#123;</span><br><span class="line">          <span class="string">&quot;firstName&quot;</span>: &#123;</span><br><span class="line">            <span class="string">&quot;type&quot;</span>: <span class="string">&quot;keyword&quot;</span></span><br><span class="line">          &#125;,</span><br><span class="line">          <span class="string">&quot;lastName&quot;</span>: &#123;</span><br><span class="line">            <span class="string">&quot;type&quot;</span>: <span class="string">&quot;keyword&quot;</span></span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p> <img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250331135954001.png" alt="image-20250331135954001"></p>
+<p><strong>（2）查看索引库</strong></p>
+<p>​         GET &#x2F;索引库名</p>
+<p><strong>（3）删除索引库</strong></p>
+<p>​         DELETE &#x2F;索引库名</p>
+<p><strong>（4）修改索引库</strong></p>
+<p>​         索引库和mapping一旦创建无法修改，但是可以添加新的字段。</p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250331140326169.png" alt="image-20250331140326169"></p>
+<p>注意：新字段名不能和原有字段名相同，不然就会以为是修改原有的字段，就会报错。</p>
+<h3 id="2-3-总结"><a href="#2-3-总结" class="headerlink" title="2.3 总结"></a>2.3 总结</h3><p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250331140802465.png" alt="image-20250331140802465"></p>
+<h2 id="三-DSL操作文档"><a href="#三-DSL操作文档" class="headerlink" title="三.DSL操作文档"></a>三.DSL操作文档</h2><h3 id="2-1-文档的CRUD"><a href="#2-1-文档的CRUD" class="headerlink" title="2.1 文档的CRUD"></a>2.1 文档的CRUD</h3><p><strong>（1）新增文档</strong></p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250331140952264.png" alt="image-20250331140952264"></p>
+<p><strong>（2）查看文档</strong></p>
+<ul>
+<li>​         根据文档倒排索引id查询文档数据:</li>
+</ul>
+<p>​                 GET &#x2F;索引库名&#x2F;_doc&#x2F;文档id</p>
+<ul>
+<li>​         批量查询文档数据：</li>
+</ul>
+<p>​                GET &#x2F;索引库名&#x2F;_search</p>
+<p><strong>（3）删除索引库文档</strong></p>
+<p>​          DELETE &#x2F;索引库名&#x2F;_doc&#x2F;文档id</p>
+<p><strong>（4）修改文档</strong></p>
+<p>方式一：全量修改，会删除旧文档，添加新文档。</p>
+<p>这种方式会根据id，去找到原来文档，删除原来文档，再创建新文档。如果文档id不存在，则创建新的文档。所以这种全量修改方式，不仅可以用做修改文档，还可以用作新增文档。</p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250331141747460.png" alt="image-20250331141747460"></p>
+<p>方式二：增量修改，修改指定字段值</p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250331142428227.png" alt="image-20250331142428227"></p>
+<h3 id="2-2-总结"><a href="#2-2-总结" class="headerlink" title="2.2 总结"></a>2.2 总结</h3><p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250331142803209.png" alt="image-20250331142803209"></p>
+<h2 id="四-RestClient操作索引库"><a href="#四-RestClient操作索引库" class="headerlink" title="四.RestClient操作索引库"></a>四.RestClient操作索引库</h2><p>ES官方提供了不同语言的客户端，用来操作ES，这些酷虎端本质就是组装DSL语句，通过http请求发送给ES。官方文档地址：</p>
+<p><a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/elasticsearch/client/index.html">https://www.elastic.co/guide/en/elasticsearch/client/index.html</a></p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250331152609601.png" alt="image-20250331152609601"></p>
+<h3 id="4-1-分析数据结构"><a href="#4-1-分析数据结构" class="headerlink" title="4.1 分析数据结构"></a>4.1 分析数据结构</h3><p>mapping要考虑的问题：</p>
+<p>字段名，数据类型，是否参与搜索，是否分词，如果分词，分词器是什么？</p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250331172910033.png" alt="image-20250331172910033"></p>
+<p><strong>ES中支持俩种地理坐标数据类型</strong></p>
+<p>（1）geo_point:由纬度（latitude）和精度（longitude）确定一个点。例如：”32.8752345，120.2981576“</p>
+<p>（2）geo_shape:有多个geo_point组成的复杂几何图形，例如一条直线。</p>
+<p><strong>字段拷贝可以使用copy_to属性将当前字段拷贝到指定字段</strong></p>
+<p>这样就可以把所有需要搜索的字段拷贝到一个字段里面，优化搜索效率。</p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250331175430343.png" alt="image-20250331175430343"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">#(<span class="number">1</span>)分析数据结构--酒店的mapping</span><br><span class="line">PUT /hotel</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;mappings&quot;</span>: &#123;</span><br><span class="line">    <span class="string">&quot;properties&quot;</span>: &#123;</span><br><span class="line">      <span class="string">&quot;id&quot;</span>:&#123;</span><br><span class="line">        <span class="string">&quot;type&quot;</span>: <span class="string">&quot;keyword&quot;</span></span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="string">&quot;name&quot;</span>:&#123;</span><br><span class="line">        <span class="string">&quot;type&quot;</span>: <span class="string">&quot;text&quot;</span>,</span><br><span class="line">        <span class="string">&quot;analyzer&quot;</span>: <span class="string">&quot;ik_max_word&quot;</span>,</span><br><span class="line">        <span class="string">&quot;copy_to&quot;</span>: <span class="string">&quot;&#123;all&#125;&quot;</span></span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="string">&quot;addredd&quot;</span>:&#123;</span><br><span class="line">        <span class="string">&quot;type&quot;</span>: <span class="string">&quot;keyword&quot;</span>,</span><br><span class="line">        <span class="string">&quot;index&quot;</span>: <span class="literal">false</span></span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="string">&quot;price&quot;</span>:&#123;</span><br><span class="line">        <span class="string">&quot;type&quot;</span>: <span class="string">&quot;integer&quot;</span></span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="string">&quot;score&quot;</span>:&#123;</span><br><span class="line">        <span class="string">&quot;type&quot;</span>: <span class="string">&quot;integer&quot;</span></span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="string">&quot;brand&quot;</span>:&#123;</span><br><span class="line">        <span class="string">&quot;type&quot;</span>: <span class="string">&quot;keyword&quot;</span>,</span><br><span class="line">        <span class="string">&quot;copy_to&quot;</span>: <span class="string">&quot;&#123;all&#125;&quot;</span></span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="string">&quot;city&quot;</span>:&#123;</span><br><span class="line">        <span class="string">&quot;type&quot;</span>: <span class="string">&quot;keyword&quot;</span></span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="string">&quot;starName&quot;</span>:&#123;</span><br><span class="line">        <span class="string">&quot;type&quot;</span>:<span class="string">&quot;keyword&quot;</span></span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="string">&quot;business&quot;</span>:&#123;</span><br><span class="line">        <span class="string">&quot;type&quot;</span>: <span class="string">&quot;keyword&quot;</span></span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="string">&quot;location&quot;</span>:&#123;</span><br><span class="line">        <span class="string">&quot;type&quot;</span>:<span class="string">&quot;geo_point&quot;</span></span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="string">&quot;pic&quot;</span>:&#123;</span><br><span class="line">        <span class="string">&quot;type&quot;</span>: <span class="string">&quot;keyword&quot;</span>,</span><br><span class="line">        <span class="string">&quot;index&quot;</span>: <span class="literal">false</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="4-2-初始化JavaRestClient"><a href="#4-2-初始化JavaRestClient" class="headerlink" title="4.2 初始化JavaRestClient"></a>4.2 初始化JavaRestClient</h3><p>（1）引入es的RestHighLevelClient依赖</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;org.elasticsearch.client&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;elasticsearch-rest-high-level-client&lt;/artifactId&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
+
+<p>（2）因为SpringBoot默认的ES的版本是7.17.10，所以我们需要覆盖默认的ES版本。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;properties&gt;</span><br><span class="line">     &lt;maven.compiler.source&gt;<span class="number">11</span>&lt;/maven.compiler.source&gt;</span><br><span class="line">     &lt;maven.compiler.target&gt;<span class="number">11</span>&lt;/maven.compiler.target&gt;</span><br><span class="line">     &lt;elasticsearch.version&gt;<span class="number">7.12</span><span class="number">.1</span>&lt;/elasticsearch.version&gt;</span><br><span class="line"> &lt;/properties&gt;</span><br></pre></td></tr></table></figure>
+
+<p>（3）初始化RestHighLevelClient</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> cn.itcast.hotel;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.apache.http.HttpHost;</span><br><span class="line"><span class="keyword">import</span> org.elasticsearch.client.RestClient;</span><br><span class="line"><span class="keyword">import</span> org.elasticsearch.client.RestHighLevelClient;</span><br><span class="line"><span class="keyword">import</span> org.junit.jupiter.api.AfterEach;</span><br><span class="line"><span class="keyword">import</span> org.junit.jupiter.api.BeforeEach;</span><br><span class="line"><span class="keyword">import</span> org.junit.jupiter.api.Test;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">HotelIndexTest</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> RestHighLevelClient client;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">testInit</span><span class="params">()</span>&#123;</span><br><span class="line">        System.out.println(<span class="built_in">this</span>.client);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@BeforeEach</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">setUp</span><span class="params">()</span>&#123;</span><br><span class="line">        <span class="built_in">this</span>.client = <span class="keyword">new</span> <span class="title class_">RestHighLevelClient</span>(RestClient.builder(</span><br><span class="line">                HttpHost.create(<span class="string">&quot;http://192.168.73.1:9200&quot;</span>)</span><br><span class="line">        ));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@AfterEach</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">tearDown</span><span class="params">()</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">        <span class="built_in">this</span>.client.close();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="4-3-RestClient对索引库的CRUD"><a href="#4-3-RestClient对索引库的CRUD" class="headerlink" title="4.3 RestClient对索引库的CRUD"></a>4.3 RestClient对索引库的CRUD</h3><p>（1）创建索引库</p>
+<p>步骤：</p>
+<ul>
+<li>准备request对象，指定索引库名称。new CreateIndexRequest(“索引库名称”)</li>
+<li>准备请求参数，DSL语句</li>
+<li>发送请求</li>
+<li><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250401131310728.png" alt="image-20250401131310728"></li>
+</ul>
+<p>（2）删除索引库</p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250401154353439.png" alt="image-20250401154353439"></p>
+<p>（3）判断索引库是否存在</p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250401154758747.png" alt="image-20250401154758747"></p>
+<h3 id="4-4-RestClient对操作索引库总结"><a href="#4-4-RestClient对操作索引库总结" class="headerlink" title="4.4 RestClient对操作索引库总结"></a>4.4 RestClient对操作索引库总结</h3><p>步骤：</p>
+<ul>
+<li>初始化RestHighLevelClient</li>
+<li>创建XXXIndexRequest. (xxx是Create,Get,Delete)</li>
+<li>准备DSL（Create需要）</li>
+<li>发送请求，调用RestHighLevelClient.indices().xxx方法（xxx是create,exists,delete）</li>
+</ul>
+<h3 id="4-5-RestClient对文档的CRUD"><a href="#4-5-RestClient对文档的CRUD" class="headerlink" title="4.5 RestClient对文档的CRUD"></a>4.5 RestClient对文档的CRUD</h3><p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250401155328345.png" alt="image-20250401155328345"></p>
+<p>（1）添加文档数据</p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250401155637985.png" alt="image-20250401155637985"></p>
+<p>（2）查询文档数据</p>
+<p>注意：根据id查询到的文档数据是json格式，需要反序列化为java对象。</p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250401162457117.png" alt="image-20250401162457117"></p>
+<p>（3）修改文档数据</p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250401163517898.png" alt="image-20250401163517898"></p>
+<p>（4）删除文档数据</p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250401164550867.png" alt="image-20250401164550867"></p>
+<h3 id="4-6-RestClient对操作文档总结"><a href="#4-6-RestClient对操作文档总结" class="headerlink" title="4.6 RestClient对操作文档总结"></a>4.6 RestClient对操作文档总结</h3><p>文档操作的基本步骤：</p>
+<ul>
+<li>初始化RestHighLevelClient</li>
+<li>创建XXXRequest.(xxx是index,Get,Update,Delete)</li>
+<li>准备参数(Index和Update时需要)</li>
+<li>发送请求。调用RestHighLevelClient.xxx()方法（xxx是index,get,update,delete）</li>
+</ul>
+<h3 id="4-7-利用RestClient批量导入文档数据"><a href="#4-7-利用RestClient批量导入文档数据" class="headerlink" title="4.7 利用RestClient批量导入文档数据"></a>4.7 利用RestClient批量导入文档数据</h3><p>利用javaRestClient中的Bulk批处理，实现批量新增文档。</p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250401165453090.png" alt="image-20250401165453090"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//   利用RestClient的Bulk批量增加文档数据</span></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">testBulk</span><span class="params">()</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line"><span class="comment">//        1.创建Bulk请求</span></span><br><span class="line">        <span class="type">BulkRequest</span> <span class="variable">request</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">BulkRequest</span>();</span><br><span class="line"><span class="comment">//        2.添加要批量提交的请求</span></span><br><span class="line">        List&lt;Hotel&gt; hotels = hotelService.list();</span><br><span class="line">        <span class="keyword">for</span>(Hotel hotel:hotels)&#123;</span><br><span class="line">            <span class="type">HotelDoc</span> <span class="variable">hotelDoc</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">HotelDoc</span>(hotel);</span><br><span class="line">            request.add(<span class="keyword">new</span> <span class="title class_">IndexRequest</span>(<span class="string">&quot;hotel&quot;</span>).id(hotelDoc.getId().toString()).source(JSON.toJSONString(hotelDoc),XContentType.JSON));</span><br><span class="line">        &#125;</span><br><span class="line"><span class="comment">//        3.发送请求</span></span><br><span class="line">        client.bulk(request,RequestOptions.DEFAULT);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="五-elasticsearch搜索功能"><a href="#五-elasticsearch搜索功能" class="headerlink" title="五.elasticsearch搜索功能"></a>五.elasticsearch搜索功能</h2><h3 id="5-1-DSL查询文档"><a href="#5-1-DSL查询文档" class="headerlink" title="5.1 DSL查询文档"></a>5.1 DSL查询文档</h3><p>1.DSL查询分类</p>
+<ul>
+<li><p><strong>查询所有</strong>：查询所有数据，一般测试用。例如：match_all</p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250401173342336.png" alt="image-20250401173342336"></p>
+</li>
+</ul>
+<p><strong>全文检索</strong>（full text）查询：利用分词器对用户输入内容分词，然后去倒排索引库中匹配。例如：match,multi_match，常用于搜索框搜索。</p>
+<p>（1）match查询：全文检索查询一种，会对用户输入内容分词，然后去倒排索引库检索。与copy_to搭配使用。（建议）</p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250401184028517.png" alt="image-20250401184028517"></p>
+<p>（2）multi_match:根据多个字段查询，参与查询字段越多，查询性能越差。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">#（<span class="number">2</span>）DSL全文检索</span><br><span class="line">#match查询 一个字段</span><br><span class="line">GET /hotel/_search</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;query&quot;</span>: &#123;</span><br><span class="line">    <span class="string">&quot;match&quot;</span>: &#123;</span><br><span class="line">      <span class="string">&quot;&#123;all&#125;&quot;</span>: <span class="string">&quot;外滩如家&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">#multi_match查询 多个字段</span><br><span class="line">GET /hotel/_search</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;query&quot;</span>: &#123;</span><br><span class="line">    <span class="string">&quot;multi_match&quot;</span>: &#123;</span><br><span class="line">      <span class="string">&quot;query&quot;</span>: <span class="string">&quot;外滩如家&quot;</span>,</span><br><span class="line">      <span class="string">&quot;fields&quot;</span>: [<span class="string">&quot;brand&quot;</span>,<span class="string">&quot;name&quot;</span>,<span class="string">&quot;business&quot;</span>]</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>精确查询</strong>：根据精确词条值查找数据，一般是查找keyword,数值，日期，boolean等类型字段。所以不会对搜索条件分词。例如：ids,range(数值范围),term（根据数据的值查询）</p>
+<p>（1）term:根据词条精确值查询（品牌，城市）</p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250401185859001.png" alt="image-20250401185859001"></p>
+<p>（2）range根据值得范围查询（日期，价格）</p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250401190337766.png" alt="image-20250401190337766"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">#（<span class="number">3</span>）精确查询</span><br><span class="line">#term查询 根据词条精确值查询（比如：品牌，城市）</span><br><span class="line">GET /hotel/_search </span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;query&quot;</span>: &#123;</span><br><span class="line">    <span class="string">&quot;term&quot;</span>:&#123;</span><br><span class="line">      <span class="string">&quot;city&quot;</span>:&#123;</span><br><span class="line">        <span class="string">&quot;value&quot;</span>:<span class="string">&quot;上海&quot;</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">#range查询 根据值得范围查询（比如：日期，价格） gte:大于等于 lte:小于等于 gt:大于</span><br><span class="line">GET /hotel/_search </span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;query&quot;</span>: &#123;</span><br><span class="line">    <span class="string">&quot;range&quot;</span>:&#123;</span><br><span class="line">      <span class="string">&quot;price&quot;</span>:&#123;</span><br><span class="line">        <span class="string">&quot;gte&quot;</span>: <span class="number">100</span>,</span><br><span class="line">        <span class="string">&quot;lte&quot;</span>: <span class="number">300</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>地理</strong>（geo）查询，根据经纬度查询。例如：geo_distance,geo_bounding_box</p>
+<p>常见的使用场景包括：查询附近地点&#x2F;人&#x2F;车</p>
+<p>（1）geo_bounding_box：查询geo_point值落在某个矩形的所有文档。（用的少）</p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250401190943677.png" alt="image-20250401190943677"></p>
+<p>（2）geo_distance：查询到指定中心小于某个距离值的所有文档。（常用）</p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250401191115960.png" alt="image-20250401191115960"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">#（<span class="number">4</span>）地点查询</span><br><span class="line">#geo_distance查询geo_point值落在某个矩形的所有文档。</span><br><span class="line">GET /hotel/_search</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;query&quot;</span>: &#123;</span><br><span class="line">    <span class="string">&quot;geo_distance&quot;</span>: &#123;</span><br><span class="line">      <span class="string">&quot;distance&quot;</span>: <span class="string">&quot;3km&quot;</span>,</span><br><span class="line">      <span class="string">&quot;location&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;lat&quot;</span>: <span class="number">31.21</span>,</span><br><span class="line">        <span class="string">&quot;lon&quot;</span>: <span class="number">121.5</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>复合</strong>（compound）查询：复合查询可以将上述各种查询条件组合起来，合并查询条件。例如：bool,function_score</p>
+<p>（1） function_score:算分函数查询，可以控制文档相关性算分，控制文档排名。比如百度竞价。</p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250401192922444.png" alt="image-20250401192922444"></p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250401193018888.png" alt="image-20250401193018888"></p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250401193548265.png" alt="image-20250401193548265"></p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250401194013417.png" alt="image-20250401194013417"></p>
+<p>（2）bool：布尔查询是一个或多个查询子句的组合。子查询的组合方式有：</p>
+<ul>
+<li><p>must：必须匹配每个子查询，类似“与”</p>
+</li>
+<li><p>should：选择性匹配子查询，类似于“或”</p>
+</li>
+<li><p>must_not：必须不匹配，不参与算分，类似于“非”</p>
+</li>
+<li><p>filter：必须匹配，不参与算分</p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250401194816357.png" alt="image-20250401194816357"></p>
+</li>
+</ul>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250401194853778.png" alt="image-20250401194853778"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">#bool</span><br><span class="line">GET /hotel/_search</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;query&quot;</span>: &#123;</span><br><span class="line">    <span class="string">&quot;bool&quot;</span>:&#123;</span><br><span class="line">     <span class="string">&quot;must&quot;</span>: [</span><br><span class="line">       &#123;</span><br><span class="line">         <span class="string">&quot;match&quot;</span>:&#123;<span class="string">&quot;name&quot;</span>:<span class="string">&quot;如家&quot;</span>&#125;</span><br><span class="line">       &#125;</span><br><span class="line">     ], </span><br><span class="line">      <span class="string">&quot;must_not&quot;</span>:[</span><br><span class="line">       &#123;</span><br><span class="line">         <span class="string">&quot;range&quot;</span>:&#123;<span class="string">&quot;price&quot;</span>:&#123;<span class="string">&quot;lte&quot;</span>:<span class="number">500</span>&#125;&#125;</span><br><span class="line">       &#125;</span><br><span class="line">     ],</span><br><span class="line">     <span class="string">&quot;filter&quot;</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">          <span class="string">&quot;geo_distance&quot;</span>:&#123;</span><br><span class="line">            <span class="string">&quot;distance&quot;</span>:<span class="string">&quot;10km&quot;</span>,</span><br><span class="line">            <span class="string">&quot;location&quot;</span>:&#123;</span><br><span class="line">              <span class="string">&quot;lat&quot;</span>:<span class="number">31.21</span>,</span><br><span class="line">              <span class="string">&quot;lon&quot;</span>:<span class="number">121.5</span></span><br><span class="line">            &#125;</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      ]</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-2-搜索结果处理"><a href="#5-2-搜索结果处理" class="headerlink" title="5.2 搜索结果处理"></a>5.2 搜索结果处理</h3><p><strong>（1）排序处理</strong></p>
+<p>elasticsearch支持对搜索结果排序，默认是根据相关算分（_score）来排序。可以排序字段类型有：keyword类型，数值类型，地理坐标类型，日期类型等。</p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250401200944777.png" alt="image-20250401200944777"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">#案例：对酒店数据按照用户评价降序排序，评价相同的按照价格升序排序</span><br><span class="line">GET /hotel/_search</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;query&quot;</span>: &#123;</span><br><span class="line">    <span class="string">&quot;match_all&quot;</span>: &#123;&#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="string">&quot;sort&quot;</span>:[</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="string">&quot;score&quot;</span>: <span class="string">&quot;desc&quot;</span></span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="string">&quot;price&quot;</span>: <span class="string">&quot;asc&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br><span class="line">#案例：实现对酒店数据照到你的位置坐标的距离升序排序</span><br><span class="line">GET /hotel/_search</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;query&quot;</span>: &#123;</span><br><span class="line">    <span class="string">&quot;match_all&quot;</span>: &#123;&#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="string">&quot;sort&quot;</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="string">&quot;_geo_distance&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;location&quot;</span>:&#123;</span><br><span class="line">              <span class="string">&quot;lat&quot;</span>:<span class="number">31.21</span>,</span><br><span class="line">              <span class="string">&quot;lon&quot;</span>:<span class="number">121.5</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="string">&quot;order&quot;</span>: <span class="string">&quot;asc&quot;</span>,</span><br><span class="line">        <span class="string">&quot;unit&quot;</span>: <span class="string">&quot;km&quot;</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>（2）分页</strong></p>
+<p>elasticsearch默认情况下只返回top10的数据，而如果要查询更多数据就需要修改分页参数了。</p>
+<p>elasticsearch中通过修改from,size参数来控制要返回的分页结果。</p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250401202148119.png" alt="image-20250401202148119"></p>
+<p>from从哪开始，size获取的条数</p>
+<p><strong>注意：</strong></p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250401203320715.png" alt="image-20250401203320715"></p>
+<p>深度分页问题的解决方案：</p>
+<ul>
+<li><p>search afer:分页时需要排序，原理时从上一次的排序值开始，查询下一页数据。（缺点：不能往前翻页，翻上一页，只能往后查）。官方推荐使用的方式。</p>
+</li>
+<li><p>scroll:原理将排序数据形成快照，保存再内存。官方已经不推荐使用。</p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250401203807964.png" alt="image-20250401203807964"></p>
+</li>
+</ul>
+<p><strong>（3）高亮</strong></p>
+<p>高亮：就是再搜索结果中的关键字突出显示。</p>
+<p>原理：</p>
+<ul>
+<li><p>将搜索结果中的关键字用标签标记出来<em></em></p>
+</li>
+<li><p>在页面中给标签添加css样式em{color:red}</p>
+</li>
+</ul>
+<p>  <img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250401204331013.png" alt="image-20250401204331013"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">#（<span class="number">3</span>）高亮处理</span><br><span class="line">#默认情况下，ES搜索字段必须与高亮字段一致</span><br><span class="line">#<span class="string">&quot;require_field_match&quot;</span>: <span class="string">&quot;false&quot;</span>指定可以不一致</span><br><span class="line">#ES默认高亮也是添加em标签 所以pre_tags和post_tags可写可不写</span><br><span class="line">GET /hotel/_search</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;query&quot;</span>: &#123;</span><br><span class="line">    <span class="string">&quot;match&quot;</span>: &#123;</span><br><span class="line">      <span class="string">&quot;&#123;all&#125;&quot;</span>:<span class="string">&quot;酒店&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="string">&quot;highlight&quot;</span>: &#123;</span><br><span class="line">    <span class="string">&quot;fields&quot;</span>: &#123;</span><br><span class="line">      <span class="string">&quot;name&quot;</span>:&#123;</span><br><span class="line">        <span class="string">&quot;pre_tags&quot;</span>: [<span class="string">&quot;&lt;em&gt;&quot;</span>], </span><br><span class="line">        <span class="string">&quot;post_tags&quot;</span>: [<span class="string">&quot;&lt;/em&gt;&quot;</span>], </span><br><span class="line">        <span class="string">&quot;require_field_match&quot;</span>: <span class="literal">false</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">GET /hotel/_search</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;query&quot;</span>: &#123; <span class="string">&quot;match&quot;</span>: &#123; <span class="string">&quot;name&quot;</span>: <span class="string">&quot;如家&quot;</span> &#125; &#125;,</span><br><span class="line">  <span class="string">&quot;highlight&quot;</span>: &#123;</span><br><span class="line">    <span class="string">&quot;fields&quot;</span>: &#123; <span class="string">&quot;name&quot;</span>: &#123;&#125; &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-3-RestClient查询文档"><a href="#5-3-RestClient查询文档" class="headerlink" title="5.3 RestClient查询文档"></a>5.3 RestClient查询文档</h3><p><strong>（1）快速入门</strong></p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250401210758060.png" alt="image-20250401210758060"></p>
+<p>解析响应结果</p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250402083315372.png" alt="image-20250402083315372"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">testMathAll</span><span class="params">()</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line"><span class="comment">//        1.准备Request</span></span><br><span class="line">        <span class="type">SearchRequest</span> <span class="variable">request</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">SearchRequest</span>(<span class="string">&quot;hotel&quot;</span>);</span><br><span class="line"><span class="comment">//        2.准备参数DSL</span></span><br><span class="line">        request.source().query(QueryBuilders.matchAllQuery());</span><br><span class="line"><span class="comment">//        3.发送请求</span></span><br><span class="line">        <span class="type">SearchResponse</span> <span class="variable">response</span> <span class="operator">=</span> <span class="built_in">this</span>.client.search(request, RequestOptions.DEFAULT);</span><br><span class="line"><span class="comment">//        4.解析响应结果</span></span><br><span class="line"><span class="comment">//        System.out.println(response);</span></span><br><span class="line">        <span class="type">SearchHits</span> <span class="variable">searchHits</span> <span class="operator">=</span> response.getHits();</span><br><span class="line"><span class="comment">//          获取查询的总条数</span></span><br><span class="line">        <span class="type">TotalHits</span> <span class="variable">total</span> <span class="operator">=</span> searchHits.getTotalHits();</span><br><span class="line">        System.out.println(<span class="string">&quot;总搜索到&quot;</span>+total+<span class="string">&quot;条数据&quot;</span>);</span><br><span class="line"><span class="comment">//          查询结果数组</span></span><br><span class="line">        SearchHit[] hits = searchHits.getHits();</span><br><span class="line">        <span class="keyword">for</span> (SearchHit hit : hits) &#123;</span><br><span class="line">            <span class="comment">//得到source</span></span><br><span class="line">            <span class="type">String</span> <span class="variable">json</span> <span class="operator">=</span> hit.getSourceAsString();</span><br><span class="line">            <span class="comment">//反序列化</span></span><br><span class="line">            <span class="type">HotelDoc</span> <span class="variable">hotelDoc</span> <span class="operator">=</span> JSON.parseObject(json, HotelDoc.class);</span><br><span class="line">            <span class="comment">//打印</span></span><br><span class="line">            System.out.println(hotelDoc);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>（2）match查询</strong></p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250402085632741.png" alt="image-20250402085632741"></p>
+<p><strong>（3）精确查询</strong></p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250402090731105.png" alt="image-20250402090731105"></p>
+<p><strong>（4）复合查询</strong></p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250402090752240.png" alt="image-20250402090752240"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">searchBool</span><span class="params">()</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line"><span class="comment">//        1.准备request</span></span><br><span class="line">        <span class="type">SearchRequest</span> <span class="variable">request</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">SearchRequest</span>(<span class="string">&quot;hotel&quot;</span>);</span><br><span class="line"><span class="comment">//        2.准备DSL语句</span></span><br><span class="line"><span class="comment">//           准备boolQuery语句</span></span><br><span class="line">        <span class="type">BoolQueryBuilder</span> <span class="variable">boolQuery</span> <span class="operator">=</span> QueryBuilders.boolQuery();</span><br><span class="line"><span class="comment">//           添加term</span></span><br><span class="line">        boolQuery.must(QueryBuilders.termQuery(<span class="string">&quot;city&quot;</span>,<span class="string">&quot;上海&quot;</span>));</span><br><span class="line"><span class="comment">//           添加range</span></span><br><span class="line">        boolQuery.filter(QueryBuilders.rangeQuery(<span class="string">&quot;price&quot;</span>).gte(<span class="number">100</span>).lte(<span class="number">400</span>));</span><br><span class="line"></span><br><span class="line">        request.source().query(boolQuery);</span><br><span class="line"><span class="comment">//        3.发送请求</span></span><br><span class="line">        <span class="type">SearchResponse</span> <span class="variable">response</span> <span class="operator">=</span> <span class="built_in">this</span>.client.search(request, RequestOptions.DEFAULT);</span><br><span class="line"><span class="comment">//        4.解析响应结果</span></span><br><span class="line">        handleResponse(response);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>（5）排序，分页，高亮</strong></p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250402091844300.png" alt="image-20250402091844300"></p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250402124919906.png" alt="image-20250402124919906"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  分页和排序</span></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">testPageAndSort</span><span class="params">()</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line"><span class="comment">//        1.准备request</span></span><br><span class="line">        <span class="type">SearchRequest</span> <span class="variable">request</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">SearchRequest</span>(<span class="string">&quot;hotel&quot;</span>);</span><br><span class="line"><span class="comment">//        2.准备DSL语句</span></span><br><span class="line">        <span class="comment">// 2.1 query</span></span><br><span class="line">        request.source().query(QueryBuilders.matchAllQuery());</span><br><span class="line">        <span class="comment">// 2.2 分页 from,size</span></span><br><span class="line">        request.source().from(<span class="number">0</span>).size(<span class="number">5</span>);</span><br><span class="line">        <span class="comment">// 2.3 排序 sort</span></span><br><span class="line">        request.source().sort(<span class="string">&quot;price&quot;</span>, SortOrder.ASC);</span><br><span class="line"><span class="comment">//        3.发送请求</span></span><br><span class="line">        <span class="type">SearchResponse</span> <span class="variable">response</span> <span class="operator">=</span> <span class="built_in">this</span>.client.search(request, RequestOptions.DEFAULT);</span><br><span class="line"><span class="comment">//        4.解析响应结果</span></span><br><span class="line">        handleResponse(response);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250402092653911.png" alt="image-20250402092653911"></p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250402093352435.png" alt="image-20250402093352435"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//    高亮</span></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">testHighLight</span><span class="params">()</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">    <span class="comment">//        1.准备request</span></span><br><span class="line">        <span class="type">SearchRequest</span> <span class="variable">request</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">SearchRequest</span>(<span class="string">&quot;hotel&quot;</span>);</span><br><span class="line">    <span class="comment">//        2.准备DSL语句</span></span><br><span class="line">        <span class="comment">// 2.1 query</span></span><br><span class="line">        request.source().query(QueryBuilders.matchQuery(<span class="string">&quot;brand&quot;</span>,<span class="string">&quot;如家&quot;</span>));</span><br><span class="line">        <span class="comment">// 2.2 高亮</span></span><br><span class="line">        request.source().highlighter(<span class="keyword">new</span> <span class="title class_">HighlightBuilder</span>().field(<span class="string">&quot;name&quot;</span>).requireFieldMatch(<span class="literal">false</span>));</span><br><span class="line">    <span class="comment">//        3.发送请求</span></span><br><span class="line">        <span class="type">SearchResponse</span> <span class="variable">response</span> <span class="operator">=</span> <span class="built_in">this</span>.client.search(request, RequestOptions.DEFAULT);</span><br><span class="line">    <span class="comment">//        4.解析响应结果</span></span><br><span class="line">        handleResponse(response);</span><br><span class="line">    &#125;</span><br><span class="line"><span class="comment">//     解析响应结果</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">handleResponse</span><span class="params">(SearchResponse response)</span> &#123;</span><br><span class="line">        <span class="type">SearchHits</span> <span class="variable">searchHits</span> <span class="operator">=</span> response.getHits();</span><br><span class="line"><span class="comment">//        获取查询的总条数</span></span><br><span class="line">        <span class="type">TotalHits</span> <span class="variable">total</span> <span class="operator">=</span> searchHits.getTotalHits();</span><br><span class="line">        System.out.println(<span class="string">&quot;总搜索到&quot;</span>+total+<span class="string">&quot;条数据&quot;</span>);</span><br><span class="line"><span class="comment">//        查询结果数组</span></span><br><span class="line">        SearchHit[] hits = searchHits.getHits();</span><br><span class="line">        <span class="keyword">for</span> (SearchHit hit : hits) &#123;</span><br><span class="line">            <span class="comment">//得到source</span></span><br><span class="line">            <span class="type">String</span> <span class="variable">json</span> <span class="operator">=</span> hit.getSourceAsString();</span><br><span class="line">            <span class="comment">//反序列化</span></span><br><span class="line">            <span class="type">HotelDoc</span> <span class="variable">hotelDoc</span> <span class="operator">=</span> JSON.parseObject(json, HotelDoc.class);</span><br><span class="line">            <span class="comment">//处理高亮</span></span><br><span class="line">            Map&lt;String, HighlightField&gt; highlightFields = hit.getHighlightFields();</span><br><span class="line">            <span class="keyword">if</span>(highlightFields == <span class="literal">null</span>|| highlightFields.isEmpty())&#123;</span><br><span class="line">                System.out.println(<span class="string">&quot;没有高亮&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span>&#123;</span><br><span class="line">                <span class="comment">//根据名字获取高亮结果</span></span><br><span class="line">                <span class="type">HighlightField</span> <span class="variable">highlightField</span> <span class="operator">=</span> highlightFields.get(<span class="string">&quot;name&quot;</span>);</span><br><span class="line">                <span class="comment">//获取高亮值</span></span><br><span class="line">                <span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> highlightField.getFragments()[<span class="number">0</span>].string();</span><br><span class="line">                <span class="comment">//覆盖非高亮结果</span></span><br><span class="line">                hotelDoc.setName(name);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">//打印</span></span><br><span class="line">            System.out.println(hotelDoc);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>（6）总结</strong></p>
+<p>QueryBulders类，用于构建查询条件</p>
+<h3 id="5-4-黑马旅游案例"><a href="#5-4-黑马旅游案例" class="headerlink" title="5.4 黑马旅游案例"></a>5.4 黑马旅游案例</h3><p>（1）酒店搜索和分页</p>
+<p>（2）酒店结果过滤</p>
+<ul>
+<li>添加品牌，城市，星级，价格等过滤功能 </li>
+<li><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250402105322655.png" alt="image-20250402105322655"></li>
+</ul>
+<p>（3）我的周边酒店</p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250402123300209.png" alt="image-20250402123300209"></p>
+<p>（4）酒店竞价排名</p>
+<ul>
+<li>广告排名置顶</li>
+</ul>
+<p>我们给需要置顶的酒店文档添加一个标记。然后利用function score给带有标记的文档增加权重。</p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250402134519560.png" alt="image-20250402134519560"></p>
+<h1 id="elasticsearch深入篇"><a href="#elasticsearch深入篇" class="headerlink" title="elasticsearch深入篇"></a>elasticsearch深入篇</h1><h2 id="一-数据聚合"><a href="#一-数据聚合" class="headerlink" title="一.数据聚合"></a>一.数据聚合</h2><h3 id="1-1-聚合的种类"><a href="#1-1-聚合的种类" class="headerlink" title="1.1 聚合的种类"></a>1.1 聚合的种类</h3><p><strong>聚合（aggregations可以实现对文档数据的统计，分析，运算。）聚合常见的有三类：桶（Bucket）聚合，度量（Metric）聚合，管道（pipeline）聚合。</strong></p>
+<p>注意：聚合字段不分值，也就是说不能为text类型。</p>
+<h3 id="1-2-DSL实现聚合"><a href="#1-2-DSL实现聚合" class="headerlink" title="1.2 DSL实现聚合"></a>1.2 DSL实现聚合</h3><p><strong>（1）桶（Bucket）聚合</strong>：用来对文档做分组。</p>
+<ul>
+<li>TermAggregation:按照文档字段值分组</li>
+<li>Date Histogram:按照日期阶段分组。例如一周一组，一月一组</li>
+</ul>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250402141653581.png" alt="image-20250402141653581"></p>
+<p>**提示1：**默认情况下，Bucket聚合会统计Bucket内的文档数量，记为_count,并且按照 _count降序排序。</p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250402142344412.png" alt="image-20250402142344412"></p>
+<p>我们可以修改结果排序方式：</p>
+<p>“order”:{“指定字段”，“排序方式”}</p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250402142418980.png" alt="image-20250402142418980"></p>
+<p>**提示2：**默认情况下，Bucket聚合是对索引库的所有文档做聚合，我们可以限定要聚合的文档范围，只要添加query条件即可：</p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250402142823857.png" alt="image-20250402142823857"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">#（<span class="number">1</span>）DSL实现Bucket聚合</span><br><span class="line">#统计价格低于<span class="number">1000</span>的酒店中酒店品牌有几种？并且按照品牌种类的酒店数量升序排序</span><br><span class="line">#可以根据酒店品牌名称做聚合</span><br><span class="line">GET /hotel/_search</span><br><span class="line">&#123;</span><br><span class="line"> <span class="string">&quot;query&quot;</span>:&#123;</span><br><span class="line">    <span class="string">&quot;range&quot;</span>:&#123;</span><br><span class="line">      <span class="string">&quot;price&quot;</span>: &#123;</span><br><span class="line">      <span class="string">&quot;gte&quot;</span>: <span class="number">0</span>,</span><br><span class="line">      <span class="string">&quot;lte&quot;</span>: <span class="number">1000</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="string">&quot;size&quot;</span>: <span class="number">0</span>,</span><br><span class="line">  <span class="string">&quot;aggs&quot;</span>: &#123;</span><br><span class="line">    <span class="string">&quot;brandAgg&quot;</span>: &#123;</span><br><span class="line">      <span class="string">&quot;terms&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;field&quot;</span>: <span class="string">&quot;brand&quot;</span>,</span><br><span class="line">        <span class="string">&quot;order&quot;</span>:&#123;</span><br><span class="line">          <span class="string">&quot;_count&quot;</span>:<span class="string">&quot;asc&quot;</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="string">&quot;size&quot;</span>: <span class="number">10</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>（2）度量（Metric）聚合</strong>:用以计算一些值，比如：最大值，最小值，平均值。</p>
+<ul>
+<li>Avg:求平均值</li>
+<li>Max:求最大值</li>
+<li>Min:求最小值</li>
+<li>Stats:同时求max,min,avg,sum等</li>
+</ul>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250402143337909.png" alt="image-20250402143337909"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">#(<span class="number">2</span>)嵌套聚合bucket桶聚合+metric度量聚合</span><br><span class="line">#根据品牌种类，计算品牌评分最大值最小值以及平均值，并且按照平均值降序排序</span><br><span class="line">GET /hotel/_search</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;size&quot;</span>: <span class="number">0</span>, </span><br><span class="line">  <span class="string">&quot;aggs&quot;</span>: &#123;</span><br><span class="line">    <span class="string">&quot;brandAgg&quot;</span>: &#123;</span><br><span class="line">      <span class="string">&quot;terms&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;field&quot;</span>: <span class="string">&quot;brand&quot;</span>,</span><br><span class="line">        <span class="string">&quot;size&quot;</span>: <span class="number">10</span>,</span><br><span class="line">        <span class="string">&quot;order&quot;</span>: &#123;</span><br><span class="line">          <span class="string">&quot;scoreAgg.avg&quot;</span>: <span class="string">&quot;desc&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="string">&quot;aggs&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;scoreAgg&quot;</span>: &#123;</span><br><span class="line">          <span class="string">&quot;stats&quot;</span>: &#123;</span><br><span class="line">            <span class="string">&quot;field&quot;</span>: <span class="string">&quot;score&quot;</span></span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>（3）管道（pipeline）聚合</strong>：其它聚合的结果为基础做聚合</p>
+<h3 id="1-3RestAPI实现聚合"><a href="#1-3RestAPI实现聚合" class="headerlink" title="1.3RestAPI实现聚合"></a>1.3RestAPI实现聚合</h3><p><strong>RestApi实现聚合查询</strong></p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250402144532359.png" alt="image-20250402144532359"></p>
+<p><strong>对聚合结果进行解析</strong></p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250407102248475.png" alt="image-20250407102248475"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//    聚合查询</span></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">testAggregation</span><span class="params">()</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line"><span class="comment">//        1.准备request</span></span><br><span class="line">        <span class="type">SearchRequest</span> <span class="variable">request</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">SearchRequest</span>(<span class="string">&quot;hotel&quot;</span>);</span><br><span class="line"><span class="comment">//        2.准备DSL</span></span><br><span class="line"><span class="comment">//          2.1 将文档数据去除</span></span><br><span class="line">        request.source().size(<span class="number">0</span>);</span><br><span class="line">        request.source().aggregation(</span><br><span class="line">                AggregationBuilders.terms(<span class="string">&quot;xiaohan&quot;</span>)</span><br><span class="line">                        .field(<span class="string">&quot;brand&quot;</span>)</span><br><span class="line">                        .size(<span class="number">20</span>)</span><br><span class="line">        );</span><br><span class="line"><span class="comment">//        3.发出请求</span></span><br><span class="line">        <span class="type">SearchResponse</span> <span class="variable">response</span> <span class="operator">=</span> client.search(request, RequestOptions.DEFAULT);</span><br><span class="line"><span class="comment">//        4.解析结果</span></span><br><span class="line"><span class="comment">//        System.out.println(response);</span></span><br><span class="line">        <span class="type">Aggregations</span> <span class="variable">aggregations</span> <span class="operator">=</span> response.getAggregations();</span><br><span class="line"><span class="comment">//         4.1 根据聚合名称获取聚合结果</span></span><br><span class="line">         <span class="type">Terms</span> <span class="variable">brandTerms</span> <span class="operator">=</span> aggregations.get(<span class="string">&quot;xiaohan&quot;</span>);</span><br><span class="line"><span class="comment">//         4.2 获取buckets</span></span><br><span class="line">        List&lt;? <span class="keyword">extends</span> <span class="title class_">Terms</span>.Bucket&gt; buckets = brandTerms.getBuckets();</span><br><span class="line">        <span class="keyword">for</span> (Terms.Bucket bucket : buckets) &#123;</span><br><span class="line">            <span class="type">String</span> <span class="variable">brandName</span> <span class="operator">=</span> bucket.getKeyAsString();</span><br><span class="line">            System.out.println(brandName);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-4-案例黑马旅游多条件过滤"><a href="#1-4-案例黑马旅游多条件过滤" class="headerlink" title="1.4 案例黑马旅游多条件过滤"></a>1.4 案例黑马旅游多条件过滤</h3><p>利用聚合查询，渲染前端搜索框下的过滤条件</p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250407103303778.png" alt="image-20250407103303778"></p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250407110229686.png" alt="image-20250407110229686"></p>
+<h2 id="二-自动补全"><a href="#二-自动补全" class="headerlink" title="二.自动补全"></a>二.自动补全</h2><h3 id="2-1-拼音分词器"><a href="#2-1-拼音分词器" class="headerlink" title="2.1 拼音分词器"></a>2.1 拼音分词器</h3><p><strong>安装拼音分词器</strong></p>
+<p>注意：一定要安装与es版本相同的分词器。</p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250407130321042.png" alt="image-20250407130321042"></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/medcl/elasticsearch-analysis-pinyin">https://github.com/medcl/elasticsearch-analysis-pinyin</a></p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250407111230117.png" alt="image-20250407111230117"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">#十六.测试拼音分词器</span><br><span class="line">POST /_analyze</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;text&quot;</span>: [<span class="string">&quot;如家酒店还不错&quot;</span>],</span><br><span class="line">  <span class="string">&quot;analyzer&quot;</span>: <span class="string">&quot;pinyin&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250407130349485.png" alt="image-20250407130349485"></p>
+<h3 id="2-2-自定义分词器"><a href="#2-2-自定义分词器" class="headerlink" title="2.2 自定义分词器"></a>2.2 自定义分词器</h3><p><strong>了解分词器</strong></p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250407130730209.png" alt="image-20250407130730209"></p>
+<p><strong>配置自定义分词器语法</strong></p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250407131156959.png" alt="image-20250407131156959"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">PUT /test</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;settings&quot;</span>: &#123;</span><br><span class="line">    <span class="string">&quot;analysis&quot;</span>: &#123;</span><br><span class="line">      <span class="string">&quot;analyzer&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;my_analyzer&quot;</span>: &#123;</span><br><span class="line">          <span class="string">&quot;tokenizer&quot;</span>: <span class="string">&quot;ik_max_word&quot;</span>,</span><br><span class="line">          <span class="string">&quot;filter&quot;</span>: <span class="string">&quot;py&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="string">&quot;filter&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;py&quot;</span>: &#123;</span><br><span class="line">          <span class="string">&quot;type&quot;</span>: <span class="string">&quot;pinyin&quot;</span>,</span><br><span class="line">          <span class="string">&quot;limit_first_letter_length&quot;</span>: <span class="number">16</span>,</span><br><span class="line">          <span class="string">&quot;keep_full_pinyin&quot;</span>: <span class="literal">false</span>,</span><br><span class="line">          <span class="string">&quot;keep_joined_full_pinyin&quot;</span>: <span class="literal">true</span>,</span><br><span class="line">          <span class="string">&quot;none_chinese_pinyin_tokenize&quot;</span>: <span class="literal">false</span>,</span><br><span class="line">          <span class="string">&quot;keep_original&quot;</span>: <span class="literal">true</span>,</span><br><span class="line">          <span class="string">&quot;remove_duplicated_term&quot;</span>: <span class="literal">true</span></span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="string">&quot;mappings&quot;</span>: &#123;</span><br><span class="line">    <span class="string">&quot;properties&quot;</span>: &#123;</span><br><span class="line">      <span class="string">&quot;name&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;type&quot;</span>: <span class="string">&quot;text&quot;</span>,</span><br><span class="line">        <span class="string">&quot;analyzer&quot;</span>: <span class="string">&quot;my_analyzer&quot;</span>,</span><br><span class="line">        <span class="string">&quot;search_analyzer&quot;</span>: <span class="string">&quot;my_analyzer&quot;</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>出现搜索到同音字问题</strong></p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250407132757627.png" alt="image-20250407132757627"></p>
+<p><strong>解决办法</strong></p>
+<p>解决办法就是，在进行搜索时，不应该采取倒排索引的方式进行搜索，应该使用ik_smart分词器</p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250407132941230.png" alt="image-20250407132941230"></p>
+<p><strong>总结：</strong></p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250407133128377.png" alt="image-20250407133128377"></p>
+<h3 id="2-3-自动补全查询"><a href="#2-3-自动补全查询" class="headerlink" title="2.3 自动补全查询"></a>2.3 自动补全查询</h3><p>elasticsearch提供了<strong>Completion Suggester</strong>查询来实现自动补全功能。<strong>这个查询会匹配以用户输入内容开头的词条并返回</strong>。为了提高补全查询的效率，对于文档中字段的类型有一些约束：</p>
+<p>（1）参与补全查询的字段必须时<strong>completion类型</strong></p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250407133525437.png" alt="image-20250407133525437"></p>
+<p>（2）字段的内容一般是用来补全的多个词条形成的数组。</p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250407133702364.png" alt="image-20250407133702364"><strong>自动补全查询语法</strong></p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250407144119355.png" alt="image-20250407144119355"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line">#十八.自动补全查询</span><br><span class="line">#创建索引库test2</span><br><span class="line">PUT test2</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;mappings&quot;</span>: &#123;</span><br><span class="line">    <span class="string">&quot;properties&quot;</span>: &#123;</span><br><span class="line">      <span class="string">&quot;title&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;type&quot;</span>: <span class="string">&quot;completion&quot;</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">#准备索引库数据</span><br><span class="line">POST test2/_doc</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;title&quot;</span>: [</span><br><span class="line">    <span class="string">&quot;Sony&quot;</span>,</span><br><span class="line">    <span class="string">&quot;WH-1000XM5&quot;</span></span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br><span class="line">POST test2/_doc</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;title&quot;</span>: [</span><br><span class="line">    <span class="string">&quot;SK-II&quot;</span>,</span><br><span class="line">    <span class="string">&quot;PITERA&quot;</span></span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br><span class="line">POST test2/_doc</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;title&quot;</span>: [</span><br><span class="line">    <span class="string">&quot;Nintendo&quot;</span>,</span><br><span class="line">    <span class="string">&quot;switch&quot;</span></span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br><span class="line">#自动补全查询</span><br><span class="line">GET /test2/_search</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;suggest&quot;</span>: &#123;</span><br><span class="line">    <span class="string">&quot;titleSuggest&quot;</span>: &#123;</span><br><span class="line">      <span class="string">&quot;text&quot;</span>: <span class="string">&quot;so&quot;</span>,</span><br><span class="line">      <span class="string">&quot;completion&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;field&quot;</span>: <span class="string">&quot;title&quot;</span>,</span><br><span class="line">         <span class="string">&quot;skip_duplicates&quot;</span>: <span class="literal">true</span>,</span><br><span class="line">        <span class="string">&quot;size&quot;</span>:<span class="number">10</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-4-实现酒店搜索自动补全"><a href="#2-4-实现酒店搜索自动补全" class="headerlink" title="2.4 实现酒店搜索自动补全"></a>2.4 实现酒店搜索自动补全</h3><p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250407145025355.png" alt="image-20250407145025355"></p>
+<p><strong>DSL实现酒店数据自动补全</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br></pre></td><td class="code"><pre><span class="line">#十九.查看酒店数据结构</span><br><span class="line">GET /hotel/_mapping</span><br><span class="line"></span><br><span class="line">#删除原来的索引库</span><br><span class="line">DELETE /hotel</span><br><span class="line"></span><br><span class="line">#更改索引库数据结构</span><br><span class="line">PUT /hotel</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;settings&quot;</span>: &#123;</span><br><span class="line">    <span class="string">&quot;analysis&quot;</span>: &#123;</span><br><span class="line">      <span class="string">&quot;analyzer&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;text_analyzer&quot;</span>: &#123;</span><br><span class="line">          <span class="string">&quot;tokenizer&quot;</span>: <span class="string">&quot;ik_max_word&quot;</span>,</span><br><span class="line">          <span class="string">&quot;filter&quot;</span>: <span class="string">&quot;py&quot;</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="string">&quot;completion_analyzer&quot;</span>: &#123;</span><br><span class="line">          <span class="string">&quot;tokenizer&quot;</span>: <span class="string">&quot;keyword&quot;</span>,</span><br><span class="line">          <span class="string">&quot;filter&quot;</span>: <span class="string">&quot;py&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="string">&quot;filter&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;py&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;limit_first_letter_lengt&quot;</span>: <span class="number">16</span>,</span><br><span class="line">          <span class="string">&quot;type&quot;</span>: <span class="string">&quot;pinyin&quot;</span>,</span><br><span class="line">          <span class="string">&quot;keep_full_pinyin&quot;</span>: <span class="literal">false</span>,</span><br><span class="line">          <span class="string">&quot;keep_joined_full_pinyin&quot;</span>: <span class="literal">true</span>,</span><br><span class="line">         <span class="string">&quot;none_chinese_pinyin_tokenize&quot;</span>: <span class="literal">false</span>,</span><br><span class="line">          <span class="string">&quot;keep_original&quot;</span>: <span class="literal">true</span>,</span><br><span class="line">          <span class="string">&quot;remove_duplicated_term&quot;</span>: <span class="literal">true</span></span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="string">&quot;mappings&quot;</span>: &#123;</span><br><span class="line">    <span class="string">&quot;properties&quot;</span>: &#123;</span><br><span class="line">      <span class="string">&quot;all&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;type&quot;</span>: <span class="string">&quot;text&quot;</span>,</span><br><span class="line">        <span class="string">&quot;analyzer&quot;</span>: <span class="string">&quot;text_analyzer&quot;</span>,</span><br><span class="line">        <span class="string">&quot;search_analyzer&quot;</span>: <span class="string">&quot;ik_smart&quot;</span></span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="string">&quot;id&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;type&quot;</span>: <span class="string">&quot;keyword&quot;</span></span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="string">&quot;address&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;type&quot;</span>: <span class="string">&quot;keyword&quot;</span>,</span><br><span class="line">        <span class="string">&quot;index&quot;</span>: <span class="literal">false</span></span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="string">&quot;brand&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;type&quot;</span>: <span class="string">&quot;keyword&quot;</span>,</span><br><span class="line">        <span class="string">&quot;copy_to&quot;</span>: <span class="string">&quot;all&quot;</span></span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="string">&quot;business&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;type&quot;</span>: <span class="string">&quot;keyword&quot;</span>,</span><br><span class="line">        <span class="string">&quot;copy_to&quot;</span>: <span class="string">&quot;all&quot;</span></span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="string">&quot;city&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;type&quot;</span>: <span class="string">&quot;keyword&quot;</span></span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="string">&quot;location&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;type&quot;</span>: <span class="string">&quot;geo_point&quot;</span></span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="string">&quot;name&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;type&quot;</span>: <span class="string">&quot;text&quot;</span>,</span><br><span class="line">        <span class="string">&quot;analyzer&quot;</span>: <span class="string">&quot;text_analyzer&quot;</span>,</span><br><span class="line">        <span class="string">&quot;search_analyzer&quot;</span>: <span class="string">&quot;ik_smart&quot;</span>,</span><br><span class="line">        <span class="string">&quot;copy_to&quot;</span>: <span class="string">&quot;all&quot;</span></span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="string">&quot;pic&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;type&quot;</span>: <span class="string">&quot;keyword&quot;</span>,</span><br><span class="line">        <span class="string">&quot;index&quot;</span>: <span class="literal">false</span></span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="string">&quot;price&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;type&quot;</span>: <span class="string">&quot;integer&quot;</span></span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="string">&quot;score&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;type&quot;</span>: <span class="string">&quot;integer&quot;</span></span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="string">&quot;starName&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;type&quot;</span>: <span class="string">&quot;keyword&quot;</span></span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="string">&quot;suggestion&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;type&quot;</span>: <span class="string">&quot;completion&quot;</span>,</span><br><span class="line">        <span class="string">&quot;analyzer&quot;</span>: <span class="string">&quot;completion_analyzer&quot;</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">#查询数据是否准备齐全</span><br><span class="line">GET /hotel/_search</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;query&quot;</span>: &#123;</span><br><span class="line">    <span class="string">&quot;match_all&quot;</span>: &#123;&#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">#进行补全查询</span><br><span class="line">GET /hotel/_search</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;suggest&quot;</span>: &#123;</span><br><span class="line">    <span class="string">&quot;suggestions&quot;</span>: &#123;</span><br><span class="line">      <span class="string">&quot;text&quot;</span>: <span class="string">&quot;h&quot;</span>,</span><br><span class="line">      <span class="string">&quot;completion&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;field&quot;</span>: <span class="string">&quot;suggestion&quot;</span>,</span><br><span class="line">        <span class="string">&quot;skip_duplicates&quot;</span>: <span class="literal">true</span>,</span><br><span class="line">        <span class="string">&quot;size&quot;</span>:<span class="number">10</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>RestAPI实现自动补全</strong></p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250407151103979.png" alt="image-20250407151103979"></p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250407151955454.png" alt="image-20250407151955454"></p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250407152755107.png" alt="image-20250407152755107"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">  <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> List&lt;String&gt; <span class="title function_">getSuggestion</span><span class="params">(String prefix)</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line"><span class="comment">//        1.准备request请求</span></span><br><span class="line">            <span class="type">SearchRequest</span> <span class="variable">request</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">SearchRequest</span>(<span class="string">&quot;hotel&quot;</span>);</span><br><span class="line"><span class="comment">//        2.准备SDL语句</span></span><br><span class="line">            request.source().suggest(</span><br><span class="line">                    <span class="keyword">new</span> <span class="title class_">SuggestBuilder</span>().addSuggestion(<span class="string">&quot;suggestions&quot;</span>,</span><br><span class="line">                            SuggestBuilders.completionSuggestion(<span class="string">&quot;suggestion&quot;</span>)</span><br><span class="line">                                    .prefix(prefix)</span><br><span class="line">                                    .size(<span class="number">10</span>)</span><br><span class="line">                                    .skipDuplicates(<span class="literal">true</span>)</span><br><span class="line">                    )</span><br><span class="line">            );</span><br><span class="line"><span class="comment">//        3.发送request请求</span></span><br><span class="line">            <span class="type">SearchResponse</span> <span class="variable">response</span> <span class="operator">=</span> <span class="built_in">this</span>.client.search(request, RequestOptions.DEFAULT);</span><br><span class="line"><span class="comment">//        4.解析结果</span></span><br><span class="line">            <span class="type">Suggest</span> <span class="variable">suggest</span> <span class="operator">=</span> response.getSuggest();</span><br><span class="line">            <span class="type">CompletionSuggestion</span> <span class="variable">suggestions</span> <span class="operator">=</span> suggest.getSuggestion(<span class="string">&quot;suggestions&quot;</span>);</span><br><span class="line">            List&lt;CompletionSuggestion.Entry.Option&gt; options = suggestions.getOptions();</span><br><span class="line">            <span class="keyword">if</span>(options == <span class="literal">null</span>||options.isEmpty()) <span class="keyword">return</span> Collections.emptyList();</span><br><span class="line">            List&lt;String&gt; result = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">            <span class="keyword">for</span> (CompletionSuggestion.Entry.Option option : options) &#123;</span><br><span class="line">                <span class="type">Text</span> <span class="variable">text</span> <span class="operator">=</span> option.getText();</span><br><span class="line">                result.add(String.valueOf(text));</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> result;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>(e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="三-数据同步-面试常问"><a href="#三-数据同步-面试常问" class="headerlink" title="三.数据同步(面试常问)"></a>三.数据同步(面试常问)</h2><p><strong>什么是数据同步？</strong></p>
+<p>elasticsearch中的酒店数据来自于mysql数据库，因此mysql数据发生改变时，elasticsearch也必须跟着改变，这个就是elasticsearch与mysql之间的数据同步。</p>
+<p>数据同步：redis与mysql数据同步；elasticsearch与mysql数据同步； </p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250407154721725.png" alt="image-20250407154721725"></p>
+<p><strong>数据同步的解决办法</strong></p>
+<p><strong>方案一：同步调用</strong></p>
+<p>优点：实现简单粗暴</p>
+<p>缺点：业务耦合高，性能降低。</p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250407154847293.png" alt="image-20250407154847293"></p>
+<p><strong>方案二：异步通知</strong></p>
+<p>优点：低耦合，实现难度一般</p>
+<p>缺点：依赖mq的可靠性</p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250407155046872.png" alt="image-20250407155046872"></p>
+<p><strong>方案三：监听binlog</strong></p>
+<p>优点：完全解除服务间的耦合</p>
+<p>缺点：开启binlog增加数据库负担，实现复杂度较高</p>
+<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250407155148190.png" alt="image-20250407155148190"></p>
+<h2 id="四-集群"><a href="#四-集群" class="headerlink" title="四.集群"></a>四.集群</h2>
+    </article>
+    
+    <div class="read-nums">
+      <!-- id 将作为查询条件 -->
+      <span id="2024/03/28/学习elasticsearch/" class="leancloud_visitors" data-flag-title="Your Article Title">
+        <em class="post-meta-item-text">浏览量</em>
+        <i class="leancloud-visitors-count"></i>
+      </span>
+    </div>
+    <div class="comments-intro">
+      <h2>评论区</h2>
+      <p>欢迎你留下宝贵的意见，昵称输入QQ号会显示QQ头像哦~</p>
+    </div>
+    <div id="vcomments" class="vcomments"></div>
+    
+  </div>
+  <div class="article-catelogue">
+    <div class="article-catelogue--wrapper">
+      <div class="catelogue catelogue-1">
+        <h3>目录</h3>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#elasticsearch%E5%9F%BA%E7%A1%80%E7%AF%87"><span class="toc-number">1.</span> <span class="toc-text">elasticsearch基础篇</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E5%88%9D%E8%AF%86ES"><span class="toc-number">1.1.</span> <span class="toc-text">一.初识ES</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-%E4%BA%86%E8%A7%A3ES"><span class="toc-number">1.1.1.</span> <span class="toc-text">1.1 了解ES</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-%E5%80%92%E6%8E%92%E7%B4%A2%E5%BC%95"><span class="toc-number">1.1.2.</span> <span class="toc-text">1.2 倒排索引</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-es%E7%9A%84%E4%B8%80%E4%BA%9B%E6%A6%82%E5%BF%B5"><span class="toc-number">1.1.3.</span> <span class="toc-text">1.3 es的一些概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-4-%E5%AE%89%E8%A3%85es-kibana"><span class="toc-number">1.1.4.</span> <span class="toc-text">1.4 安装es,kibana</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-5-es%E7%9A%84%E5%90%AF%E7%94%A8"><span class="toc-number">1.1.5.</span> <span class="toc-text">1.5 es的启用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-6-%E5%88%86%E8%AF%8D%E5%99%A8"><span class="toc-number">1.1.6.</span> <span class="toc-text">1.6 分词器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-7-IK%E5%88%86%E8%AF%8D%E5%99%A8%E7%9A%84%E6%89%A9%E5%B1%95%E5%92%8C%E5%81%9C%E7%94%A8%E8%AF%8D%E5%85%B8"><span class="toc-number">1.1.7.</span> <span class="toc-text">1.7 IK分词器的扩展和停用词典</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-8-%E6%80%BB%E7%BB%93"><span class="toc-number">1.1.8.</span> <span class="toc-text">1.8 总结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-DSL%E6%93%8D%E4%BD%9C%E7%B4%A2%E5%BC%95%E5%BA%93"><span class="toc-number">1.2.</span> <span class="toc-text">二.DSL操作索引库</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-mapping%E6%98%A0%E5%B0%84%E5%B1%9E%E6%80%A7"><span class="toc-number">1.2.1.</span> <span class="toc-text">2.1 mapping映射属性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E7%B4%A2%E5%BC%95%E5%BA%93%E7%9A%84CRUD"><span class="toc-number">1.2.2.</span> <span class="toc-text">2.2 索引库的CRUD</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-%E6%80%BB%E7%BB%93"><span class="toc-number">1.2.3.</span> <span class="toc-text">2.3 总结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-DSL%E6%93%8D%E4%BD%9C%E6%96%87%E6%A1%A3"><span class="toc-number">1.3.</span> <span class="toc-text">三.DSL操作文档</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E6%96%87%E6%A1%A3%E7%9A%84CRUD"><span class="toc-number">1.3.1.</span> <span class="toc-text">2.1 文档的CRUD</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E6%80%BB%E7%BB%93"><span class="toc-number">1.3.2.</span> <span class="toc-text">2.2 总结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-RestClient%E6%93%8D%E4%BD%9C%E7%B4%A2%E5%BC%95%E5%BA%93"><span class="toc-number">1.4.</span> <span class="toc-text">四.RestClient操作索引库</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-%E5%88%86%E6%9E%90%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="toc-number">1.4.1.</span> <span class="toc-text">4.1 分析数据结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-%E5%88%9D%E5%A7%8B%E5%8C%96JavaRestClient"><span class="toc-number">1.4.2.</span> <span class="toc-text">4.2 初始化JavaRestClient</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-RestClient%E5%AF%B9%E7%B4%A2%E5%BC%95%E5%BA%93%E7%9A%84CRUD"><span class="toc-number">1.4.3.</span> <span class="toc-text">4.3 RestClient对索引库的CRUD</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-4-RestClient%E5%AF%B9%E6%93%8D%E4%BD%9C%E7%B4%A2%E5%BC%95%E5%BA%93%E6%80%BB%E7%BB%93"><span class="toc-number">1.4.4.</span> <span class="toc-text">4.4 RestClient对操作索引库总结</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-5-RestClient%E5%AF%B9%E6%96%87%E6%A1%A3%E7%9A%84CRUD"><span class="toc-number">1.4.5.</span> <span class="toc-text">4.5 RestClient对文档的CRUD</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-6-RestClient%E5%AF%B9%E6%93%8D%E4%BD%9C%E6%96%87%E6%A1%A3%E6%80%BB%E7%BB%93"><span class="toc-number">1.4.6.</span> <span class="toc-text">4.6 RestClient对操作文档总结</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-7-%E5%88%A9%E7%94%A8RestClient%E6%89%B9%E9%87%8F%E5%AF%BC%E5%85%A5%E6%96%87%E6%A1%A3%E6%95%B0%E6%8D%AE"><span class="toc-number">1.4.7.</span> <span class="toc-text">4.7 利用RestClient批量导入文档数据</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-elasticsearch%E6%90%9C%E7%B4%A2%E5%8A%9F%E8%83%BD"><span class="toc-number">1.5.</span> <span class="toc-text">五.elasticsearch搜索功能</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-DSL%E6%9F%A5%E8%AF%A2%E6%96%87%E6%A1%A3"><span class="toc-number">1.5.1.</span> <span class="toc-text">5.1 DSL查询文档</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2-%E6%90%9C%E7%B4%A2%E7%BB%93%E6%9E%9C%E5%A4%84%E7%90%86"><span class="toc-number">1.5.2.</span> <span class="toc-text">5.2 搜索结果处理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-3-RestClient%E6%9F%A5%E8%AF%A2%E6%96%87%E6%A1%A3"><span class="toc-number">1.5.3.</span> <span class="toc-text">5.3 RestClient查询文档</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-4-%E9%BB%91%E9%A9%AC%E6%97%85%E6%B8%B8%E6%A1%88%E4%BE%8B"><span class="toc-number">1.5.4.</span> <span class="toc-text">5.4 黑马旅游案例</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#elasticsearch%E6%B7%B1%E5%85%A5%E7%AF%87"><span class="toc-number">2.</span> <span class="toc-text">elasticsearch深入篇</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E6%95%B0%E6%8D%AE%E8%81%9A%E5%90%88"><span class="toc-number">2.1.</span> <span class="toc-text">一.数据聚合</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-%E8%81%9A%E5%90%88%E7%9A%84%E7%A7%8D%E7%B1%BB"><span class="toc-number">2.1.1.</span> <span class="toc-text">1.1 聚合的种类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-DSL%E5%AE%9E%E7%8E%B0%E8%81%9A%E5%90%88"><span class="toc-number">2.1.2.</span> <span class="toc-text">1.2 DSL实现聚合</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3RestAPI%E5%AE%9E%E7%8E%B0%E8%81%9A%E5%90%88"><span class="toc-number">2.1.3.</span> <span class="toc-text">1.3RestAPI实现聚合</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-4-%E6%A1%88%E4%BE%8B%E9%BB%91%E9%A9%AC%E6%97%85%E6%B8%B8%E5%A4%9A%E6%9D%A1%E4%BB%B6%E8%BF%87%E6%BB%A4"><span class="toc-number">2.1.4.</span> <span class="toc-text">1.4 案例黑马旅游多条件过滤</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E8%87%AA%E5%8A%A8%E8%A1%A5%E5%85%A8"><span class="toc-number">2.2.</span> <span class="toc-text">二.自动补全</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E6%8B%BC%E9%9F%B3%E5%88%86%E8%AF%8D%E5%99%A8"><span class="toc-number">2.2.1.</span> <span class="toc-text">2.1 拼音分词器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E8%87%AA%E5%AE%9A%E4%B9%89%E5%88%86%E8%AF%8D%E5%99%A8"><span class="toc-number">2.2.2.</span> <span class="toc-text">2.2 自定义分词器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-%E8%87%AA%E5%8A%A8%E8%A1%A5%E5%85%A8%E6%9F%A5%E8%AF%A2"><span class="toc-number">2.2.3.</span> <span class="toc-text">2.3 自动补全查询</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-%E5%AE%9E%E7%8E%B0%E9%85%92%E5%BA%97%E6%90%9C%E7%B4%A2%E8%87%AA%E5%8A%A8%E8%A1%A5%E5%85%A8"><span class="toc-number">2.2.4.</span> <span class="toc-text">2.4 实现酒店搜索自动补全</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E6%95%B0%E6%8D%AE%E5%90%8C%E6%AD%A5-%E9%9D%A2%E8%AF%95%E5%B8%B8%E9%97%AE"><span class="toc-number">2.3.</span> <span class="toc-text">三.数据同步(面试常问)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E9%9B%86%E7%BE%A4"><span class="toc-number">2.4.</span> <span class="toc-text">四.集群</span></a></li></ol></li></ol>
+      </div>
+      
+        <div class="catelogue catelogue-2">
+          
+            <p>
+              <span>上一篇：</span>
+              <a href="/2024/04/03/Python/">python应用</a>
+            </p>
+           
+          
+            <p>
+              <span>下一篇</span>
+              <a href="/2024/03/27/JAVA WEB/">学习javaweb基础</a>
+            </p>
+          
+        </div>
+      
+    </div>
+  </div>
+</div>
+
+
+<script>
+  // var定义，避免pjax重新进来造成的重复声明错误
+  var config = JSON.parse('{"enable":true,"appId":"Pf8zCXGEH1qsprnWfikVVujL-gzGzoHsz","appKey":"qOqoiUHhH1TGtLRUYURkLRQX","placeholder":"请留下你宝贵的意见吧~","meta":["nick"],"recordIP":true,"visitor":true,"enableQQ":true}')
+  new Valine({
+    el: '#vcomments',
+    appId: config.appId,
+    appKey: config.appKey,
+    placeholder: config.placeholder,
+    meta: config.meta,
+    recordIP: config.recordIP,
+    visitor: config.visitor,
+    enableQQ: config.enableQQ,
+    path: '2024/03/28/学习elasticsearch/'
+  })
+</script>
+
+
+<script>
+  $(document).on('pjax:complete', function() {
+    const tocs = document.querySelector('.toc')
+    const links = tocs ? tocs.querySelectorAll('a') : []
+    links.forEach(link => {
+      link.addEventListener('click', e => {
+        const href = decodeURIComponent(e.href)
+        href.search(/#(.*)/)
+        const id = RegExp.$1
+        const target = document.querySelector('#' + id)
+        const top = target.offsetTop
+        document.documentElement.scrollTo({
+          top: top - 100,
+          behavior: 'smooth'
+        })
+        e.preventDefault()
+      })
+    })
+  })
+</script> 
+
+</div>
+      <div class="main-right-wrapper"><div class="main-right">
+  <div class="main-right--board">
+    <div class="main-right--title">
+      <h5>公告栏</h5>
+      <i class="iconfont icon-gonggao"></i>
+    </div>
+    <div class="main-right--content">
+      Hello~大噶好。我是gcbsh，欢迎你们来到我的博客小站，希望能在这里收获到有用的东西哦！ 
+    </div>
+  </div>
+
+  <div id="aplayer" class="main-right--music"></div>
+
+  <div class="operate-items">
+    <div class="operate-item backtop">
+      <i class="iconfont icon-huidaodingbu"></i>
+      <span>回到顶部</span>
+    </div>
+    
+    <div class="operate-item turn-comment hidden">
+      <i class="iconfont icon-pinglun"></i>
+      <span>查看评论</span>
+    </div>
+    
+  </div>
+
+  <div class="main-right--site">
+    <div class="main-right--power">
+      <p>Power By <a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/">Hexo</a>.</p>
+      <p>Theme：<a target="_blank" rel="noopener" href="https://github.com/Aizener/hexo-theme-cola">Cola.</a></p>
+    </div>
+    <p class="main-right--refer"><a target="_blank" rel="noopener" href="https://beian.miit.gov.cn/#/Integrated/index">蜀ICP备2022005384号-1</a> </p>
+  </div>
+</div>
+
+<script>
+  function setOperateItem () {
+    const reg = /\d{4}\/\d{2}\/\d{2}\/.+/
+    const path = location.pathname
+    const operateDom = document.querySelector('.main-right .operate-items')
+    const commentDom = document.querySelector('.turn-comment')
+    const cateloguDom = document.querySelector('.article-catelogue > .article-catelogue--wrapper');
+
+    if (commentDom) {
+      if (reg.test(path) || path.match(/\/log\/.+/)) {
+        commentDom.classList.remove('hidden')
+        const newDom = operateDom.cloneNode(true);
+        const _backtopDom = newDom.querySelector('.backtop');
+        const _commentDom = newDom.querySelector('.turn-comment');
+        _backtopDom.addEventListener('click', () => backTopEvent());
+        _commentDom.addEventListener('click', () => commentDomEvent());
+        cateloguDom.appendChild(newDom);
+      } else {
+        commentDom.classList.add('hidden')
+      }
+    }
+  }
+
+  setOperateItem()
+  const musics = JSON.parse(`[{"name":"去有风的地方","artist":"郁可唯","url":"music/quyoufengdedifang.mp3","cover":"/imgs/quyoufengdedifang.jpg"},{"name":"消失","artist":"苏运莹","url":"music/xiaoshi.mp3","cover":"/imgs/xiaoshi.jpg"}]`)
+  const ap = new APlayer({
+    container: document.querySelector('#aplayer'),
+    audio: musics,
+  })
+
+  $(document).on('pjax:complete', function() {
+    setOperateItem()
+  })
+
+  document.querySelector('.backtop').addEventListener('click', () => {
+    backTopEvent();
+  })
+  const dom = document.querySelector('.turn-comment')
+  dom && dom.addEventListener('click', () => {
+    commentDomEvent();
+  })
+
+  function backTopEvent() {
+    document.documentElement.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    })
+  }
+
+  function commentDomEvent() {
+    const commentDom = document.querySelector('.comments-intro')
+    if (!commentDom) return
+    const top = commentDom.offsetTop, height = commentDom.offsetHeight
+    document.documentElement.scrollTo({
+      top: top - 2 * height,
+      behavior: 'smooth'
+    })
+  }
+</script></div>
+    </section>
+  </div>
+  <div id="progress" class="progress"></div>
+  <div id="gray" class="gray"></div>
+
+  <script>
+    function initScroll () {
+      document.addEventListener('scroll', () => {
+        const doc = document.documentElement
+        const scrollTop = doc.scrollTop
+        const pageHeight = doc.offsetHeight
+        const clientHeight = doc.clientHeight
+        const ratio = scrollTop / (pageHeight - clientHeight)
+        const progress = document.querySelector('#progress')
+        const avatarImg = document.querySelector('.main-left--avatar')
+        progress.style.width = (100 * ratio) + '%'
+        avatarImg.style.transform = `rotate(${360 * ratio}deg)`
+      })
+    }
+
+    const rootPath = "/"
+
+    const checkAndSetArticlePageLayout = () => {
+      const path = location.pathname.replace(rootPath, '');
+      if (
+        /^\/?\d{4}\/\d{2}\/\d{2}\/.*/.test(path) ||
+        /^log\/.+/.test(path)
+      ) {
+        $('.main-container, .main-right, .main-right-wrapper').addClass('is-article')
+      } else {
+        $('.main-container, .main-right, .main-right-wrapper').removeClass('is-article')
+      }
+    }
+
+    const gray = "none"
+    const setGrayStyle = () => {
+      if (gray === 'none') {
+        return
+      } else if (gray === 'index') {
+        location.pathname === '/' ? $('#gray').show() : $('#gray').hide()
+      } else if (gray === 'all') {
+        $('#gray').show()
+      }
+    }
+    setGrayStyle()
+
+
+    window.onload = function () {
+      checkAndSetArticlePageLayout()
+      setTimeout(() => {
+        $('#load').slideUp()
+        $('#container').slideToggle()
+        setTimeout(() => {
+          initScroll();
+        }, 500)
+      }, 500)
+    }
+    
+    let status = 0
+    // 对所有链接跳转事件绑定pjax容器container
+    $(document).pjax('a[target!=_blank]', '#main-container', {
+      container: '#main-container',
+      fragment: '#main-container',
+      timeout: 8000
+    })
+
+    $(document).on('pjax:start', function() {
+    })
+    $(document).on('pjax:complete', function() {
+      status = 0
+      $('.main-container').addClass('to-up').on('animationend', function() {
+        $(this).removeClass('to-up')
+      })
+      setGrayStyle()
+      checkAndSetArticlePageLayout()
+    })
+    $(document).on('pjax:popstate', function() {
+      status = -1
+      checkAndSetArticlePageLayout()
+    });
+  </script>
+</body>
+</html>
