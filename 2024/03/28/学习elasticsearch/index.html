@@ -193,7 +193,7 @@
   const ipt = document.querySelector('#search-input')
   const btn = document.querySelector('#search-btn')
   const layer = document.querySelector('#search-layer')
-  const posts = JSON.parse(`[{"title":"c++竞赛","cover":"/images/c++.jpg","path":"2023/03/27/ACM暑假集训笔记/"},{"title":"学习javaweb框架","cover":"/images/javaweb-cover.jpg","path":"2024/11/27/JAVAWEB框架/"},{"title":"学习javaweb基础","cover":"/images/javaweb-cover.jpg","path":"2024/03/27/JAVA WEB/"},{"title":"python应用","cover":"/images/python.jpg","path":"2024/04/03/Python/"},{"title":"Redis实战篇","cover":"/images/redis-cover.jpg","path":"2025/03/31/Redis实战篇/"},{"title":"Redis基础篇","cover":"/images/redis-cover.jpg","path":"2025/03/10/Redis基础篇/"},{"title":"python基础","cover":"/images/python.jpg","path":"2024/05/12/python详细版本/"},{"title":"学习git指令","cover":"/images/git.jpg","path":"2024/04/11/git项目管理工具/"},{"title":"学习elasticsearch","cover":"/images/wx.jpg","path":"2024/03/28/学习elasticsearch/"},{"title":"微信小程序","cover":"/images/wx.jpg","path":"2024/09/09/微信小程序/"},{"title":"mysql","cover":"/images/mysql.jpg","path":"2023/10/25/数据库知识/"}]`)
+  const posts = JSON.parse(`[{"title":"学习javaweb框架","cover":"/images/javaweb-cover.jpg","path":"2024/11/27/JAVAWEB框架/"},{"title":"c++竞赛","cover":"/images/c++.jpg","path":"2023/03/27/ACM暑假集训笔记/"},{"title":"python应用","cover":"/images/python.jpg","path":"2024/04/03/Python/"},{"title":"Redis基础篇","cover":"/images/redis-cover.jpg","path":"2025/03/10/Redis基础篇/"},{"title":"学习javaweb基础","cover":"/images/javaweb-cover.jpg","path":"2024/03/27/JAVA WEB/"},{"title":"Redis实战篇","cover":"/images/redis-cover.jpg","path":"2025/03/31/Redis实战篇/"},{"title":"学习git指令","cover":"/images/git.jpg","path":"2024/04/11/git项目管理工具/"},{"title":"学习elasticsearch","cover":"/images/wx.jpg","path":"2024/03/28/学习elasticsearch/"},{"title":"python基础","cover":"/images/python.jpg","path":"2024/05/12/python详细版本/"},{"title":"mysql","cover":"/images/mysql.jpg","path":"2023/10/25/数据库知识/"},{"title":"微信小程序","cover":"/images/wx.jpg","path":"2024/09/09/微信小程序/"}]`)
   ipt.addEventListener('keyup', e => {
     if (e.key === 'Enter') {
       handleSearch()
@@ -376,12 +376,12 @@
       <h1 id="elasticsearch基础篇"><a href="#elasticsearch基础篇" class="headerlink" title="elasticsearch基础篇"></a>elasticsearch基础篇</h1><p>elasticsearch分布式搜索引擎</p>
 <h2 id="一-初识ES"><a href="#一-初识ES" class="headerlink" title="一.初识ES"></a>一.初识ES</h2><h3 id="1-1-了解ES"><a href="#1-1-了解ES" class="headerlink" title="1.1 了解ES"></a>1.1 了解ES</h3><p>elasticsearch是一款非常强大的开源搜索引擎，可以帮助我们从海量数据中快速找到需要的内容。<strong>被广泛应用于搜索，日志统计，分析，系统监控等领域。</strong></p>
 <p>elasticsearch是elastic stack的核心，<strong>负责存储，搜索，分析数据。</strong></p>
-<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250328155803197.png" alt="image-20250328155803197"></p>
+<p><img src="/images/image-20250328155803197.png" alt="elasticsearch"></p>
 <p>Lucene是Apache的开源搜索引擎类库，提供了搜索引擎的核心API，elasticsearch就是基于这个类库实现的。</p>
 <h3 id="1-2-倒排索引"><a href="#1-2-倒排索引" class="headerlink" title="1.2 倒排索引"></a>1.2 倒排索引</h3><p>传统数据库（如mysql）采取正向索引。</p>
 <p>正向索引：基于文档id创建索引。查询词条时，必须先找到文档，而后判断是否包含词条。</p>
 <p>正向索引在局部内容检索上性能比较差（逐条数据扫描）</p>
-<p><img src="C:\Users\韩俊兰\AppData\Roaming\Typora\typora-user-images\image-20250328160646639.png" alt="image-20250328160646639"></p>
+<p><img src="/images/image-20250328160646639.png" alt="elasticsearch"></p>
 <p>elascticsearch采用倒排索引。（核心）</p>
 <p>倒排索引：对文档内容分词，对词条创建索引，并记录词条所在文档的信息。查询时现根据词条查询到文档id,而后获取到文档。</p>
 <p><strong>文档（document）</strong>:每条数据就是一个文档</p>
